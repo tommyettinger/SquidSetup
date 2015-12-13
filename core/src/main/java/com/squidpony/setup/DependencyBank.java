@@ -7,7 +7,7 @@ public class DependencyBank {
 
 	//Versions
 	static String libgdxVersion = "1.7.1";
-	static String squidlibVersion = "3.0.0-SNAPSHOT";
+	static String squidlibVersion = "3.0.0-b2";
 	static String gsonVersion = "2.3.1";
 	//Temporary snapshot version, we need a more dynamic solution for pointing to the latest nightly
 	static String libgdxNightlyVersion = "1.7.2-SNAPSHOT";
