@@ -6,8 +6,8 @@ import java.util.HashMap;
 public class DependencyBank {
 
 	//Versions
-	static String libgdxVersion = "1.7.0";
-	static String squidlibVersion = "3.0.0-b1";
+	static String libgdxVersion = "1.7.1";
+	static String squidlibVersion = "3.0.0-SNAPSHOT";
 	static String gsonVersion = "2.3.1";
 	//Temporary snapshot version, we need a more dynamic solution for pointing to the latest nightly
 	static String libgdxNightlyVersion = "1.7.2-SNAPSHOT";
@@ -17,6 +17,7 @@ public class DependencyBank {
 
 	//Repositories
 	static String mavenCentral = "mavenCentral()";
+	static String mavenLocal = "mavenLocal()";
 	static String libGDXSnapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots/";
 	static String libGDXReleaseUrl = "https://oss.sonatype.org/content/repositories/releases/";
 
@@ -66,7 +67,7 @@ public class DependencyBank {
 				"Core Utility, Logic, and AI code for SquidLib"
 		),
 		SQUIDLIB(
-				new String[]{"com.squidpony:squidlib-gdx:$squidlibVersion", "com.badlogicgames.gdx:gdx:$gdxVersion"},
+				new String[]{"com.squidpony:squidlib:$squidlibVersion", "com.badlogicgames.gdx:gdx:$gdxVersion"},
 				new String[]{"com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"},
 				new String[]{"com.badlogicgames.gdx:gdx-backend-android:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"},
 				new String[]{"org.robovm:robovm-rt:$roboVMVersion", "org.robovm:robovm-cocoatouch:$roboVMVersion", "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"},

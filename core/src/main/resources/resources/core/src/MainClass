@@ -18,6 +18,7 @@ import squidpony.squidgrid.gui.gdx.SquidMouse;
 import squidpony.squidgrid.mapping.DungeonGenerator;
 import squidpony.squidgrid.mapping.DungeonUtility;
 import squidpony.squidmath.Coord;
+import squidpony.squidmath.CoordPacker;
 import squidpony.squidmath.LightRNG;
 import squidpony.squidmath.RNG;
 
@@ -84,17 +85,19 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         //decoDungeon is given the dungeon with any decorations we specified. (Here, we didn't, unless you chose to add
         //water to the dungeon. In that case, decoDungeon will have different contents than bareDungeon, next.)
         decoDungeon = dungeonGen.generate();
-        //simplifyDungeon provides a basic representation of the generated dungeon -- '#' for walls, '.' for floors.
-        bareDungeon = DungeonUtility.simplifyDungeon(decoDungeon);
+        //getBareDungeon provides the simplest representation of the generated dungeon -- '#' for walls, '.' for floors.
+        bareDungeon = dungeonGen.getBareDungeon();
         //When we draw, we may want to use a nicer representation of walls. DungeonUtility has lots of useful methods
         //for modifying char[][] dungeon grids, and this one takes each '#' and replaces it with a box-drawing character.
         lineDungeon = DungeonUtility.hashesToLines(decoDungeon);
+        // it's more efficient to get random floors from a packed set containing only (compressed) floor positions.
+        short[] placement = CoordPacker.pack(bareDungeon, '.');
         //Coord is the type we use as a general 2D point, usually in a dungeon.
         //Because we know dungeons won't be incredibly huge, Coord performs best for x and y values less than 256.
         cursor = Coord.get(-1, -1);
         //player is, here, just a Coord that stores his position. In a real game, you would probably have a class for
         //creatures, and possibly a subclass for the player.
-        player = dungeonGen.utility.randomFloor(bareDungeon);
+        player = dungeonGen.utility.randomCell(placement);
         //This is used to allow clicks or taps to take the player to the desired area.
         toCursor = new ArrayList<Coord>(100);
         awaitedMoves = new ArrayList<Coord>(100);
@@ -184,7 +187,7 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
                         //to the position the user clicked on.
                         toCursor = playerToCursor.findPath(100, null, null, player, cursor);
                     }
-                    awaitedMoves = new ArrayList<Coord>(toCursor);
+                    awaitedMoves = new ArrayList<>(toCursor);
                 }
                 return false;
             }
