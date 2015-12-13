@@ -1,12 +1,18 @@
 package %PACKAGE%.desktop;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import %PACKAGE%.%MAIN_CLASS%;
 
 public class DesktopLauncher {
-	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new %MAIN_CLASS%(), config);
-	}
+	public static void main (String[] args) {
+    	LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+   		config.width = 80 * 12;
+    	config.height = 25 * 24;
+    	config.addIcon("Tentacle-16.png", Files.FileType.Classpath);
+    	config.addIcon("Tentacle-32.png", Files.FileType.Classpath);
+    	config.addIcon("Tentacle-128.png", Files.FileType.Classpath);
+    	new LwjglApplication(new %MAIN_CLASS%(), config);
+    }
 }

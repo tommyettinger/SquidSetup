@@ -6,8 +6,9 @@ import java.util.HashMap;
 public class DependencyBank {
 
 	//Versions
-	static String libgdxVersion = "1.7.1";
+	static String libgdxVersion = "1.7.0";
 	static String squidlibVersion = "3.0.0-b1";
+	static String gsonVersion = "2.3.1";
 	//Temporary snapshot version, we need a more dynamic solution for pointing to the latest nightly
 	static String libgdxNightlyVersion = "1.7.2-SNAPSHOT";
 	static String roboVMVersion = "1.9.0";
@@ -57,7 +58,7 @@ public class DependencyBank {
 	 */
 	public enum ProjectDependency {
 		SQUIDLIB_UTIL(
-				new String[]{"com.squidpony:squidlib-util:$squidlibVersion"},
+				new String[]{"com.squidpony:squidlib-util:$squidlibVersion", "com.google.code.gson:gson:$gsonVersion"},
 				new String[]{},
 				new String[]{},
 				new String[]{},
@@ -65,10 +66,10 @@ public class DependencyBank {
 				"Core Utility, Logic, and AI code for SquidLib"
 		),
 		SQUIDLIB(
-				new String[]{"com.squidpony:squidlib:$squidlibVersion"},
-				new String[]{},
-				new String[]{},
-				new String[]{},
+				new String[]{"com.squidpony:squidlib-gdx:$squidlibVersion", "com.badlogicgames.gdx:gdx:$gdxVersion"},
+				new String[]{"com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"},
+				new String[]{"com.badlogicgames.gdx:gdx-backend-android:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"},
+				new String[]{"org.robovm:robovm-rt:$roboVMVersion", "org.robovm:robovm-cocoatouch:$roboVMVersion", "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"},
 
 				"Fancy text-based display module using squidlib-util and libGDX"
 		),
@@ -78,7 +79,7 @@ public class DependencyBank {
 			new String[]{"com.badlogicgames.gdx:gdx-backend-android:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"},
 			new String[]{"org.robovm:robovm-rt:$roboVMVersion", "org.robovm:robovm-cocoatouch:$roboVMVersion", "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"},
 
-			"Core Library for LibGDX (not needed if you depend on module 'squidlib', which uses libGDX)"
+			"Core Library for LibGDX (not needed if 'Squidlib' is checked; it uses libGDX)"
 		),
 		BULLET(
 			new String[]{"com.badlogicgames.gdx:gdx-bullet:$gdxVersion"},

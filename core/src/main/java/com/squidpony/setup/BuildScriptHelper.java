@@ -1,8 +1,6 @@
 package com.squidpony.setup;
 
 
-import com.squidpony.setup.DependencyBank.ProjectType;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.List;
@@ -40,6 +38,7 @@ public class BuildScriptHelper {
 		write(wr, "ext {");
 		write(wr, "appName = \"%APP_NAME%\"");
 		write(wr, "squidlibVersion = '" + DependencyBank.squidlibVersion + "'");
+		write(wr, "gsonVersion = '" + DependencyBank.gsonVersion + "'");
 		write(wr, "gdxVersion = '" + DependencyBank.libgdxVersion + "'");
 		write(wr, "roboVMVersion = '" + DependencyBank.roboVMVersion + "'");
 		write(wr, "box2DLightsVersion = '" + DependencyBank.box2DLightsVersion + "'");

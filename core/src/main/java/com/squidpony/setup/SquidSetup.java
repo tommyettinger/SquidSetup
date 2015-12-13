@@ -264,7 +264,6 @@ public class SquidSetup {
 
 		// Assets
 		String assetPath = builder.modules.contains(ProjectType.ANDROID) ? "android/assets" : "core/assets";
-		project.files.add(new ProjectFile("android/assets/badlogic.jpg", assetPath + "/badlogic.jpg", false));
 
 		// android project
 		if (builder.modules.contains(ProjectType.ANDROID)) {
