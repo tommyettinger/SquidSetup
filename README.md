@@ -23,7 +23,7 @@ handle the graphics yourself).
 
 ## Usage
 
-  - Get the latest `SquidSetup.jar` from the Releases tab of this project.
+  - Get the latest `SquidSetup.jar` from the [Releases tab](https://github.com/tommyettinger/SquidSetup/releases) of this project.
   - Regardless of what platforms you intend to target, make sure the steps
     [described by the LibGDX wiki here](https://github.com/libgdx/libgdx/wiki/Setting-up-your-Development-Environment-%28Eclipse%2C-Intellij-IDEA%2C-NetBeans%29)
     are taken care of.
