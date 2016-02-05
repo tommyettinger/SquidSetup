@@ -255,6 +255,9 @@ public class SquidSetup {
 		// core project
 		project.files.add(new ProjectFile("core/build.gradle"));
 		project.files.add(new ProjectFile("core/src/MainClass", "core/src/" + packageDir + "/" + mainClass + ".java", true));
+		if (builder.modules.contains(ProjectType.HTML)) {
+			project.files.add(new ProjectFile("core/CoreGdxDefinition", "core/src/" + mainClass + ".gwt.xml", true));
+		}
 
 		// desktop project
 		if (builder.modules.contains(ProjectType.DESKTOP)) {
@@ -264,6 +267,7 @@ public class SquidSetup {
 
 		// Assets
 		String assetPath = builder.modules.contains(ProjectType.ANDROID) ? "android/assets" : "core/assets";
+		project.files.add(new ProjectFile("android/assets/Squid.png", assetPath + "/Squid.png", false));
 
 		// android project
 		if (builder.modules.contains(ProjectType.ANDROID)) {
@@ -282,6 +286,19 @@ public class SquidSetup {
 			project.files.add(new ProjectFile("local.properties", true));
 		}
 
+		// html project
+		if (builder.modules.contains(ProjectType.HTML)) {
+			project.files.add(new ProjectFile("html/build.gradle"));
+			project.files.add(new ProjectFile("html/src/HtmlLauncher", "html/src/" + packageDir + "/client/HtmlLauncher.java", true));
+			project.files.add(new ProjectFile("html/GdxDefinition", "html/src/" + packageDir + "/GdxDefinition.gwt.xml", true));
+			project.files.add(new ProjectFile("html/GdxDefinitionSuperdev", "html/src/" + packageDir + "/GdxDefinitionSuperdev.gwt.xml", true));
+			project.files.add(new ProjectFile("html/war/index", "html/webapp/index.html", true));
+			project.files.add(new ProjectFile("html/war/styles.css", "html/webapp/styles.css", false));
+			project.files.add(new ProjectFile("html/war/refresh.png", "html/webapp/refresh.png", false));
+			project.files.add(new ProjectFile("html/war/soundmanager2-jsmin.js", "html/webapp/soundmanager2-jsmin.js", false));
+			project.files.add(new ProjectFile("html/war/soundmanager2-setup.js", "html/webapp/soundmanager2-setup.js", false));
+			project.files.add(new ProjectFile("html/war/WEB-INF/web.xml", "html/webapp/WEB-INF/web.xml", true));
+		}
 		// ios robovm
 		if (builder.modules.contains(ProjectType.IOS)) {
 			project.files.add(new ProjectFile("ios/src/IOSLauncher", "ios/src/" + packageDir + "/IOSLauncher.java", true));
@@ -312,6 +329,10 @@ public class SquidSetup {
 		values.put("%ASSET_PATH%", assetPath);
 		values.put("%BUILD_TOOLS_VERSION%", DependencyBank.buildToolsVersion);
 		values.put("%API_LEVEL%", DependencyBank.androidAPILevel);
+		values.put("%GWT_VERSION%", DependencyBank.gwtVersion);
+		if (builder.modules.contains(ProjectType.HTML)) {
+			values.put("%GWT_INHERITS%", parseGwtInherits(builder));
+		}
 
 
 		copyAndReplace(outputDir, project, values);
@@ -478,6 +499,20 @@ public class SquidSetup {
 		return params;
 	}
 
+	private String parseGwtInherits (ProjectBuilder builder) {
+		String parsed = "";
+
+		for (Dependency dep : builder.dependencies) {
+			if (dep.getGwtInherits() != null) {
+				for (String inherit : dep.getGwtInherits()) {
+					parsed += "\t<inherits name='" + inherit + "' />\n";
+				}
+			}
+		}
+
+		return parsed;
+	}
+
 	private String parseGradleArgs (List<ProjectType> modules, List<String> args) {
 		String argString = "";
 		if (args == null) return argString;
@@ -521,6 +556,7 @@ public class SquidSetup {
 			projects.add(ProjectType.DESKTOP);
 			projects.add(ProjectType.ANDROID);
 			projects.add(ProjectType.IOS);
+			projects.add(ProjectType.HTML);
 
 			List<Dependency> dependencies = new ArrayList<Dependency>();
 			dependencies.add(bank.getDependency(ProjectDependency.GDX));

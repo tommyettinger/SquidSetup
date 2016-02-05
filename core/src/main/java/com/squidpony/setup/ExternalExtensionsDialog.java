@@ -200,12 +200,13 @@ public class ExternalExtensionsDialog extends JDialog implements TableModelListe
 				for (int j = 0; j < inheritsNode.getLength(); j++)
 					gwtInherits[j] = inheritsNode.item(j).getTextContent();
 
-				final HashMap<String, List<String>> dependencies = new HashMap<String, List<String>>();
+				final HashMap<String, List<ExternalExtensionDependency>> dependencies = new HashMap<String, List<ExternalExtensionDependency>>();
 
 				addToDependencyMapFromXML(dependencies, eElement, "core");
 				addToDependencyMapFromXML(dependencies, eElement, "desktop");
 				addToDependencyMapFromXML(dependencies, eElement, "android");
 				addToDependencyMapFromXML(dependencies, eElement, "ios");
+				addToDependencyMapFromXML(dependencies, eElement, "html");
 
 				URI uri = null;
 				try {
@@ -219,6 +220,7 @@ public class ExternalExtensionsDialog extends JDialog implements TableModelListe
 					extension.setDependencies(dependencies);
 					tableModel.addExtension(extension, false, name, description, version, compatibility, uri);
 				}
+
 			}
 		}
 	}
@@ -272,11 +274,11 @@ public class ExternalExtensionsDialog extends JDialog implements TableModelListe
 		}
 	}
 
-	private void addToDependencyMapFromXML (Map<String, List<String>> dependencies, Element eElement, String platform) {
+	private void addToDependencyMapFromXML (Map<String, List<ExternalExtensionDependency>> dependencies, Element eElement, String platform) {
 		if (eElement.getElementsByTagName(platform).item(0) != null) {
 			Element project = (Element)eElement.getElementsByTagName(platform).item(0);
 
-			ArrayList<String> deps = new ArrayList<String>();
+			ArrayList<ExternalExtensionDependency> deps = new ArrayList<ExternalExtensionDependency>();
 
 			if (project.getTextContent().trim().equals("")) {
 				// No dependencies required
@@ -290,7 +292,8 @@ public class ExternalExtensionsDialog extends JDialog implements TableModelListe
 					Node nNode = nList.item(i);
 					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 						Element dependencyNode = (Element)nNode;
-						deps.add(dependencyNode.getTextContent());
+						boolean external = Boolean.parseBoolean(dependencyNode.getAttribute("external"));
+						deps.add(new ExternalExtensionDependency(dependencyNode.getTextContent(), external));
 					}
 
 				}
@@ -299,6 +302,7 @@ public class ExternalExtensionsDialog extends JDialog implements TableModelListe
 			dependencies.put(platform, deps);
 		}
 	}
+
 
 	class ExtensionTableModel extends DefaultTableModel {
 

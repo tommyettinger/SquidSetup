@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import squidpony.squidai.DijkstraMap;
 import squidpony.squidgrid.gui.gdx.DefaultResources;
 import squidpony.squidgrid.gui.gdx.SColor;
@@ -19,10 +19,10 @@ import squidpony.squidgrid.mapping.DungeonGenerator;
 import squidpony.squidgrid.mapping.DungeonUtility;
 import squidpony.squidmath.Coord;
 import squidpony.squidmath.CoordPacker;
-import squidpony.squidmath.LightRNG;
 import squidpony.squidmath.RNG;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class %MAIN_CLASS% extends ApplicationAdapter {
     SpriteBatch batch;
@@ -33,9 +33,9 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
     private char[][] decoDungeon, bareDungeon, lineDungeon;
     private int[][] colorIndices, bgColorIndices;
     /** In number of cells */
-    private int width;
+    private int gridWidth;
     /** In number of cells */
-    private int height;
+    private int gridHeight;
     /** The pixel width of a cell */
     private int cellWidth;
     /** The pixel height of a cell */
@@ -48,29 +48,46 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
     private ArrayList<Coord> toCursor;
     private ArrayList<Coord> awaitedMoves;
     private float secondsWithoutMoves;
+    private String[] lang = new String[12];
+    private int langIndex = 0;
     @Override
     public void create () {
         //These variables, corresponding to the screen's width and height in cells and a cell's width and height in
         //pixels, must match the size you specified in the launcher for input to behave.
         //This is one of the more common places a mistake can happen.
-        //In our desktop launcher, we gave this arguments to the configuration:
-        //	config.width = 80 * 12;
-        //  config.height = 25 * 24;
-        //Most games that do not use multiple Panels should probably use the same approach.
-        width = 80;
-        height = 25;
-        cellWidth = 12;
-        cellHeight = 24;
-        // gotta have a random number generator. We seed a LightRNG with any long we want, then pass that to an RNG.
-        rng = new RNG(new LightRNG(0xd00d));
+        //In our desktop launcher, we gave these arguments to the configuration:
+        //	config.width = 80 * 8;
+        //  config.height = 40 * 18;
+        //Here, config.height refers to the total number of rows to be displayed on the screen.
+        //We're displaying 32 rows of dungeon, then 8 more rows of text generation to show some tricks with language.
+        //gridHeight is 32 because that variable will be used for generating the dungeon and handling movement within
+        //the upper 32 rows. Anything that refers to the full height, which happens rarely and usually for things like
+        //screen resizes, just uses gridHeight + 8. Next to it is gridWidth, which is 80 because we want 80 grid spaces
+        //across the whole screen. cellWidth and cellHeight are 8 and 18, and match the multipliers for config.width and
+        //config.height, but in this case don't strictly need to because we soon use a "Stretchable" font. While
+        //gridWidth and gridHeight are measured in spaces on the grid, cellWidth and cellHeight are the pixel dimensions
+        //of an individual cell. The font will look more crisp if the cell dimensions match the config multipliers
+        //exactly, and the stretchable fonts (technically, distance field fonts) can resize to non-square sizes and
+        //still retain most of that crispness.
+        gridWidth = 80;
+        gridHeight = 32;
+        cellWidth = 8;
+        cellHeight = 18;
+        // gotta have a random number generator. We can seed an RNG with any long we want, or even a String.
+        rng = new RNG("SquidLib!");
 
         //Some classes in SquidLib need access to a batch to render certain things, so it's a good idea to have one.
         batch = new SpriteBatch();
         //Here we make sure our Stage, which holds any text-based grids we make, uses our Batch.
-        stage = new Stage(new ScreenViewport(), batch);
-        // the font will try to load Inconsolata-LGC as a bitmap font from resources.
+        stage = new Stage(new StretchViewport(gridWidth * cellWidth, (gridHeight + 8) * cellHeight), batch);
+        // the font will try to load Inconsolata-LGC-Custom as an embedded bitmap font with a distance field effect.
         // this font is covered under the SIL Open Font License (fully free), so there's no reason it can't be used.
-        display = new SquidLayers(width, height, cellWidth, cellHeight, DefaultResources.smoothNameLarge);
+        display = new SquidLayers(gridWidth, gridHeight + 8, cellWidth, cellHeight, DefaultResources.getStretchableFont());
+        // a bit of a hack to increase the text height slightly without changing the size of the cells they're in.
+        // this causes a tiny bit of overlap between cells, which gets rid of an annoying gap between vertical lines.
+        // if you use '#' for walls instead of box drawing chars, you don't need this.
+        display.getTextFactory().height(cellHeight + 1).initBySize();
+        // this makes animations very fast, which is good for multi-cell movement but bad for attack animations.
         display.setAnimationDuration(0.03f);
 
         //These need to have their positions set before adding any entities if there is an offset involved.
@@ -79,7 +96,7 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
 
         //This uses the seeded RNG we made earlier to build a procedural dungeon using a method that takes rectangular
         //sections of pre-drawn dungeon and drops them into place in a tiling pattern. It makes good "ruined" dungeons.
-        dungeonGen = new DungeonGenerator(width, height, rng);
+        dungeonGen = new DungeonGenerator(gridWidth, gridHeight, rng);
         //uncomment this next line to randomly add water to the dungeon in pools.
         //dungeonGen.addWater(15);
         //decoDungeon is given the dungeon with any decorations we specified. (Here, we didn't, unless you chose to add
@@ -106,6 +123,24 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         bgColor = SColor.DARK_SLATE_GRAY;
         colorIndices = DungeonUtility.generatePaletteIndices(decoDungeon);
         bgColorIndices = DungeonUtility.generateBGPaletteIndices(decoDungeon);
+        // these were generated by the FakeLanguageGen class, which is compatible with most platforms SquidLib runs on,
+        // but not HTML. So they are simply pre-generated chunks of text to show the glyph support in SquidLib.
+        lang = new String[]
+                {
+                        "Ned jation, quariok sied pebation gnadism erbiss!",
+                        "Tezen kisaiba konnouda, bubotan, ne rijonnozouna?",
+                        "Mà le roe leth glang içoui?",
+                        "Potron oxa kthoi opleipotron ola aisaisp kthou.",
+                        "Εοθιαμ οκραυπ ρεοϕα τερος ψοσποιζ ριαμ.",
+                        "Tuskierovich topliegrachigary khodynamyv, toskiafi!",
+                        "Гыпогозуск, глынуск сид фавуриджйглътод!",
+                        "Hmaagrai eindian, ase agluxi-ugg?",
+                        "Gœu, auna sazeun nonanen kunneûnou ro.",
+                        "Esibőnt sěrmü ęãtsed sàpoupot lóâ delyīŉāy goỳ, sneśiec bism ālsi?",
+                        "Зaчaire vаτяπλaс щεογκιшι cэнαι гεвов; rαυп, ειрйч бιοκριαρτουggrй nι!",
+                        "Gatyriam reta - venőîn dīnøî şonā kazhy ásǻī, tsibiśťinki.",
+                };
+
         // this is a big one.
         // SquidInput can be constructed with a KeyHandler (which just processes specific keypresses), a SquidMouse
         // (which is given an InputProcessor implementation and can handle multiple kinds of mouse move), or both.
@@ -174,7 +209,7 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
                 //input and converts it to grid coordinates (here, a cell is 12 wide and 24 tall, so clicking at the
                 // pixel position 15,51 will pass screenX as 1 (since if you divide 15 by 12 and round down you get 1),
                 // and screenY as 2 (since 51 divided by 24 rounded down is 2)).
-                new SquidMouse(cellWidth, cellHeight, width, height, 0, 0, new InputAdapter() {
+                new SquidMouse(cellWidth, cellHeight, gridWidth, gridHeight, 0, 0, new InputAdapter() {
 
             // if the user clicks and there are no awaitedMoves queued up, generate toCursor if it
             // hasn't been generated already by mouseMoved, then copy it over to awaitedMoves.
@@ -228,11 +263,13 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
      */
     private void move(int xmod, int ymod) {
         int newX = player.x + xmod, newY = player.y + ymod;
-        if (newX >= 0 && newY >= 0 && newX < width && newY < height
+        if (newX >= 0 && newY >= 0 && newX < gridWidth && newY < gridHeight
                 && bareDungeon[newX][newY] != '#')
         {
             player = player.translate(xmod, ymod);
         }
+        // loops through the text snippets displayed whenever the player moves
+        langIndex = (langIndex + 1) % 12;
     }
 
     /**
@@ -240,8 +277,8 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
      */
     public void putMap()
     {
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        for (int i = 0; i < gridWidth; i++) {
+            for (int j = 0; j < gridHeight; j++) {
                 display.put(i, j, lineDungeon[i][j], colorIndices[i][j], bgColorIndices[i][j], 40);
             }
         }
@@ -252,6 +289,15 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         }
         //places the player as an '@' at his position in orange (6 is an index into SColor.LIMITED_PALETTE).
         display.put(player.x, player.y, '@', 6);
+        //this helps compatibility with the HTML target, which doesn't support String.format()
+        char[] spaceArray = new char[gridWidth];
+        Arrays.fill(spaceArray, ' ');
+        String spaces = String.valueOf(spaceArray);
+
+        for (int i = 0; i < 6; i++) {
+            display.putString(0, gridHeight + i + 1, spaces, 0, 1);
+            display.putString(2, gridHeight + i + 1, lang[(langIndex + i) % 12], 0, 1);
+        }
     }
     @Override
     public void render () {
@@ -286,6 +332,6 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		super.resize(width, height);
         //very important to have the mouse behave correctly if the user fullscreens or resizes the game!
-		input.getMouse().reinitialize((float) width / this.width, height / this.height);
+		input.getMouse().reinitialize((float) width / this.gridWidth, (float)height / (this.gridHeight + 8), this.gridWidth, this.gridHeight, 0, 0);
 	}
 }
