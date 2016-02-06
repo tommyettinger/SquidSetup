@@ -3,6 +3,10 @@
 <module rename-to="html">
 %GWT_INHERITS%
 	<inherits name='%MAIN_CLASS%' />
+	<inherits name='squidlib-util' />
+
+	<!-- Comment this next line out if you don't depend on the text display part of SquidLib -->
+	<inherits name='squidlib'/>
 	<entry-point class='%PACKAGE%.client.HtmlLauncher' />
 	
 	<set-configuration-property name="gdx.assetpath" value="../%ASSET_PATH%" />

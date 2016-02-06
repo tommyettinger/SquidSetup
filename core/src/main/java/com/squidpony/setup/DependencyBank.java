@@ -13,7 +13,7 @@ public class DependencyBank {
 	static String roboVMVersion = "1.12.0";
 	static String buildToolsVersion = "23.0.1";
 	static String androidAPILevel = "20";
-	static String gwtVersion = "2.6.0";
+	static String gwtVersion = "2.7.0";
 
 	//Repositories
 	static String mavenCentral = "mavenCentral()";
