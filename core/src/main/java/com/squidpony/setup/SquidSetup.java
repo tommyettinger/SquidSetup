@@ -268,6 +268,12 @@ public class SquidSetup {
 		// Assets
 		String assetPath = builder.modules.contains(ProjectType.ANDROID) ? "android/assets" : "core/assets";
 		project.files.add(new ProjectFile("android/assets/Squid.png", assetPath + "/Squid.png", false));
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Square-distance.png", assetPath + "/Inconsolata-LGC-Square-distance.png", false));
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Square-distance.fnt", assetPath + "/Inconsolata-LGC-Square-distance.fnt", false));
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Custom-distance.png", assetPath + "/Inconsolata-LGC-Custom-distance.png", false));
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Custom-distance.fnt", assetPath + "/Inconsolata-LGC-Custom-distance.fnt", false));
+		project.files.add(new ProjectFile("android/assets/distance.vertex.glsl", assetPath + "/distance.vertex.glsl", false));
+		project.files.add(new ProjectFile("android/assets/distance.fragment.glsl", assetPath + "/distance.fragment.glsl", false));
 
 		// android project
 		if (builder.modules.contains(ProjectType.ANDROID)) {
@@ -299,6 +305,7 @@ public class SquidSetup {
 			project.files.add(new ProjectFile("html/war/soundmanager2-setup.js", "html/webapp/soundmanager2-setup.js", false));
 			project.files.add(new ProjectFile("html/war/WEB-INF/web.xml", "html/webapp/WEB-INF/web.xml", true));
 		}
+
 		// ios robovm
 		if (builder.modules.contains(ProjectType.IOS)) {
 			project.files.add(new ProjectFile("ios/src/IOSLauncher", "ios/src/" + packageDir + "/IOSLauncher.java", true));
@@ -446,7 +453,7 @@ public class SquidSetup {
 			throw new RuntimeException("Couldn't create dir '" + outFile.getAbsolutePath() + "'");
 		}
 
-		boolean isTemp = file instanceof TemporaryProjectFile ? true : false;
+		boolean isTemp = file instanceof TemporaryProjectFile;
 
 		if (file.isTemplate) {
 			String txt;

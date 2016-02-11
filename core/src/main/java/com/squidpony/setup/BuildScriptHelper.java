@@ -68,18 +68,19 @@ public class BuildScriptHelper {
 		write(wr, "}");
 		space(wr);
 		write(wr, "repositories {");
+		write(wr, DependencyBank.mavenLocal);
 		write(wr, DependencyBank.mavenCentral);
-		//write(wr, DependencyBank.mavenLocal);
 		write(wr, "maven { url \"" + DependencyBank.libGDXSnapshotsUrl + "\" }");
 		write(wr, "maven { url \"" + DependencyBank.libGDXReleaseUrl + "\" }");
 		write(wr, "}");
 		write(wr, "}");
+		/*
 		write(wr, "configurations.all {");
 		write(wr, "resolutionStrategy {");
 		write(wr, "force 'com.google.gwt:gwt-user:2.7.0', 'com.google.gwt:gwt-dev:2.7.0'");
 		write(wr, "}");
 		write(wr, "}");
-
+		*/
 	}
 
 	public static void addProject(DependencyBank.ProjectType project, List<Dependency> dependencies, BufferedWriter wr) throws IOException {
@@ -100,12 +101,14 @@ public class BuildScriptHelper {
 		if (!project.equals(DependencyBank.ProjectType.CORE)) {
 			write(wr, "compile project(\":" + DependencyBank.ProjectType.CORE.getName() + "\")");
 		}
+		/*
 		if(project.equals(DependencyBank.ProjectType.HTML))
 		{
 
 			write(wr, "compile 'com.google.gwt:gwt-user:2.7.0'");
 			write(wr, "compile 'com.google.gwt:gwt-dev:2.7.0'");
 		}
+		*/
 		for (Dependency dep : dependencyList) {
 			if (dep.getDependencies(project) == null) continue;
 			for (String moduleDependency : dep.getDependencies(project)) {
@@ -124,10 +127,12 @@ public class BuildScriptHelper {
 		if (project.equals(DependencyBank.ProjectType.ANDROID)) {
 			write(wr, "configurations { natives }");
 		}
+		/*
 		else if(project.equals(DependencyBank.ProjectType.HTML))
 		{
 			write(wr, "gwt { gwtVersion='2.7.0' }");
 		}
+		*/
 	}
 	private static void write(BufferedWriter wr, String input) throws IOException {
 		int delta = StringUtils.countMatches(input, '{') - StringUtils.countMatches(input, '}');

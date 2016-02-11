@@ -6,14 +6,14 @@ import java.util.HashMap;
 public class DependencyBank {
 
 	//Versions
-	static String libgdxVersion = "1.9.1";
-	static String squidlibVersion = "3.0.0-b3";
+	static String libgdxVersion = "1.9.2";
+	static String squidlibVersion = "3.0.0-SNAPSHOT";
 	//Temporary snapshot version, we need a more dynamic solution for pointing to the latest nightly
-	static String libgdxNightlyVersion = "1.9.2-SNAPSHOT";
+	static String libgdxNightlyVersion = "1.9.3-SNAPSHOT";
 	static String roboVMVersion = "1.12.0";
 	static String buildToolsVersion = "23.0.1";
 	static String androidAPILevel = "20";
-	static String gwtVersion = "2.7.0";
+	static String gwtVersion = "2.6.0";
 
 	//Repositories
 	static String mavenCentral = "mavenCentral()";
