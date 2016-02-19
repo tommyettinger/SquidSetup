@@ -267,13 +267,50 @@ public class SquidSetup {
 
 		// Assets
 		String assetPath = builder.modules.contains(ProjectType.ANDROID) ? "android/assets" : "core/assets";
+
 		project.files.add(new ProjectFile("android/assets/Squid.png", assetPath + "/Squid.png", false));
+		project.files.add(new ProjectFile("android/assets/Tentacle.png", assetPath + "/Tentacle.png", false));
+		project.files.add(new ProjectFile("android/assets/Tentacle-16.png", assetPath + "/Tentacle-16.png", false));
+		project.files.add(new ProjectFile("android/assets/Tentacle-32.png", assetPath + "/Tentacle-32.png", false));
+		project.files.add(new ProjectFile("android/assets/Tentacle-128.png", assetPath + "/Tentacle-128.png", false));
+
 		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Square-distance.png", assetPath + "/Inconsolata-LGC-Square-distance.png", false));
 		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Square-distance.fnt", assetPath + "/Inconsolata-LGC-Square-distance.fnt", false));
 		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Custom-distance.png", assetPath + "/Inconsolata-LGC-Custom-distance.png", false));
 		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Custom-distance.fnt", assetPath + "/Inconsolata-LGC-Custom-distance.fnt", false));
-		project.files.add(new ProjectFile("android/assets/distance.vertex.glsl", assetPath + "/distance.vertex.glsl", false));
-		project.files.add(new ProjectFile("android/assets/distance.fragment.glsl", assetPath + "/distance.fragment.glsl", false));
+
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-8x18.png", assetPath + "/Inconsolata-LGC-8x18.png", false));
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-8x18.fnt", assetPath + "/Inconsolata-LGC-8x18.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-12x24.png", assetPath + "/Inconsolata-LGC-12x24.png", false));
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-12x24.fnt", assetPath + "/Inconsolata-LGC-12x24.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Square.png", assetPath + "/Inconsolata-LGC-Square.png", false));
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Square.fnt", assetPath + "/Inconsolata-LGC-Square.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Square-25x25.png", assetPath + "/Inconsolata-LGC-Square-25x25.png", false));
+		project.files.add(new ProjectFile("android/assets/Inconsolata-LGC-Square-25x25.fnt", assetPath + "/Inconsolata-LGC-Square-25x25.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Mandrill-6x16.png", assetPath + "/Mandrill-6x16.png", false));
+		project.files.add(new ProjectFile("android/assets/Mandrill-6x16.fnt", assetPath + "/Mandrill-6x16.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Mandrill-12x32.png", assetPath + "/Mandrill-12x32.png", false));
+		project.files.add(new ProjectFile("android/assets/Mandrill-12x32.fnt", assetPath + "/Mandrill-12x32.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Rogue-Zodiac-6x12_0.png", assetPath + "/Rogue-Zodiac-6x12_0.png", false));
+		project.files.add(new ProjectFile("android/assets/Rogue-Zodiac-6x12.fnt", assetPath + "/Rogue-Zodiac-6x12.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Rogue-Zodiac-12x24_0.png", assetPath + "/Rogue-Zodiac-12x24_0.png", false));
+		project.files.add(new ProjectFile("android/assets/Rogue-Zodiac-12x24.fnt", assetPath + "/Rogue-Zodiac-12x24.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Rogue-Zodiac-18x36_0.png", assetPath + "/Rogue-Zodiac-18x36_0.png", false));
+		project.files.add(new ProjectFile("android/assets/Rogue-Zodiac-18x36.fnt", assetPath + "/Rogue-Zodiac-18x36.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Zodiac-Square-12x12.png", assetPath + "/Zodiac-Square-12x12.png", false));
+		project.files.add(new ProjectFile("android/assets/Zodiac-Square-12x12.fnt", assetPath + "/Zodiac-Square-12x12.fnt", false));
+
+		project.files.add(new ProjectFile("android/assets/Zodiac-Square-24x24.png", assetPath + "/Zodiac-Square-24x24.png", false));
+		project.files.add(new ProjectFile("android/assets/Zodiac-Square-24x24.fnt", assetPath + "/Zodiac-Square-24x24.fnt", false));
 
 		// android project
 		if (builder.modules.contains(ProjectType.ANDROID)) {

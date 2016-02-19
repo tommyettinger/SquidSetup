@@ -7,7 +7,8 @@ public class DependencyBank {
 
 	//Versions
 	static String libgdxVersion = "1.9.2";
-	static String squidlibVersion = "3.0.0-SNAPSHOT";
+	static String squidlibVersion = "-SNAPSHOT";
+	static String squidlibStableVersion = "3.0.0-b3";
 	//Temporary snapshot version, we need a more dynamic solution for pointing to the latest nightly
 	static String libgdxNightlyVersion = "1.9.3-SNAPSHOT";
 	static String roboVMVersion = "1.12.0";
@@ -19,6 +20,7 @@ public class DependencyBank {
 	static String mavenCentral = "mavenCentral()";
 	static String jCenter = "jcenter()";
 	static String mavenLocal = "mavenLocal()";
+	static String jitPackUrl = "https://jitpack.io";
 	static String libGDXSnapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots/";
 	static String libGDXReleaseUrl = "https://oss.sonatype.org/content/repositories/releases/";
 
@@ -63,20 +65,20 @@ public class DependencyBank {
 	 */
 	public enum ProjectDependency {
 		SQUIDLIB_UTIL(
-				new String[]{"com.squidpony:squidlib-util:$squidlibVersion"},
+				new String[]{"com.github.SquidPony.SquidLib:squidlib-util:$squidlibVersion"},
 				new String[]{},
 				new String[]{},
 				new String[]{},
-				new String[]{"com.squidpony:squidlib-util:$squidlibVersion:sources"},
+				new String[]{"com.github.SquidPony.SquidLib:squidlib-util:$squidlibVersion:sources"},
 				new String[]{},
 				"Core Utility, Logic, and AI code for SquidLib"
 		),
 		SQUIDLIB(
-				new String[]{"com.squidpony:squidlib:$squidlibVersion", "com.badlogicgames.gdx:gdx:$gdxVersion"},
+				new String[]{"com.github.SquidPony.SquidLib:squidlib:$squidlibVersion", "com.badlogicgames.gdx:gdx:$gdxVersion"},
 				new String[]{"com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"},
 				new String[]{"com.badlogicgames.gdx:gdx-backend-android:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"},
 				new String[]{"org.robovm:robovm-rt:$roboVMVersion", "org.robovm:robovm-cocoatouch:$roboVMVersion", "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"},
-				new String[]{"com.squidpony:squidlib:$squidlibVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion", "com.badlogicgames.gdx:gdx:$gdxVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"},
+				new String[]{"com.github.SquidPony.SquidLib:squidlib:$squidlibVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion", "com.badlogicgames.gdx:gdx:$gdxVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"},
 				new String[]{"com.badlogic.gdx.backends.gdx_backends_gwt"},
 				"Fancy text-based display module using squidlib-util and libGDX"
 		),

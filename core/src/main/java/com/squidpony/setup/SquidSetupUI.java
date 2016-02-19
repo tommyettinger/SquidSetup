@@ -402,7 +402,8 @@ public class SquidSetupUI extends JFrame {
 
 		JPanel subProjectsPanel = new JPanel(new GridLayout());
 		JLabel projectsLabel = new JLabel("Sub Projects");
-		JLabel extensionsLabel = new JLabel("Extensions");
+		JLabel extensionsLabel = new JLabel("Extensions (defaults don't need changing for text-based games)");
+		//JLabel extensionsLabel = new JLabel("Extensions");
 		List<JPanel> extensionsPanels = new ArrayList<JPanel>();
 		SetupButton showMoreExtensionsButton = new SetupButton("Show Third Party Extensions");
 
@@ -536,7 +537,7 @@ public class SquidSetupUI extends JFrame {
 				extensionsPanels.add(extensionPanel);
 			}
 
-			add(extensionsLabel, new GridBagConstraints(0, 8, 1, 1, 0, 0, WEST, WEST, new Insets(10, 0, 0, 0), 0, 0));
+			add(extensionsLabel, new GridBagConstraints(0, 8, 3, 1, 0, 0, WEST, WEST, new Insets(10, 0, 0, 0), 0, 0));
 			int rowCounter = 9;
 			for (JPanel extensionsPanel : extensionsPanels) {
 				add(extensionsPanel, new GridBagConstraints(0, rowCounter, 3, 1, 0, 0, CENTER, HORIZONTAL, new Insets(5, 0, 0, 0), 0, 0));
