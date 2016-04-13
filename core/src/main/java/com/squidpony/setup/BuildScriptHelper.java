@@ -65,6 +65,7 @@ public class BuildScriptHelper {
 		write(wr, "box2DLightsVersion = '" + DependencyBank.box2DLightsVersion + "'");
 		write(wr, "ashleyVersion = '" + DependencyBank.ashleyVersion + "'");
 		write(wr, "aiVersion = '" + DependencyBank.aiVersion + "'");
+		write(wr, "regexodusVersion = '" + DependencyBank.regexodusVersion + "'");
 		write(wr, "}");
 		space(wr);
 		write(wr, "repositories {");

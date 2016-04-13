@@ -2,10 +2,6 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit trunk//EN" "https://gwt.googlesource.com/gwt/+/master/./distro-source/core/src/gwt-module.dtd">
 <module rename-to="html">
 %GWT_INHERITS%
-	<inherits name='squidlib-util' />
-
-	<!-- Comment this next line out if you don't depend on the text display part of SquidLib -->
-	<inherits name='squidlib'/>
 
 	<inherits name='%MAIN_CLASS%' />
 	<entry-point class='%PACKAGE%.client.HtmlLauncher' />

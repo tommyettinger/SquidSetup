@@ -33,6 +33,7 @@ public class DependencyBank {
 	static String box2DLightsVersion = "1.4";
 	static String ashleyVersion = "1.7.0";
 	static String aiVersion = "1.8.0";
+	static String regexodusVersion = "v0.1";
 
 	HashMap<ProjectDependency, Dependency> gdxDependencies = new HashMap<ProjectDependency, Dependency>();
 
@@ -65,12 +66,12 @@ public class DependencyBank {
 	 */
 	public enum ProjectDependency {
 		SQUIDLIB_UTIL(
-				new String[]{"com.github.SquidPony.SquidLib:squidlib-util:$squidlibVersion"},
+				new String[]{"com.github.SquidPony.SquidLib:squidlib-util:$squidlibVersion", "com.github.tommyettinger:RegExodus:$regexodusVersion"},
 				new String[]{},
 				new String[]{},
 				new String[]{},
-				new String[]{"com.github.SquidPony.SquidLib:squidlib-util:$squidlibVersion:sources"},
-				new String[]{},
+				new String[]{"com.github.SquidPony.SquidLib:squidlib-util:$squidlibVersion:sources", "com.github.tommyettinger:RegExodus:$regexodusVersion:sources"},
+				new String[]{"squidlib-util", "regexodus"},
 				"Core Utility, Logic, and AI code for SquidLib"
 		),
 		SQUIDLIB(
@@ -79,7 +80,7 @@ public class DependencyBank {
 				new String[]{"com.badlogicgames.gdx:gdx-backend-android:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"},
 				new String[]{"org.robovm:robovm-rt:$roboVMVersion", "org.robovm:robovm-cocoatouch:$roboVMVersion", "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"},
 				new String[]{"com.github.SquidPony.SquidLib:squidlib:$squidlibVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion", "com.badlogicgames.gdx:gdx:$gdxVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"},
-				new String[]{"com.badlogic.gdx.backends.gdx_backends_gwt"},
+				new String[]{"com.badlogic.gdx.backends.gdx_backends_gwt", "squidlib"},
 				"Fancy text-based display module using squidlib-util and libGDX"
 		),
 		GDX(
@@ -179,13 +180,13 @@ public class DependencyBank {
 		private String[] gwtInherits;
 		private String description;
 
-		ProjectDependency(String[] coreDeps, String[] desktopDeps, String[] androidDeps, String[] iosDeps, String[] gwtDeps, String[] gwtInhertis, String description) {
+		ProjectDependency(String[] coreDeps, String[] desktopDeps, String[] androidDeps, String[] iosDeps, String[] gwtDeps, String[] gwtInherits, String description) {
 			this.coreDependencies = coreDeps;
 			this.desktopDependencies = desktopDeps;
 			this.androidDependencies = androidDeps;
 			this.iosDependencies = iosDeps;
 			this.gwtDependencies = gwtDeps;
-			this.gwtInherits = gwtInhertis;
+			this.gwtInherits = gwtInherits;
 			this.description = description;
 		}
 
