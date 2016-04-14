@@ -33,7 +33,7 @@ public class DependencyBank {
 	static String box2DLightsVersion = "1.4";
 	static String ashleyVersion = "1.7.0";
 	static String aiVersion = "1.8.0";
-	static String regexodusVersion = "v0.1";
+	static String regexodusVersion = "v0.1.1";
 
 	HashMap<ProjectDependency, Dependency> gdxDependencies = new HashMap<ProjectDependency, Dependency>();
 
