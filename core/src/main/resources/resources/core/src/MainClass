@@ -70,23 +70,23 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         //pixels, must match the size you specified in the launcher for input to behave.
         //This is one of the more common places a mistake can happen.
         //In our desktop launcher, we gave these arguments to the configuration:
-        //	config.width = 50 * 22;
-        //  config.height = 32 * 22;
+        //	config.width = 80 * 11;
+        //  config.height = (24 + 8) * 22;
         //Here, config.height refers to the total number of rows to be displayed on the screen.
         //We're displaying 24 rows of dungeon, then 8 more rows of text generation to show some tricks with language.
         //That adds up to 32 total rows of height.
         //gridHeight is 24 because that variable will be used for generating the dungeon and handling movement within
         //the upper 24 rows. Anything that refers to the full height, which happens rarely and usually for things like
         //screen resizes, just uses gridHeight + 8. Next to it is gridWidth, which is 50 because we want 50 grid spaces
-        //across the whole screen. cellWidth and cellHeight are both 22, and match the multipliers for config.width and
-        //config.height, but in this case don't strictly need to because we soon use a "Stretchable" font. While
+        //across the whole screen. cellWidth and cellHeight are 11 and 22, and match the multipliers for config.width
+        //and config.height, but in this case don't strictly need to because we soon use a "Stretchable" font. While
         //gridWidth and gridHeight are measured in spaces on the grid, cellWidth and cellHeight are the pixel dimensions
         //of an individual cell. The font will look more crisp if the cell dimensions match the config multipliers
         //exactly, and the stretchable fonts (technically, distance field fonts) can resize to non-square sizes and
         //still retain most of that crispness.
-        gridWidth = 50;
+        gridWidth = 80;
         gridHeight = 24;
-        cellWidth = 22;
+        cellWidth = 11;
         cellHeight = 22;
         // gotta have a random number generator. We can seed an RNG with any long we want, or even a String.
         rng = new RNG("SquidLib!");
@@ -106,7 +106,7 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         // layout of text in a cell, among other things. DefaultResources stores pre-configured BitmapFont objects but
         // also some TextCellFactory objects for distance field fonts; either one can be passed to this constructor.
         // the font will try to load Inconsolata-LGC-Square as a bitmap font with a distance field effect.
-        display = new SquidLayers(gridWidth, gridHeight + 8, cellWidth, cellHeight, DefaultResources.getStretchableSquareFont());
+        display = new SquidLayers(gridWidth, gridHeight + 8, cellWidth, cellHeight, DefaultResources.getStretchableFont());
         // a bit of a hack to increase the text height slightly without changing the size of the cells they're in.
         // this causes a tiny bit of overlap between cells, which gets rid of an annoying gap between vertical lines.
         // if you use '#' for walls instead of box drawing chars, you don't need this.
@@ -161,7 +161,7 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         // this serves to demonstrate the large amount of glyphs SquidLib supports.
         // FakeLanguageGen doesn't attempt to produce legible text, so any of the arguments given to these method calls
         // can be changed in a trial-and-error way to find the subjectively best output. The arguments to sentence()
-        // are simply minimum words, maximum words, between-word punctuation, sentence-ending punctuation, chance out of
+        // are the minimum words, maximum words, between-word punctuation, sentence-ending punctuation, chance out of
         // 0.0 to 1.0 of putting between-word punctuation after a word, and lastly the max characters per sentence.
         // It is recommended that you don't increase the max characters per sentence much more, since it's already very
         // close to touching the edges of the message box it's in.
@@ -185,6 +185,10 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
                                 new String[]{".", ".", ".", "!", "?", "...", "..."}, 0.12, gridWidth - 4),
                         FakeLanguageGen.SWAHILI.sentence(4, 9, new String[]{",", ",", ",", ";", ";"},
                                 new String[]{".", ".", ".", "!", "?"}, 0.12, gridWidth - 4),
+                        FakeLanguageGen.SOMALI.sentence(3, 8, new String[]{",", ",", ",", ";", ";"},
+                                new String[]{".", ".", ".", "!", "!", "...", "?"}, 0.1, gridWidth - 4),
+                        FakeLanguageGen.HINDI_ROMANIZED.sentence(3, 7, new String[]{",", ",", ",", ";", ";"},
+                                new String[]{".", ".", ".", "!", "?", "?", "..."}, 0.22, gridWidth - 4),
                         FakeLanguageGen.FANTASY_NAME.sentence(4, 8, new String[]{",", ",", ",", ";", ";"},
                                 new String[]{".", ".", ".", "!", "?", "..."}, 0.22, gridWidth - 4),
                         FakeLanguageGen.FANCY_FANTASY_NAME.sentence(4, 8, new String[]{",", ",", ",", ";", ";"},

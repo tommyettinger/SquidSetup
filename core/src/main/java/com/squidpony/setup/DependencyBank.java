@@ -7,7 +7,7 @@ public class DependencyBank {
 
 	//Versions
 	static String libgdxVersion = "1.9.2";
-	static String squidlibVersion = "-SNAPSHOT";
+	static String squidlibVersion = "d6dc3ff62c";
 	static String squidlibStableVersion = "3.0.0-b3";
 	//Temporary snapshot version, we need a more dynamic solution for pointing to the latest nightly
 	static String libgdxNightlyVersion = "1.9.3-SNAPSHOT";
@@ -33,7 +33,7 @@ public class DependencyBank {
 	static String box2DLightsVersion = "1.4";
 	static String ashleyVersion = "1.7.0";
 	static String aiVersion = "1.8.0";
-	static String regexodusVersion = "v0.1.1";
+	static String regexodusVersion = "v0.1.2";
 
 	HashMap<ProjectDependency, Dependency> gdxDependencies = new HashMap<ProjectDependency, Dependency>();
 
