@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import squidpony.FakeLanguageGen;
+import squidpony.GwtCompatibility;
 import squidpony.squidai.DijkstraMap;
 import squidpony.squidgrid.gui.gdx.*;
 import squidpony.squidgrid.mapping.DungeonGenerator;
@@ -28,7 +29,7 @@ import java.util.Arrays;
 // In SquidSetup, squidlib-util is always a dependency, and squidlib (the display code that automatically includes
 // libGDX) is checked by default. If you didn't change those dependencies, this class should run out of the box.
 //
-// If you didn't select squidib as a dependency in SquidSetup, this class will be full of errors. If you don't depend
+// If you didn't select squidlib as a dependency in SquidSetup, this class will be full of errors. If you don't depend
 // on LibGDX, you'll need to figure out display on your own, and the setup of multiple platform projects is probably
 // useless to you. But, if you do depend on LibGDX, you can make some use of this class. You can remove any imports or
 // usages of classes in the squidpony.squidgrid.gui.gdx package, remove as much of create() as you  want (some of it
@@ -40,12 +41,11 @@ import java.util.Arrays;
 // perfectly fine for these uses.
 public class %MAIN_CLASS% extends ApplicationAdapter {
     SpriteBatch batch;
-
     private RNG rng;
     private SquidLayers display;
     private DungeonGenerator dungeonGen;
-    private char[][] decoDungeon, bareDungeon, lineDungeon;
-    private int[][] colorIndices, bgColorIndices;
+    private char[][] decoDungeon, bareDungeon, lineDungeon, spaces;
+    private int[][] colorIndices, bgColorIndices, languageBG, languageFG;
     /** In number of cells */
     private int gridWidth;
     /** In number of cells */
@@ -113,6 +113,7 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         display.setTextSize(cellWidth, cellHeight + 1);
 
         // this makes animations very fast, which is good for multi-cell movement but bad for attack animations.
+        // 0.03 is in seconds, so each animation will be 0.03 seconds in duration.
         display.setAnimationDuration(0.03f);
 
         //These need to have their positions set before adding any entities if there is an offset involved.
@@ -140,7 +141,7 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         lineDungeon = DungeonUtility.hashesToLines(decoDungeon);
         // it's more efficient to get random floors from a packed set containing only (compressed) floor positions.
         // CoordPacker is a deep and involved class, but when other classes request packed data, you usually just need
-        // to give them a short array representing a region, as produced by CoordPacker.pack().
+        // to give them a short[] representing a region, as produced by CoordPacker.pack().
         short[] placement = CoordPacker.pack(bareDungeon, '.');
         //Coord is the type we use as a general 2D point, usually in a dungeon.
         //Because we know dungeons won't be huge, Coord is optimized for x and y values between -3 and 255, inclusive.
@@ -157,6 +158,18 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         // DungeonUtility provides various ways to get default colors or other information from a dungeon char 2D array.
         colorIndices = DungeonUtility.generatePaletteIndices(decoDungeon);
         bgColorIndices = DungeonUtility.generateBGPaletteIndices(decoDungeon);
+        // Here, we're preparing some 2D arrays so they don't get created during rendering.
+        // Creating new arrays or objects during rendering can put lots of pressure on Java's garbage collector,
+        // and Android's garbage collector can be very slow, especially when compared to desktop.
+        // These methods are in GwtCompatibility not because GWT has some flaw with array creation,
+        // but because Java in general is missing methods for dealing with 2D arrays.
+        // So, you can think of the class more like "Gwt, and also Compatibility".
+        // fill2D constructs a 2D array filled with one item. Other methods can insert a
+        // 2D array into a differently-sized 2D array, or copy a 2D array of various types.
+        spaces = GwtCompatibility.fill2D(' ', gridWidth, 6);
+        languageBG = GwtCompatibility.fill2D(1, gridWidth, 6);
+        languageFG = GwtCompatibility.fill2D(0, gridWidth, 6);
+
         // this creates an array of sentences, where each imitates a different sort of language or mix of languages.
         // this serves to demonstrate the large amount of glyphs SquidLib supports.
         // FakeLanguageGen doesn't attempt to produce legible text, so any of the arguments given to these method calls
@@ -353,13 +366,17 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
         }
         //places the player as an '@' at his position in orange (6 is an index into SColor.LIMITED_PALETTE).
         display.put(player.x, player.y, '@', 6);
-        //this helps compatibility with the HTML target, which doesn't support String.format()
-        char[] spaceArray = new char[gridWidth];
-        Arrays.fill(spaceArray, ' ');
-        String spaces = String.valueOf(spaceArray);
+        // for clarity, you could replace the above line with the uncommented line below
+        //display.put(player.x, player.y, '@', SColor.INTERNATIONAL_ORANGE);
+        // since this is what 6 refers to, a color constant in a palette where 6 refers to this shade of orange.
+        // You could experiment with different SColors; the JavaDocs for each color show a nice preview.
+        // To view JavaDocs for a field, you can use Ctrl-Q in IntelliJ IDEA and Android Studio, or
+        // just mouse over in Eclipse.
+        // SColor extends Color, so you can use an SColor anywhere a Color is expected.
 
+        // The arrays we produced in create() are used here to provide a blank area behind text
+        display.put(0, gridHeight + 1, spaces, languageFG, languageBG);
         for (int i = 0; i < 6; i++) {
-            display.putString(0, gridHeight + i + 1, spaces, 0, 1);
             display.putString(2, gridHeight + i + 1, lang[(langIndex + i) % lang.length], 0, 1);
         }
     }
@@ -390,14 +407,22 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
             input.next();
         }
 
-        //stage has its own batch and must be explicitly told to draw(). this also causes it to act().
+        //stage has its own batch and must be explicitly told to draw().
         stage.draw();
+        //you may need to explicitly tell stage to act() if input isn't working.
+        //there shouldn't be a problem from calling act(), but
+        //you can comment out the next line to test if input has problems.
+        stage.act();
     }
 
     @Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
         //very important to have the mouse behave correctly if the user fullscreens or resizes the game!
+        // this gets the mouse's understanding of the screen updated for the newly resized grid.
+        // you may need to change this if your game has multiple sections, like a SquidMessageBox or other widget below
+        // the main grid of the game. If a game uses VisualInput, then that way of handling input will need to be told
+        // about the changes to the screen as well.
 		input.getMouse().reinitialize((float) width / this.gridWidth, (float)height / (this.gridHeight + 8), this.gridWidth, this.gridHeight, 0, 0);
 	}
 }
