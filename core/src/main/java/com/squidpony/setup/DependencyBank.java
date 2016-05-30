@@ -6,9 +6,9 @@ import java.util.HashMap;
 public class DependencyBank {
 
 	//Versions
-	static String libgdxVersion = "1.9.2";
+	static String libgdxVersion = "1.9.3";
 	static String squidlibSnapshotVersion = "8205ce78b2";
-	static String squidlibVersion = "3.0.0-b5";
+	static String squidlibVersion = "3.0.0-b6";
 	//Temporary snapshot version, we need a more dynamic solution for pointing to the latest nightly
 	static String libgdxNightlyVersion = "1.9.3-SNAPSHOT";
 	static String roboVMVersion = "1.12.0";
@@ -33,7 +33,7 @@ public class DependencyBank {
 	static String box2DLightsVersion = "1.4";
 	static String ashleyVersion = "1.7.0";
 	static String aiVersion = "1.8.0";
-	static String regexodusVersion = "0.1.3";
+	static String regexodusVersion = "0.1.5";
 
 	HashMap<ProjectDependency, Dependency> gdxDependencies = new HashMap<ProjectDependency, Dependency>();
 

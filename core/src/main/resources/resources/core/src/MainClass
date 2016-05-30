@@ -299,7 +299,7 @@ public class %MAIN_CLASS% extends ApplicationAdapter {
                         //to the position the user clicked on.
                         toCursor = playerToCursor.findPath(100, null, null, player, cursor);
                     }
-                    awaitedMoves = new ArrayList<>(toCursor);
+                    awaitedMoves = new ArrayList<Coord>(toCursor);
                 }
                 return false;
             }
