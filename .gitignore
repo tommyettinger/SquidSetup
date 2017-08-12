@@ -1,5 +1,6 @@
-## Java
+## Based on default LibGDX project settings.
 
+## Java
 *.class
 *.war
 *.ear
@@ -17,7 +18,7 @@ gwt-unitCache/
 www-test/
 .gwt-tmp/
 
-## Android Studio and Intellij and Android in general
+## Android Studio, IntelliJ, Android
 android/libs/armeabi/
 android/libs/armeabi-v7a/
 android/libs/x86/
@@ -45,20 +46,10 @@ local.properties
 .externalToolBuilders/
 *.launch
 
-## NetBeans
-**/nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
-nb-configuration.xml
-
 ## Gradle
-
 .gradle
 gradle-app.setting
 build/
 
-## OS Specific
+## OS-specific, others
 .DS_Store

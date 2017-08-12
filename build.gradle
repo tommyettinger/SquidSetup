@@ -1,36 +1,50 @@
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
 buildscript {
-    repositories {
-        mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    }
-    dependencies {
-    }
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    classpath "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+  }
 }
 
-allprojects {
-    apply plugin: "eclipse"
-    apply plugin: "idea"
+version = "$gdxVersion-SNAPSHOT"
+mainClassName = 'com.github.czyzby.setup.MainKt'
 
-    version = '1.0'
-    ext {
-        appName = "squidlib-setup"
-    }
-
-    repositories {
-        mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-    }
+jar {
+  manifest {
+    attributes 'Main-Class': mainClassName
+  }
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
-project(":core") {
-    apply plugin: "java"
-
-
-    dependencies {
-    }
+repositories {
+  mavenLocal()
+  jcenter()
+  mavenCentral()
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
-tasks.eclipse.doLast {
-    delete ".project"
+dependencies {
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  compile "org.apache.commons:commons-exec:$commonsExecVersion"
+
+  compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+  compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+  compile "com.github.czyzby:gdx-autumn-mvc:$autumnVersion"
+  compile "com.github.czyzby:gdx-autumn-fcs:$autumnVersion"
+  compile "com.github.czyzby:gdx-lml-vis:$autumnVersion"
+}
+
+task pack << {
+  com.badlogic.gdx.tools.texturepacker.TexturePacker.process(
+    file("raw").absolutePath,
+    file("src/main/resources/skin").absolutePath,
+    "tinted"
+  )
 }
