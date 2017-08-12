@@ -41,10 +41,12 @@ dependencies {
   compile "com.github.czyzby:gdx-lml-vis:$autumnVersion"
 }
 
-task pack << {
-  com.badlogic.gdx.tools.texturepacker.TexturePacker.process(
-    file("raw").absolutePath,
-    file("src/main/resources/skin").absolutePath,
-    "tinted"
-  )
+task pack {
+  doLast {
+    com.badlogic.gdx.tools.texturepacker.TexturePacker.process(
+            file("raw").absolutePath,
+            file("src/main/resources/skin").absolutePath,
+            "tinted"
+    )
+  }
 }

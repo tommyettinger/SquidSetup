@@ -10,7 +10,7 @@ import com.github.czyzby.setup.views.Extension
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-const val SQUID_LIB_VERSION = "7870369d32"
+const val SQUID_LIB_VERSION = "bf157f342c"
 
 /**
  * URL of SquidLib libraries.

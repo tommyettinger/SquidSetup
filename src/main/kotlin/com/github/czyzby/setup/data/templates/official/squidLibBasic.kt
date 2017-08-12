@@ -13,8 +13,8 @@ import com.github.czyzby.setup.views.ProjectTemplate
 @ProjectTemplate(official = true)
 class SquidLibBasicTemplate : Template {
     override val id = "squidLibBasicTemplate"
-    override val width = "90 * 10"
-    override val height = "32 * 20"
+    override val width = "80 * 10"
+    override val height = "31 * 20"
     override val description: String
         get() = "Project template included simple launchers and an `ApplicationAdapter` extension showing usage of [SquidLib](https://github.com/SquidPony/SquidLib) for display and some logic."
 
@@ -65,7 +65,10 @@ import java.util.List;
  * This is a small, not-overly-simple demo that presents some important features of SquidLib and shows a faster,
  * cleaner, and more recently-introduced way of displaying the map and other text. Features include dungeon map
  * generation, field of view, pathfinding (to the mouse position), simplex noise (used for a flickering torch effect),
- * language generation/ciphering,
+ * language generation/ciphering, color manipulation, and ever-present random number generation (with a seed).
+ * You can increase the size of the map on most target platforms (but GWT struggles with large... anything) by
+ * changing gridHeight and gridWidth to affect the visible area or bigWidth and bigHeight to adjust the size of the
+ * dungeon you can move through, with the camera following your '@' symbol.
  */
 public class ${project.basic.mainClass} extends ApplicationAdapter {
     SpriteBatch batch;
@@ -89,14 +92,14 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     //one cell; resizing the window can make the units cellWidth and cellHeight use smaller or larger than a pixel.
 
     /** In number of cells */
-    private static final int gridWidth = 90;
+    private static final int gridWidth = 80;
     /** In number of cells */
-    private static final int gridHeight = 25;
+    private static final int gridHeight = 24;
 
     /** In number of cells */
-    private static final int bigWidth = gridWidth * 3;
+    private static final int bigWidth = gridWidth * 2;
     /** In number of cells */
-    private static final int bigHeight = gridHeight * 3;
+    private static final int bigHeight = gridHeight * 2;
 
     /** In number of cells */
     private static final int bonusHeight = 7;
@@ -280,42 +283,56 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         floors = new GreasedRegion(bareDungeon, '.');
         //player is, here, just a Coord that stores his position. In a real game, you would probably have a class for
         //creatures, and possibly a subclass for the player. The singleRandom() method on GreasedRegion finds one Coord
-        // in that region that is "on," or -1,-1 if there are no such cells. It takes an RNG object as a parameter, and
-        // if you gave a seed to the RNG constructor, then the cell this chooses will be reliable for testing. If you
-        // don't seed the RNG, any valid cell should be possible.
+        //in that region that is "on," or -1,-1 if there are no such cells. It takes an RNG object as a parameter, and
+        //if you gave a seed to the RNG constructor, then the cell this chooses will be reliable for testing. If you
+        //don't seed the RNG, any valid cell should be possible.
         player = floors.singleRandom(rng);
 
         //These need to have their positions set before adding any entities if there is an offset involved.
         //There is no offset used here, but it's still a good practice here to set positions early on.
-//        display.setPosition(gridWidth * cellWidth * 0.5f - display.worldX(player.x),
-//                gridHeight * cellHeight * 0.5f - display.worldY(player.y));
         display.setPosition(0f, 0f);
         // Uses shadowcasting FOV and reuses the visible array without creating new arrays constantly.
         FOV.reuseFOV(resistance, visible, player.x, player.y, 9.0, Radius.CIRCLE);
-        // 0.01 is the upper bound (inclusive), so any Coord in visible that is more well-lit than 0.01 will _not_ be in
-        // the blockage Collection, but anything 0.01 or less will be in it. This lets us use blockage to prevent access
+        // 0.0 is the upper bound (inclusive), so any Coord in visible that is more well-lit than 0.0 will _not_ be in
+        // the blockage Collection, but anything 0.0 or less will be in it. This lets us use blockage to prevent access
         // to cells we can't see from the start of the move.
         blockage = new GreasedRegion(visible, 0.0);
-        seen = blockage.copy().not();
-        blockage.surface8way();
+        // Here we mark the initially seen cells as anything that wasn't included in the unseen "blocked" region.
+        // We invert the copy's contents to prepare for a later step, which makes blockage contain only the cells that
+        // are above 0.0, then copy it to save this step as the seen cells. We will modify seen later independently of
+        // the blocked cells, so a copy is correct here. Most methods on GreasedRegion objects will modify the
+        // GreasedRegion they are called on, which can greatly help efficiency on long chains of operations.
+        seen = blockage.not().copy();
+        // Here is one of those methods on a GreasedRegion; fringe8way takes a GreasedRegion (here, the set of cells
+        // that are visible to the player), and modifies it to contain only cells that were not in the last step, but
+        // were adjacent to a cell that was present in the last step. This can be visualized as taking the area just
+        // beyond the border of a region, using 8-way adjacency here because we specified fringe8way instead of fringe.
+        // We do this because it means pathfinding will only have to work with a small number of cells (the area just
+        // out of sight, and no further) instead of all invisible cells when figuring out if something is currently
+        // impossible to enter.
+        blockage.fringe8way();
         //This is used to allow clicks or taps to take the player to the desired area.
         toCursor = new ArrayList<>(200);
         //When a path is confirmed by clicking, we draw from this List to find which cell is next to move into.
         awaitedMoves = new ArrayList<>(200);
         //DijkstraMap is the pathfinding swiss-army knife we use here to find a path to the latest cursor position.
         //DijkstraMap.Measurement is an enum that determines the possibility or preference to enter diagonals. Here, the
-        // MANHATTAN value is used, which means 4-way movement only, no diagonals possible. Alternatives are CHEBYSHEV,
-        // which allows 8 directions of movement at the same cost for all directions, and EUCLIDEAN, which allows 8
-        // directions, but will prefer orthogonal moves unless diagonal ones are clearly closer "as the crow flies."
+        //MANHATTAN value is used, which means 4-way movement only, no diagonals possible. Alternatives are CHEBYSHEV,
+        //which allows 8 directions of movement at the same cost for all directions, and EUCLIDEAN, which allows 8
+        //directions, but will prefer orthogonal moves unless diagonal ones are clearly closer "as the crow flies."
         playerToCursor = new DijkstraMap(decoDungeon, DijkstraMap.Measurement.MANHATTAN);
         //These next two lines mark the player as something we want paths to go to or from, and get the distances to the
         // player from all walkable cells in the dungeon.
         playerToCursor.setGoal(player);
-        playerToCursor.scan(blockage);
+        // DijkstraMap.partialScan only finds the distance to get to a cell if that distance is less than some limit,
+        // which is 12 here. It also won't try to find distances through an impassable cell, which here is the blockage
+        // GreasedRegion that contains the cells just past the edge of the player's FOV area.
+        playerToCursor.partialScan(12, blockage);
+
 
         //The next three lines set the background color for anything we don't draw on, but also create 2D arrays of the
         //same size as decoDungeon that store simple indexes into a common list of colors, using the colors that looks
-        // up as the colors for the cell with the same x and y.
+        //up as the colors for the cell with the same x and y.
         bgColor = SColor.DARK_SLATE_GRAY;
         SColor.LIMITED_PALETTE[3] = SColor.DB_GRAPHITE;
         Color[][] temp = MapUtility.generateDefaultColors(decoDungeon);
@@ -428,39 +445,12 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                 // and screenY as 2 (since 51 divided by 24 rounded down is 2)).
                 new SquidMouse(cellWidth, cellHeight, gridWidth, gridHeight, 0, 0, new InputAdapter() {
 
-            // if the user clicks and there are no awaitedMoves queued up, generate toCursor if it
-            // hasn't been generated already by mouseMoved, then copy it over to awaitedMoves.
+            // if the user clicks and mouseMoved hasn't already assigned a path to toCursor, then we call mouseMoved
+            // ourselves and copy toCursor over to awaitedMoves.
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                // This is needed because we center the camera on the player as he moves through a dungeon that is three
-                // screens wide and three screens tall, but the mouse still only can receive input on one screen's worth
-                // of cells. (gridWidth >> 1) halves gridWidth, pretty much, and that we use to get the centered
-                // position after adding to the player's position (along with the gridHeight).
-                screenX += player.x - (gridWidth >> 1);
-                screenY += player.y - (gridHeight >> 1);
-                // we also need to check if screenX or screenY is out of bounds.
-                if (screenX < 0 || screenY < 0 || screenX >= bigWidth || screenY >= bigHeight)
-                    return false;
-                if (awaitedMoves.isEmpty()) {
-                    if (toCursor.isEmpty()) {
-                        cursor = Coord.get(screenX, screenY);
-                        //This uses DijkstraMap.findPathPreScannned() to get a path as a List of Coord from the current
-                        // player position to the position the user clicked on. The "PreScanned" part is an optimization
-                        // that's special to DijkstraMap; because the whole map has already been fully analyzed by the
-                        // DijkstraMap.scan() method at the start of the program, and re-calculated whenever the player
-                        // moves, we only need to do a fraction of the work to find the best path with that info.
-                        toCursor = playerToCursor.findPathPreScanned(cursor);
-                        //findPathPreScanned includes the current cell (goal) by default, which is helpful when
-                        // you're finding a path to a monster or loot, and want to bump into it, but here can be
-                        // confusing because you would "move into yourself" as your first move without this.
-                        // Getting a sublist avoids potential performance issues with removing from the start of an
-                        // ArrayList, since it keeps the original list around and only gets a "view" of it.
-                        if (!toCursor.isEmpty()) {
-                            toCursor = toCursor.subList(1, toCursor.size());
-                        }
-                    }
-                    awaitedMoves.addAll(toCursor);
-                }
+                mouseMoved(screenX, screenY);
+                awaitedMoves.addAll(toCursor);
                 return true;
             }
 
@@ -475,8 +465,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
             public boolean mouseMoved(int screenX, int screenY) {
                 if(!awaitedMoves.isEmpty())
                     return false;
-                // This is needed because we center the camera on the player as he moves through a dungeon that is three
-                // screens wide and three screens tall, but the mouse still only can receive input on one screen's worth
+                // This is needed because we center the camera on the player as he moves through a dungeon that is
+                // multiple screens wide and tall, but the mouse still only can receive input on one screen's worth
                 // of cells. (gridWidth >> 1) halves gridWidth, pretty much, and that we use to get the centered
                 // position after adding to the player's position (along with the gridHeight).
                 screenX += player.x - (gridWidth >> 1);
@@ -488,14 +478,14 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     return false;
                 }
                 cursor = Coord.get(screenX, screenY);
-                //This uses DijkstraMap.findPathPreScannned() to get a path as a List of Coord from the current
+                // This uses DijkstraMap.findPathPreScannned() to get a path as a List of Coord from the current
                 // player position to the position the user clicked on. The "PreScanned" part is an optimization
-                // that's special to DijkstraMap; because the whole map has already been fully analyzed by the
-                // DijkstraMap.scan() method at the start of the program, and re-calculated whenever the player
-                // moves, we only need to do a fraction of the work to find the best path with that info.
-
+                // that's special to DijkstraMap; because the part of the map that is viable to move into has
+                // already been fully analyzed by the DijkstraMap.partialScan() method at the start of the
+                // program, and re-calculated whenever the player moves, we only need to do a fraction of the
+                // work to find the best path with that info.
                 toCursor = playerToCursor.findPathPreScanned(cursor);
-                //findPathPreScanned includes the current cell (goal) by default, which is helpful when
+                // findPathPreScanned includes the current cell (goal) by default, which is helpful when
                 // you're finding a path to a monster or loot, and want to bump into it, but here can be
                 // confusing because you would "move into yourself" as your first move without this.
                 // Getting a sublist avoids potential performance issues with removing from the start of an
@@ -511,8 +501,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, input));
         //You might be able to get by with the next line instead of the above line, but the former is preferred.
         //Gdx.input.setInputProcessor(input);
-        // and then add display, our one visual component, to the list of things that act in Stage.
+        //we add display, our one visual component that moves, to the list of things that act in the main Stage.
         stage.addActor(display);
+        //we add languageDisplay to languageStage, where it will be unchanged by camera moves in the main Stage.
         languageStage.addActor(languageDisplay);
 
 
@@ -533,7 +524,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
             FOV.reuseFOV(resistance, visible, player.x, player.y, 9.0, Radius.CIRCLE);
             // This is just like the constructor used earlier, but affects an existing GreasedRegion without making
             // a new one just for this movement.
-            blockage.refill(visible, 0.01);
+            blockage.refill(visible, 0.0);
             seen.or(blockage.not());
             blockage.fringe8way();
         }
@@ -565,18 +556,33 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //past from affecting the current frame. This isn't a problem here, but would probably be an issue if we had
         //monsters running in and out of our vision. If artifacts from previous frames show up, uncomment the next line.
         //display.clear();
-        long tm = (System.currentTimeMillis() & 0xffffffL);
+        float tm = (System.currentTimeMillis() & 0xffffffL) * 0.001f;
         for (int i = 0; i < bigWidth; i++) {
             for (int j = 0; j < bigHeight; j++) {
                 if(visible[i][j] > 0.0) {
-                    float bg = SColor.lerpFloatColors(bgColors[i][j], WHITE_FLOAT,(40f + 256f + (-105f +
-                            180f * ((float)visible[i][j] * (1.0f + 0.2f * SeededNoise.noise(i * 0.2f, j * 0.2f, tm * 0.001f, 10000)))))
-                            * 0x1p-9f); // "* 0x1p-9f" is equivalent to "/ 512.0", just maybe faster
+                    // There are a lot of numbers here; they're just chosen for aesthetic reasons. They affect
+                    // the brightness of a cell, using SeededNoise for a flickering torchlight effect that changes
+                    // as the time does, and also depends on the x,y position of the cell being lit. We use
+                    // SColor.lerpFloatColors() to take two floats that encode colors without using an object,
+                    // and mix them according to a third float between 0f and 1f. The two colors are the background
+                    // color of the cell, and pure white, while the third number is where the mess is. First it
+                    // gets a number using the visibility of the cell and the SeededNoise result, which will be
+                    // between 0f and 512f, then effectively divides that by 512 using a strange-at-first
+                    // hexadecimal float literal, 0x1p-9f. That is essentially the same as writing 0.001953125f,
+                    // (float)Math.pow(2.0, -9.0), or (1f / 512f), but is possibly faster than the last two if the
+                    // compiler can't optimize float division effectively, and is a good tool to have because these
+                    // hexadecimal float or double literals can only represent numbers accurately. 0.3 - 0.2 is
+                    // not equal to 0.1 with doubles, because tenths are inaccurate with most floating-point
+                    // numbers, and hex literals won't have the option to write an inaccurate float or double.
+                    float bg = SColor.lerpFloatColors(bgColors[i][j], WHITE_FLOAT,(196f + (
+                            180f * ((float)visible[i][j] * (1.0f + 0.2f * SeededNoise.noise(i * 0.2f, j * 0.2f, tm, 10000)))))
+                            * 0x1p-9f); // as above, "* 0x1p-9f" is roughly equivalent to "/ 512.0"
                     display.put(i, j, lineDungeon[i][j], colors[i][j], bg);
                 }else if(seen.contains(i, j))
                     display.put(i, j, lineDungeon[i][j], colors[i][j], SColor.lerpFloatColors(bgColors[i][j], GRAY_FLOAT, 0.3f));
             }
         }
+
         Coord pt;
         for (int i = 0; i < toCursor.size(); i++) {
             pt = toCursor.get(i);
@@ -623,7 +629,10 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     // player's position, and the "target" of a pathfinding method like DijkstraMap.findPathPreScanned() is the
                     // currently-moused-over cell, which we only need to set where the mouse is being handled.
                     playerToCursor.setGoal(player);
-                    playerToCursor.scan(blockage);
+                    // DijkstraMap.partialScan only finds the distance to get to a cell if that distance is less than some limit,
+                    // which is 12 here. It also won't try to find distances through an impassable cell, which here is the blockage
+                    // GreasedRegion that contains the cells just past the edge of the player's FOV area.
+                    playerToCursor.partialScan(12, blockage);
                 }
             }
         }
