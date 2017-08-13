@@ -327,7 +327,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // DijkstraMap.partialScan only finds the distance to get to a cell if that distance is less than some limit,
         // which is 12 here. It also won't try to find distances through an impassable cell, which here is the blockage
         // GreasedRegion that contains the cells just past the edge of the player's FOV area.
-        playerToCursor.partialScan(12, blockage);
+        playerToCursor.partialScan(13, blockage);
 
 
         //The next three lines set the background color for anything we don't draw on, but also create 2D arrays of the
@@ -632,7 +632,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     // DijkstraMap.partialScan only finds the distance to get to a cell if that distance is less than some limit,
                     // which is 12 here. It also won't try to find distances through an impassable cell, which here is the blockage
                     // GreasedRegion that contains the cells just past the edge of the player's FOV area.
-                    playerToCursor.partialScan(12, blockage);
+                    playerToCursor.partialScan(13, blockage);
                 }
             }
         }

@@ -4,13 +4,18 @@ import com.github.czyzby.setup.data.platforms.Core
 import com.github.czyzby.setup.data.platforms.GWT
 import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.Extension
+import com.jcabi.github.Coordinates
+import com.jcabi.github.RtGithub
+import java.util.*
+
 
 /**
  * Version of SquidLib libraries.
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-const val SQUID_LIB_VERSION = "bf157f342c"
+val SQUID_LIB_VERSION = RtGithub().repos().get(Coordinates.Simple("SquidPony", "SquidLib"))
+        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
 
 /**
  * URL of SquidLib libraries.
@@ -45,7 +50,7 @@ class RegExodus : ThirdPartyExtension() {
 @Extension()
 class SquidLibUtil : ThirdPartyExtension() {
     override val id = "squidLibUtil"
-    override val defaultVersion = SQUID_LIB_VERSION
+    override var defaultVersion = SQUID_LIB_VERSION
     override val url = SQUID_LIB_URL
 
     override fun initiateDependencies(project: Project) {
@@ -66,7 +71,7 @@ class SquidLibUtil : ThirdPartyExtension() {
 @Extension()
 class SquidLib : ThirdPartyExtension() {
     override val id = "squidLib"
-    override val defaultVersion = SQUID_LIB_VERSION
+    override var defaultVersion = SQUID_LIB_VERSION
     override val url = SQUID_LIB_URL
 
     override fun initiateDependencies(project: Project) {
@@ -76,6 +81,7 @@ class SquidLib : ThirdPartyExtension() {
         addGwtInherit(project, "squidlib")
 
         SquidLibUtil().initiate(project)
+        defaultVersion = SQUID_LIB_VERSION
     }
 }
 
@@ -87,7 +93,7 @@ class SquidLib : ThirdPartyExtension() {
 @Extension()
 class SquidLibExtra : ThirdPartyExtension() {
     override val id = "squidLibExtra"
-    override val defaultVersion = SQUID_LIB_VERSION
+    override var defaultVersion = SQUID_LIB_VERSION
     override val url = SQUID_LIB_URL
 
     override fun initiateDependencies(project: Project) {
@@ -97,5 +103,6 @@ class SquidLibExtra : ThirdPartyExtension() {
         addGwtInherit(project, "squidlib-extra")
 
         SquidLibUtil().initiate(project)
+        defaultVersion = SQUID_LIB_VERSION
     }
 }

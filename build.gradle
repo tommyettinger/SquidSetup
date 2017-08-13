@@ -39,6 +39,7 @@ dependencies {
   compile "com.github.czyzby:gdx-autumn-mvc:$autumnVersion"
   compile "com.github.czyzby:gdx-autumn-fcs:$autumnVersion"
   compile "com.github.czyzby:gdx-lml-vis:$autumnVersion"
+  compile "com.jcabi:jcabi-github:0.23"
 }
 
 task pack {
