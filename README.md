@@ -25,12 +25,20 @@ handle the graphics yourself).
 ## Usage
 
   - Get the latest `SquidSetup.jar` from the [Releases tab](https://github.com/tommyettinger/SquidSetup/releases) of this project.
+    - You may want the latest possible code using the [3.0.0-SNAPSHOT Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-SNAPSHOT),
+      or you may want a more-stable beta version. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
+      will be obtained from Maven Central. The latest commit is determined by the library `jcabi-github`, and involves an API call to GitHub when using
+      the snapshot release (not any beta or stable releases); the API call may be slow or might not complete if GitHub is having issues.
   - Regardless of what platforms you intend to target, make sure the steps
     [described by the LibGDX wiki here](https://github.com/libgdx/libgdx/wiki/Setting-up-your-Development-Environment-%28Eclipse%2C-Intellij-IDEA%2C-NetBeans%29)
     are taken care of.
   - Run the JAR. Plug in whatever options you see fit:
-    - iOS should not be checked if you aren't running Mac OS X.
-    - Android should only be checked if you've set up your computer for Android development.
+    - Desktop and/or LWJGL3 should usually be checked, so you can test on the same computer
+      you develop on.
+    - iOS should probably not be checked if you aren't running MacOS.
+    - Android should only be checked if you've set up your computer for Android development,
+      and may cause some hassles even in other projects if you use Android Studio or IntelliJ
+      IDEA before the upcoming version 2017.3, when a bug is expected to be fixed.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -45,14 +53,20 @@ handle the graphics yourself).
     
 Now you'll have a project all set up with a sample.
 
+  - If you use Android Studio or IntelliJ IDEA and have an Android project, you'll need to use
+    Gradle tasks to do any part of the build/run process, thanks to a long-standing issue in
+    IDEA's Android plugin.  The simplest way to do this is in the IDE itself, via
+    `View -> Tool Windows -> Gradle`, and selecting tasks to perform, such as
+    `Desktop -> Tasks -> application -> run.` If you try to run a specific class' `main()`
+    method, you may encounter strange issues, but this shouldn't happen with Gradle tasks.
+    This also shouldn't happen if you avoid creating an Android module in the first place
+    (if you didn't check Android in the setup, this problem shouldn't apply).
   - If you had the Desktop and SquidLib options checked in the setup, you can try to run the
     Desktop module right away, with a simple pathfinding/FOV/text-gen demo that responds to
     mouse and keyboard input in a random dungeon (the random number generator is seeded the
     same every time by default, but you can change the RNG constructor as a way to experiment).
   - If you had the Android option checked in the setup and are using the SquidLib Basic template,
-    you can try to run the Android module on an emulator or a connected Android device. It won't
-    work quite as well as desktop will by default, mostly because the screen size and application
-    "window" size aren't well-coordinated yet.
+    you can try to run the Android module on an emulator or a connected Android device.
   - If you had the GWT option checked in the setup and are using the SquidLib Basic template,
     you can go through the lengthy, but simple, build for GWT, probably using the `superDev`
     task for the `gwt` module, or also possibly the `dist` task in that module. Using superDev

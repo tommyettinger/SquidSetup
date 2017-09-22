@@ -14,7 +14,7 @@ import com.kotcrab.vis.ui.util.OsUtils
 
 fun main(args: Array<String>) {
     val config = Lwjgl3ApplicationConfiguration()
-    config.setTitle("gdx-setup")
+    config.setTitle("SquidSetup")
     config.setWindowedMode(Configuration.WIDTH, Configuration.HEIGHT)
     config.disableAudio(true)
     config.setDecorated(false)

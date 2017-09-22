@@ -28,10 +28,10 @@ import com.kotcrab.vis.ui.widget.file.FileChooser
 @Component
 class Configuration {
     companion object {
-        const val VERSION = "1.9.6-SNAPSHOT"
+        const val VERSION = "3.0.0-b9"
         const val WIDTH = 600
         const val HEIGHT = 700
-        const val PREFERENCES_PATH = "gdx-setup-prefs"
+        const val PREFERENCES_PATH = "SquidSetup-prefs"
     }
 
     @LmlParserSyntax val syntax = VisLmlSyntax()

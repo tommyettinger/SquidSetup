@@ -47,7 +47,7 @@ class DesktopGradleFile(val project: Project) : GradleFile(Desktop.ID) {
 
     override fun getContent(): String = """apply plugin: 'application'
 
-sourceSets.main.resources.srcDirs += [ rootProject.file('assets').absolutePath ]
+sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = '${project.basic.rootPackage}.desktop.DesktopLauncher'
 eclipse.project.name = appName + '-desktop'
 sourceCompatibility = ${project.advanced.desktopJavaVersion}

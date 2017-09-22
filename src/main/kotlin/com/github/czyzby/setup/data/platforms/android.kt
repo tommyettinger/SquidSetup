@@ -138,7 +138,9 @@ android {
 configurations { natives }
 
 dependencies {
-${joinDependencies(dependencies)}${joinDependencies(nativeDependencies, "natives")}}
+${joinDependencies(dependencies)}
+${joinDependencies(nativeDependencies, "natives")}
+}
 
 // Called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders

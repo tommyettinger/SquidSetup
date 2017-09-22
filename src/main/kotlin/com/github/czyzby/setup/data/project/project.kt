@@ -245,7 +245,7 @@ task packAndCompileSkin(dependsOn: [pack, compileSkin])""", true, "UTF-8");
         if (advanced.generateReadme) {
             files.add(SourceFile(projectName = "", fileName = "README.md", content = """# ${basic.name}
 
-A [LibGDX](http://libgdx.badlogicgames.com/) project generated with [gdx-setup](https://github.com/czyzby/gdx-setup).
+A [LibGDX](http://libgdx.badlogicgames.com/) project generated with [SquidSetup](https://github.com/tommyettinger/SquidSetup).
 
 ${readmeDescription}
 

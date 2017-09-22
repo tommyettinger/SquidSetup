@@ -47,7 +47,7 @@ class Lwjgl3GradleFile(val project: Project) : GradleFile(LWJGL3.ID) {
 
     override fun getContent(): String = """apply plugin: 'application'
 
-sourceSets.main.resources.srcDirs += [ rootProject.file('assets').absolutePath ]
+sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = '${project.basic.rootPackage}.lwjgl3.Lwjgl3Launcher'
 eclipse.project.name = appName + '-lwjgl3'
 sourceCompatibility = ${project.advanced.desktopJavaVersion}

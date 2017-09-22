@@ -1,12 +1,11 @@
 package com.github.czyzby.setup.data.libs.unofficial
 
+//import com.jcabi.github.Coordinates
+//import com.jcabi.github.RtGithub
 import com.github.czyzby.setup.data.platforms.Core
 import com.github.czyzby.setup.data.platforms.GWT
 import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.Extension
-import com.jcabi.github.Coordinates
-import com.jcabi.github.RtGithub
-import java.util.*
 
 
 /**
@@ -14,8 +13,8 @@ import java.util.*
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-val SQUID_LIB_VERSION = RtGithub().repos().get(Coordinates.Simple("SquidPony", "SquidLib"))
-        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
+val SQUID_LIB_VERSION = "3.0.0-b9"//RtGithub().repos().get(Coordinates.Simple("SquidPony", "SquidLib"))
+//        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
 
 /**
  * URL of SquidLib libraries.
@@ -23,6 +22,9 @@ val SQUID_LIB_VERSION = RtGithub().repos().get(Coordinates.Simple("SquidPony", "
  * @author Tommy Ettinger
  */
 const val SQUID_LIB_URL = "https://github.com/SquidPony/SquidLib"
+
+//const val REPO_PATH = "com.github.SquidPony.SquidLib"
+const val REPO_PATH = "com.squidpony"
 
 /**
  * Cross-platform regex utilities.
@@ -41,7 +43,6 @@ class RegExodus : ThirdPartyExtension() {
         addGwtInherit(project, "regexodus")
     }
 }
-
 /**
  * Utilities for grid-based games.
  * @author Eben Howard
@@ -54,9 +55,9 @@ class SquidLibUtil : ThirdPartyExtension() {
     override val url = SQUID_LIB_URL
 
     override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.SquidPony.SquidLib:squidlib-util")
+        addDependency(project, Core.ID, "$REPO_PATH:squidlib-util")
 
-        addDependency(project, GWT.ID, "com.github.SquidPony.SquidLib:squidlib-util:sources")
+        addDependency(project, GWT.ID, "$REPO_PATH:squidlib-util:sources")
         addGwtInherit(project, "squidlib-util")
 
         RegExodus().initiate(project)
@@ -75,9 +76,9 @@ class SquidLib : ThirdPartyExtension() {
     override val url = SQUID_LIB_URL
 
     override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.SquidPony.SquidLib:squidlib")
+        addDependency(project, Core.ID, "$REPO_PATH:squidlib")
 
-        addDependency(project, GWT.ID, "com.github.SquidPony.SquidLib:squidlib:sources")
+        addDependency(project, GWT.ID, "$REPO_PATH:squidlib:sources")
         addGwtInherit(project, "squidlib")
 
         SquidLibUtil().initiate(project)
@@ -97,9 +98,9 @@ class SquidLibExtra : ThirdPartyExtension() {
     override val url = SQUID_LIB_URL
 
     override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.SquidPony.SquidLib:squidlib-extra")
+        addDependency(project, Core.ID, "$REPO_PATH:squidlib-extra")
 
-        addDependency(project, GWT.ID, "com.github.SquidPony.SquidLib:squidlib-extra:sources")
+        addDependency(project, GWT.ID, "$REPO_PATH:squidlib-extra:sources")
         addGwtInherit(project, "squidlib-extra")
 
         SquidLibUtil().initiate(project)

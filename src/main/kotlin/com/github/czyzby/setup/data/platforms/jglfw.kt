@@ -39,7 +39,7 @@ class JglfwGradleFile(val project: Project) : GradleFile(JGLFW.ID) {
 
     override fun getContent(): String = """apply plugin: 'application'
 
-sourceSets.main.resources.srcDirs += [ rootProject.file('assets').absolutePath ]
+sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = '${project.basic.rootPackage}.jglfw.JglfwLauncher'
 eclipse.project.name = appName + '-jglfw'
 sourceCompatibility = ${project.advanced.desktopJavaVersion}
