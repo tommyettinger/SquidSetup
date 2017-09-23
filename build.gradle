@@ -11,7 +11,7 @@ buildscript {
   }
 }
 
-version = "3.0.0-b9"
+version = "3.0.0-SNAPSHOT"
 mainClassName = 'com.github.czyzby.setup.MainKt'
 
 jar {
@@ -42,7 +42,7 @@ dependencies {
   compile "com.github.czyzby:gdx-autumn-mvc:$autumnVersion"
   compile "com.github.czyzby:gdx-autumn-fcs:$autumnVersion"
   compile "com.github.czyzby:gdx-lml-vis:$autumnVersion"
-  //compile "com.jcabi:jcabi-github:0.23"
+  compile "com.jcabi:jcabi-github:0.23"
 }
 
 task pack {
