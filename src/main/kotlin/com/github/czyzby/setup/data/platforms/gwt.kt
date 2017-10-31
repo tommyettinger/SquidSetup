@@ -16,7 +16,7 @@ import java.util.*
 @GdxPlatform
 class GWT : Platform {
     companion object {
-        const val ID = "gwt"
+        const val ID = "html"
         const val BASIC_INHERIT = "com.badlogic.gdx.backends.gdx_backends_gwt"
         val INHERIT_COMPARATOR = Comparator<kotlin.String> { a, b ->
             // Basic GWT inherit has to be first:
@@ -35,13 +35,13 @@ class GWT : Platform {
     override fun createGradleFile(project: Project): GradleFile = GWTGradleFile(project)
 
     override fun initiate(project: Project) {
-        project.rootGradle.buildDependencies.add("\"org.wisepersist:gwt-gradle-plugin:\$gwtPluginVersion\"")
+        project.rootGradle.buildDependencies.add("\"de.richsource.gradle.plugins:gwt-gradle-plugin:\$gwtPluginVersion\"")
 
         addGradleTaskDescription(project, "superDev", "compiles GWT sources and runs the application in SuperDev mode. It will be available at [localhost:8080/${id}](http://localhost:8080/${id}). Use only during development.")
         addGradleTaskDescription(project, "dist", "compiles GWT sources. The compiled application can be found at `${id}/build/dist`: you can use any HTTP server to deploy it.")
 
         project.gwtInherits.add(BASIC_INHERIT)
-        project.properties["${id}FrameworkVersion"] = project.advanced.gwtVersion
+        project.properties["gwtFrameworkVersion"] = project.advanced.gwtVersion
         project.properties["gwtPluginVersion"] = project.advanced.gwtPluginVersion
 
         // Adding GWT definition to core project:
@@ -122,19 +122,14 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
     }
 
     override fun getContent(): String = """
-apply plugin: "java"
 apply plugin: "gwt"
 apply plugin: "war"
-
-import org.wisepersist.gradle.plugins.gwt.GwtSuperDev
-
-def HttpFileServer server = null
-def httpFilePort = 9090
+apply plugin: "jetty"
 
 gwt {
-  gwtVersion = gwtFrameworkVersion // Should match the version used for building the GWT backend. See gradle.properties.
-  maxHeapSize = '1G' // Default 256m is not enough for the GWT compiler. GWT is HUNGRY.
-  minHeapSize = '1G'
+  gwtVersion="${'$'}gwtFrameworkVersion" // Should match the gwt version used for building the gwt backend
+  maxHeapSize="1G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
+  minHeapSize="1G"
 
   src = files(file('src/main/java')) // Needs to be in front of "modules" below.
   modules '${project.basic.rootPackage}.GdxDefinition'
@@ -149,30 +144,15 @@ dependencies {
 ${joinDependencies(dependencies)}
 }
 
-task startHttpServer() {
-    dependsOn draftCompileGwt
-
-    String output = project.buildDir.path + "/gwt/draftOut";
-
-    doLast {
-        copy {
-            from "webapp"
-            into output
-        }
-
-        copy {
-            from "war"
-            into output
-        }
-
-        server = new SimpleHttpFileServerFactory().start(new File(output), httpFilePort)
-
-        println "Server started in directory " + server.getContentRoot() + ", port " + server.getPort()
-    }
+task draftRun(type: JettyRunWar) {
+    dependsOn draftWar
+    dependsOn.remove('war')
+    webApp=draftWar.archivePath
+    daemon=true
 }
 
-task superDev(type: GwtSuperDev) {
-    dependsOn startHttpServer
+task superDev(type: de.richsource.gradle.plugins.gwt.GwtSuperDev) {
+    dependsOn draftRun
     doFirst {
         gwt.modules = gwt.devModules
     }
@@ -188,13 +168,18 @@ task dist(dependsOn: [clean, compileGwt]) {
         copy {
             from "webapp"
             into "build/dist"
-            }
+        }
         copy {
             from "war"
             into "build/dist"
         }
     }
 }
+
+draftWar {
+    from "war"
+}
+
 task addSource {
   doLast {
 ${buildDependencies.joinToString(separator = "") {
@@ -206,6 +191,10 @@ ${buildDependencies.joinToString(separator = "") {
 tasks.compileGwt.dependsOn(addSource)
 tasks.draftCompileGwt.dependsOn(addSource)
 
-eclipse.project.name = appName + "-gwt"
-"""
+sourceCompatibility = ${project.advanced.javaVersion}
+sourceSets.main.java.srcDirs = [ "src/main/java/" ]
+
+eclipse.project {
+    name = appName + "-html"
+}"""
 }

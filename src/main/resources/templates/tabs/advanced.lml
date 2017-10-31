@@ -44,7 +44,7 @@
             </:for>
         </selectBox>
         @gwtPlugin
-        <textField id="gwtPlugin" tooltip="@gwtPluginTip" growX="true">1.0.3</textField>
+        <textField id="gwtPlugin" tooltip="@gwtPluginTip" growX="true">0.6</textField>
     </table>
     </scrollPane>
     <table growX="true" defaultPad="2" defaultSpaceRight="10" defaultSpaceLeft="10">

@@ -34,7 +34,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import squidpony.FakeLanguageGen;
 import squidpony.NaturalLanguageCipher;
@@ -65,10 +64,14 @@ import java.util.List;
  * This is a small, not-overly-simple demo that presents some important features of SquidLib and shows a faster,
  * cleaner, and more recently-introduced way of displaying the map and other text. Features include dungeon map
  * generation, field of view, pathfinding (to the mouse position), simplex noise (used for a flickering torch effect),
- * language generation/ciphering, color manipulation, and ever-present random number generation (with a seed).
+ * language generation/ciphering, a colorful glow effect, and ever-present random number generation (with a seed).
  * You can increase the size of the map on most target platforms (but GWT struggles with large... anything) by
  * changing gridHeight and gridWidth to affect the visible area or bigWidth and bigHeight to adjust the size of the
  * dungeon you can move through, with the camera following your '@' symbol.
+ * <br>
+ * The assets folder of this project, if it was created with SquidSetup, will contain the necessary font files (just one
+ * .fnt file and one .png are needed, but many more are included by default). You should move any font files you don't
+ * use out of the assets directory when you produce a release JAR, APK, or GWT build.
  */
 public class ${project.basic.mainClass} extends ApplicationAdapter {
     SpriteBatch batch;
@@ -159,10 +162,10 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     // but also allows Colors instead for most methods that take a packed float. Some cases, like very briefly-used
     // colors that are some mix of two other colors, are much better to create as packed floats from other packed
     // floats, usually using SColor.lerpFloatColors(), which avoids creating any objects. It's ideal to avoid creating
-    // new objects (such as Colors) frequently for only brief usage,because this can cause temporary garbage objects to
+    // new objects (such as Colors) frequently for only brief usage, because this can cause temporary garbage objects to
     // build up and slow down the program while they get cleaned up (garbage collection, which is slower on Android).
-    private static final float WHITE_FLOAT = NumberUtils.intToFloatColor(-1),
-            GRAY_FLOAT = NumberUtils.intToFloatColor(0xFF444444);
+    private static final float WHITE_FLOAT = SColor.FLOAT_WHITE, // SColor pre-defines white and black as floats
+            GRAY_FLOAT = SColor.floatGetI(0x44, 0x44, 0x44);     // Gets a packed float directly from RGB ints
     // here we store the colors we will use for a burst effect when the player bumps into a wall. We don't really need
     // to recalculate this every time a wall gets bumped, and this lets us do more complex things with the colors.
     private float[] burstColors;
@@ -185,6 +188,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // the font will try to load Iosevka Slab as an embedded bitmap font with a distance field effect.
         // the distance field effect allows the font to be stretched without getting blurry or grainy too easily.
         // this font is covered under the SIL Open Font License (fully free), so there's no reason it can't be used.
+        // It is included in the assets folder if this project was made with SquidSetup, along with other fonts.
         display = new SparseLayers(bigWidth, bigHeight + bonusHeight, cellWidth, cellHeight,
                 DefaultResources.getStretchableSlabFont());
 
@@ -325,14 +329,15 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // player from all walkable cells in the dungeon.
         playerToCursor.setGoal(player);
         // DijkstraMap.partialScan only finds the distance to get to a cell if that distance is less than some limit,
-        // which is 12 here. It also won't try to find distances through an impassable cell, which here is the blockage
+        // which is 13 here. It also won't try to find distances through an impassable cell, which here is the blockage
         // GreasedRegion that contains the cells just past the edge of the player's FOV area.
         playerToCursor.partialScan(13, blockage);
 
 
         //The next three lines set the background color for anything we don't draw on, but also create 2D arrays of the
         //same size as decoDungeon that store simple indexes into a common list of colors, using the colors that looks
-        //up as the colors for the cell with the same x and y.
+        //up as the colors for the cell with the same x and y. By changing an item in SColor.LIMITED_PALETTE, we also
+        //change the colors assigned by default to walls.
         bgColor = SColor.DARK_SLATE_GRAY;
         SColor.LIMITED_PALETTE[3] = SColor.DB_GRAPHITE;
         Color[][] temp = MapUtility.generateDefaultColors(decoDungeon);
@@ -440,9 +445,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
             }
         },
                 //The second parameter passed to a SquidInput can be a SquidMouse, which takes mouse or touchscreen
-                //input and converts it to grid coordinates (here, a cell is 12 wide and 24 tall, so clicking at the
-                // pixel position 15,51 will pass screenX as 1 (since if you divide 15 by 12 and round down you get 1),
-                // and screenY as 2 (since 51 divided by 24 rounded down is 2)).
+                //input and converts it to grid coordinates (here, a cell is 10 wide and 20 tall, so clicking at the
+                // pixel position 16,51 will pass screenX as 1 (since if you divide 16 by 10 and round down you get 1),
+                // and screenY as 2 (since 51 divided by 20 rounded down is 2)).
                 new SquidMouse(cellWidth, cellHeight, gridWidth, gridHeight, 0, 0, new InputAdapter() {
 
             // if the user clicks and mouseMoved hasn't already assigned a path to toCursor, then we call mouseMoved
@@ -530,11 +535,16 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         }
         else
         {
+            // A SparseLayers knows how to move a Glyph (like the one for the player, pg) out of its normal alignment
+            // on the grid, and also how to move it back again. Using bump() will move pg quickly about a third of the
+            // way into a wall, then back to its former position at normal speed.
             display.bump(pg, Direction.getRoughDirection(xmod, ymod), 0.25f);
-            display.addAction(new PanelEffect.GibberishEffect(display, 1f, floors, player, 6,
-                    burstColors,
-                    new char[]{'\u0000'} // the char at Unicode 0 is used to mean a solid block that takes up the cell
-            ));
+            // PanelEffect is a type of Action (from libGDX) that can run on a SparseLayers or SquidPanel.
+            // This particular kind of PanelEffect creates a purple glow around the player when he bumps into a wall.
+            // Other kinds can make explosions or projectiles appear.
+            display.addAction(new PanelEffect.PulseEffect(display, 1f, floors, player, 3
+                    , new float[]{SColor.CW_FADED_PURPLE.toFloatBits()}
+                    ));
         }
         // removes the first line displayed of the Art of War text or its translation.
         lang.remove(0);
@@ -556,6 +566,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //past from affecting the current frame. This isn't a problem here, but would probably be an issue if we had
         //monsters running in and out of our vision. If artifacts from previous frames show up, uncomment the next line.
         //display.clear();
+
         float tm = (System.currentTimeMillis() & 0xffffffL) * 0.001f;
         for (int i = 0; i < bigWidth; i++) {
             for (int j = 0; j < bigHeight; j++) {
@@ -571,14 +582,14 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     // hexadecimal float literal, 0x1p-9f. That is essentially the same as writing 0.001953125f,
                     // (float)Math.pow(2.0, -9.0), or (1f / 512f), but is possibly faster than the last two if the
                     // compiler can't optimize float division effectively, and is a good tool to have because these
-                    // hexadecimal float or double literals can only represent numbers accurately. 0.3 - 0.2 is
-                    // not equal to 0.1 with doubles, because tenths are inaccurate with most floating-point
-                    // numbers, and hex literals won't have the option to write an inaccurate float or double.
+                    // hexadecimal float or double literals always represent numbers accurately. To contrast,
+                    // 0.3 - 0.2 is not equal to 0.1 with doubles, because tenths are inaccurate with floats and
+                    // doubles, and hex literals won't have the option to write an inaccurate float or double.
                     float bg = SColor.lerpFloatColors(bgColors[i][j], WHITE_FLOAT,(196f + (
                             180f * ((float)visible[i][j] * (1.0f + 0.2f * SeededNoise.noise(i * 0.2f, j * 0.2f, tm, 10000)))))
                             * 0x1p-9f); // as above, "* 0x1p-9f" is roughly equivalent to "/ 512.0"
                     display.put(i, j, lineDungeon[i][j], colors[i][j], bg);
-                }else if(seen.contains(i, j))
+                } else if(seen.contains(i, j))
                     display.put(i, j, lineDungeon[i][j], colors[i][j], SColor.lerpFloatColors(bgColors[i][j], GRAY_FLOAT, 0.3f));
             }
         }
@@ -601,6 +612,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         Gdx.gl.glClearColor(bgColor.r / 255.0f, bgColor.g / 255.0f, bgColor.b / 255.0f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // center the camera on the player's position
         stage.getCamera().position.x = pg.getX();
         stage.getCamera().position.y =  pg.getY();
 
@@ -630,7 +642,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     // currently-moused-over cell, which we only need to set where the mouse is being handled.
                     playerToCursor.setGoal(player);
                     // DijkstraMap.partialScan only finds the distance to get to a cell if that distance is less than some limit,
-                    // which is 12 here. It also won't try to find distances through an impassable cell, which here is the blockage
+                    // which is 13 here. It also won't try to find distances through an impassable cell, which here is the blockage
                     // GreasedRegion that contains the cells just past the edge of the player's FOV area.
                     playerToCursor.partialScan(13, blockage);
                 }
