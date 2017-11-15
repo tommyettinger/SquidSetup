@@ -13,8 +13,8 @@ import com.github.czyzby.setup.views.ProjectTemplate
 @ProjectTemplate(official = true)
 class SquidLibBasicTemplate : Template {
     override val id = "squidLibBasicTemplate"
-    override val width = "80 * 10"
-    override val height = "31 * 20"
+    override val width = "90 * 10"
+    override val height = "32 * 20"
     override val description: String
         get() = "Project template included simple launchers and an `ApplicationAdapter` extension showing usage of [SquidLib](https://github.com/SquidPony/SquidLib) for display and some logic."
 
@@ -95,9 +95,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     //one cell; resizing the window can make the units cellWidth and cellHeight use smaller or larger than a pixel.
 
     /** In number of cells */
-    private static final int gridWidth = 80;
+    private static final int gridWidth = 90;
     /** In number of cells */
-    private static final int gridHeight = 24;
+    private static final int gridHeight = 25;
 
     /** In number of cells */
     private static final int bigWidth = gridWidth * 2;
@@ -164,11 +164,14 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     // floats, usually using SColor.lerpFloatColors(), which avoids creating any objects. It's ideal to avoid creating
     // new objects (such as Colors) frequently for only brief usage, because this can cause temporary garbage objects to
     // build up and slow down the program while they get cleaned up (garbage collection, which is slower on Android).
-    private static final float WHITE_FLOAT = SColor.FLOAT_WHITE, // SColor pre-defines white and black as floats
-            GRAY_FLOAT = SColor.floatGetI(0x44, 0x44, 0x44);     // Gets a packed float directly from RGB ints
-    // here we store the colors we will use for a burst effect when the player bumps into a wall. We don't really need
-    // to recalculate this every time a wall gets bumped, and this lets us do more complex things with the colors.
-    private float[] burstColors;
+    // Recent versions of SquidLib include the packed float literal in the JavaDocs for any SColor, along with previews
+    // of that SColor as a background and foreground when used with other colors, plus more info like the hue,
+    // saturation, and value of the color. Here we just use the packed floats directly from the SColor docs, but we also
+    // mention what color it is in a line comment, which is a good habit so you can see a preview if needed.
+    // The format used for the floats is a hex literal; these are explained at the bottom of this file, in case you
+    // aren't familiar with them (they're a rather obscure feature of Java 5 and newer).
+    private static final float FLOAT_LIGHTING = -0x1.cff1fep126F, // same result as SColor.COSMIC_LATTE.toFloatBits()
+            GRAY_FLOAT = -0x1.7e7e7ep125F; // same result as SColor.CW_GRAY_BLACK.toFloatBits()
 
     @Override
     public void create () {
@@ -202,7 +205,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // set the background colors directly as floats with the SparseLayers.backgrounds field, and it can be handy
         // to hold onto the current color we want to fill that with in the defaultPackedBackground field.
         //SparseLayers has fillBackground() and fillArea() methods for coloring all or part of the backgrounds.
-        languageDisplay.defaultPackedBackground = SColor.COSMIC_LATTE.toFloatBits();
+        languageDisplay.defaultPackedBackground = FLOAT_LIGHTING;
 
         //This uses the seeded RNG we made earlier to build a procedural dungeon using a method that takes rectangular
         //sections of pre-drawn dungeon and drops them into place in a tiling pattern. It makes good winding dungeons
@@ -335,37 +338,14 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
 
 
         //The next three lines set the background color for anything we don't draw on, but also create 2D arrays of the
-        //same size as decoDungeon that store simple indexes into a common list of colors, using the colors that looks
-        //up as the colors for the cell with the same x and y. By changing an item in SColor.LIMITED_PALETTE, we also
-        //change the colors assigned by default to walls.
+        //same size as decoDungeon that store the colors for the foregrounds and backgrounds of each cell as packed
+        //floats (a format SparseLayers can use throughout its API), using the colors for the cell with the same x and
+        //y. By changing an item in SColor.LIMITED_PALETTE, we also change the color assigned by MapUtility to floors.
         bgColor = SColor.DARK_SLATE_GRAY;
         SColor.LIMITED_PALETTE[3] = SColor.DB_GRAPHITE;
-        Color[][] temp = MapUtility.generateDefaultColors(decoDungeon);
-        colors = new float[bigWidth][bigHeight];
-        for (int i = 0; i < bigWidth; i++) {
-            for (int j = 0; j < bigHeight; j++) {
-                colors[i][j] = temp[i][j].toFloatBits();
-            }
-        }
-        temp = MapUtility.generateDefaultBGColors(decoDungeon);
-        bgColors = new float[bigWidth][bigHeight];
-        for (int i = 0; i < bigWidth; i++) {
-            for (int j = 0; j < bigHeight; j++) {
-                bgColors[i][j] = temp[i][j].toFloatBits();
-            }
-        }
+        colors = MapUtility.generateDefaultColorsFloat(decoDungeon);
+        bgColors = MapUtility.generateDefaultBGColorsFloat(decoDungeon);
 
-        // here we assign the colors that bumping into a wall (using the keyboard controls) will produce in a burst.
-        burstColors = new float[36];
-        for (int i = 0; i < 9; i++) {
-            // floatGetHSV makes a color as a packed float given its hue, saturation, value (lightness), and opacity.
-            // we use groups of 9 where each group goes through the hue rotation once.
-            // later groups become less saturated, darker, and more translucent as the animation continues.
-            burstColors[i   ] = SColor.floatGetHSV(i / 9f, 0.735f - i * 0.015f, 1f, 0.7f);
-            burstColors[i+9 ] = SColor.floatGetHSV(i / 9f, 0.6f, 1f - i * 0.015f, 0.7f);
-            burstColors[i+18] = SColor.floatGetHSV(i / 9f, 0.6f, 0.865f - i * 0.015f, 0.7f - i * 0.025f);
-            burstColors[i+27] = SColor.floatGetHSV(i / 9f, 0.6f - i * 0.015f, 0.73f - i * 0.015f, 0.475f - i * 0.03f);
-        }
 
         //places the player as an '@' at his position in orange.
         pg = display.glyph('@', SColor.SAFETY_ORANGE.toFloatBits(), player.x, player.y);
@@ -567,7 +547,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //monsters running in and out of our vision. If artifacts from previous frames show up, uncomment the next line.
         //display.clear();
 
-        float tm = (System.currentTimeMillis() & 0xffffffL) * 0.001f;
+        double tm = (System.currentTimeMillis() & 0xffffffL) * 0.0015;
         for (int i = 0; i < bigWidth; i++) {
             for (int j = 0; j < bigHeight; j++) {
                 if(visible[i][j] > 0.0) {
@@ -576,19 +556,23 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     // as the time does, and also depends on the x,y position of the cell being lit. We use
                     // SColor.lerpFloatColors() to take two floats that encode colors without using an object,
                     // and mix them according to a third float between 0f and 1f. The two colors are the background
-                    // color of the cell, and pure white, while the third number is where the mess is. First it
-                    // gets a number using the visibility of the cell and the SeededNoise result, which will be
-                    // between 0f and 512f, then effectively divides that by 512 using a strange-at-first
-                    // hexadecimal float literal, 0x1p-9f. That is essentially the same as writing 0.001953125f,
-                    // (float)Math.pow(2.0, -9.0), or (1f / 512f), but is possibly faster than the last two if the
-                    // compiler can't optimize float division effectively, and is a good tool to have because these
-                    // hexadecimal float or double literals always represent numbers accurately. To contrast,
-                    // 0.3 - 0.2 is not equal to 0.1 with doubles, because tenths are inaccurate with floats and
-                    // doubles, and hex literals won't have the option to write an inaccurate float or double.
-                    float bg = SColor.lerpFloatColors(bgColors[i][j], WHITE_FLOAT,(196f + (
-                            180f * ((float)visible[i][j] * (1.0f + 0.2f * SeededNoise.noise(i * 0.2f, j * 0.2f, tm, 10000)))))
-                            * 0x1p-9f); // as above, "* 0x1p-9f" is roughly equivalent to "/ 512.0"
-                    display.put(i, j, lineDungeon[i][j], colors[i][j], bg);
+                    // color of the cell, then very light yellow, while the third number is where the mess is. First it
+                    // gets a number using the visibility of the cell and the SeededNoise result. The higher the
+                    // visibility, the brighter the cell will be, and a small adjustment to that brightness is applied
+                    // with the noise result for the player's x position, y position, and the current time.
+                    // SeededNoise.noise() produces a double between -1.0 and 1.0, so the adjustments this makes to it
+                    // yield a number between 0.75 and 1.25. Multiplying that with the visibility, then multiplying by
+                    // 200 and adding 200 produces a number with a max that varies from 350 to 450 and a minimum of 0
+                    // (when visibility is 0). Since this number will always be between 0f and 512f, but we want a
+                    // number between 0 and 1 to provide the amount for the lighting color to affect the background
+                    // color, we effectively divide by 512 using multiplication by a rarely-seen hexadecimal float
+                    // literal, 0x1p-9f. Hex literals for floats and doubles are useful, and a small explanation is at
+                    // the bottom of this file.
+                    display.put(i, j, lineDungeon[i][j], colors[i][j],
+                            SColor.lerpFloatColors(bgColors[i][j], FLOAT_LIGHTING,(200f + (
+                                    200f * (float)(visible[i][j] * (1.0 + 0.25 * SeededNoise.noise(i * 0.3, j * 0.3, tm, 1)))))
+                                    * 0x1p-9f) // as above, "* 0x1p-9f" is roughly equivalent to "/ 512.0"
+                            );
                 } else if(seen.contains(i, j))
                     display.put(i, j, lineDungeon[i][j], colors[i][j], SColor.lerpFloatColors(bgColors[i][j], GRAY_FLOAT, 0.3f));
             }
@@ -597,8 +581,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         Coord pt;
         for (int i = 0; i < toCursor.size(); i++) {
             pt = toCursor.get(i);
-            // use a brighter light to trace the path to the cursor, from 170 max lightness to 0 min.
-            display.put(pt.x, pt.y, SColor.lerpFloatColors(bgColors[pt.x][pt.y], WHITE_FLOAT, 0.75f));
+            // use a brighter light to trace the path to the cursor, mixing the background color with mostly white.
+            display.put(pt.x, pt.y, SColor.lerpFloatColors(bgColors[pt.x][pt.y], SColor.FLOAT_WHITE, 0.85f));
         }
         languageDisplay.clear(0);
         languageDisplay.fillBackground(languageDisplay.defaultPackedBackground);
@@ -692,6 +676,30 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                 width, height - (int)languageDisplay.getHeight());
 	}
 }
+// An explanation of hexadecimal float/double literals was mentioned earlier, so here it is.
+// The literal 0x1p-9f was used earlier; it is essentially the same as writing 0.001953125f,
+// (float)Math.pow(2.0, -9.0), or (1f / 512f), but is possibly faster than the last two if the
+// compiler can't optimize float division effectively, and is a good tool to have because these
+// hexadecimal float or double literals always represent numbers accurately. To contrast,
+// 0.3 - 0.2 is not equal to 0.1 with doubles, because tenths are inaccurate with floats and
+// doubles, and hex literals won't have the option to write an inaccurate float or double.
+// There's some slightly confusing syntax used to write these literals; the 0x means the first
+// part uses hex digits (0123456789ABCDEF), but the p is not a hex digit and is used to start
+// the "p is for power" exponent section. In the example, I used -9 for the power; this is a
+// base 10 number, and is used to mean a power of 2 that the hex digits will be multiplied by.
+// Because the -9 is a base 10 number, the f at the end is not a hex digit, and actually just
+// means the literal is a float, in the same way 1.5f is a float. 2.0 to the -9 is the same as
+// 1.0 / Math.pow(2.0, 9.0), but re-calculating Math.pow() is considerably slower if you run it
+// for every cell during every frame. Though this is most useful for negative exponents because
+// there are a lot of numbers after the decimal point to write out with 0.001953125 or the like,
+// it is also sometimes handy when you have an integer or long written in hexadecimal and want
+// to make it a float or double. You could use the hex long 0x9E3779B9L, for instance, but to
+// write that as a double you would use 0x9E3779B9p0 , not the invalid syntax 0x9E3779B9.0 .
+// We use p0 there because 2 to the 0 is 1, so multiplying by 1 gets us the same hex number.
+// Very large numbers can also benefit by using a large positive exponent; using p10 and p+10
+// as the last part of a hex literal are equivalent. You can see the hex literal for any given
+// float with Float.toHexString(float), or for a double with Double.toHexString(double) .
+// More information here: https://blogs.oracle.com/darcy/hexadecimal-floating-point-literals
 """
 
 }
