@@ -14,7 +14,7 @@ import com.github.czyzby.setup.views.ProjectTemplate
 class SquidLibBasicTemplate : Template {
     override val id = "squidLibBasicTemplate"
     override val width = "90 * 10"
-    override val height = "32 * 20"
+    override val height = "(25 + 7) * 20"
     override val description: String
         get() = "Project template included simple launchers and an `ApplicationAdapter` extension showing usage of [SquidLib](https://github.com/SquidPony/SquidLib) for display and some logic."
 
@@ -191,14 +191,23 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // the font will try to load Iosevka Slab as an embedded bitmap font with a distance field effect.
         // the distance field effect allows the font to be stretched without getting blurry or grainy too easily.
         // this font is covered under the SIL Open Font License (fully free), so there's no reason it can't be used.
-        // It is included in the assets folder if this project was made with SquidSetup, along with other fonts.
+        // It is included in the assets folder if this project was made with SquidSetup, along with other fonts
+        // Another option to consider is DefaultResources.getSlabFamily(), which uses the same font (Iosevka Slab) but
+        // treats it differently, and can be used to draw bold and/or italic text at the expense of the font being
+        // slightly less detailed visually and some rare glyphs being omitted. Bold and italic text are usually handled
+        // with markup in text that is passed to SquidLib's GDXMarkup class; see GDXMarkup's docs for more info.
+        // There are also several other distance field fonts, including two more font families like
+        // DefaultResources.getSlabFamily() that allow bold/italic text. Although some BitmapFont assets are available
+        // without a distance field effect, they are discouraged for most usage because they can't cleanly resize
+        // without loading a different BitmapFont per size, and there's usually just one size in DefaultResources.
         display = new SparseLayers(bigWidth, bigHeight + bonusHeight, cellWidth, cellHeight,
                 DefaultResources.getStretchableSlabFont());
 
-        // a bit of a hack to increase the text height slightly without changing the size of the cells they're in.
-        // this causes a tiny bit of overlap between cells, which gets rid of an annoying gap between vertical lines.
-        // if you use '#' for walls instead of box drawing chars, you don't need this.
-        display.font.tweakWidth(cellWidth * 1.1f).tweakHeight(cellHeight * 1.1f).initBySize();
+        // A bit of a hack to increase the text height slightly without changing the size of the cells they're in.
+        // This causes a tiny bit of overlap between cells, which gets rid of an annoying gap between solid lines.
+        // If you use '#' for walls instead of box drawing chars, you don't need this.
+        // If you don't use DefaultResources.getStretchableSlabFont(), you may need to adjust the multipliers here.
+        display.font.tweakWidth(cellWidth * 1.05f).tweakHeight(cellHeight * 1.1f).initBySize();
 
         languageDisplay = new SparseLayers(gridWidth, bonusHeight - 1, cellWidth, cellHeight, display.font);
         // SparseLayers doesn't currently use the default background fields, but this isn't really a problem; we can
@@ -351,9 +360,17 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         pg = display.glyph('@', SColor.SAFETY_ORANGE.toFloatBits(), player.x, player.y);
 
         lang = new ArrayList<>(16);
+        // StringKit has various utilities for dealing with text, including wrapping text so it fits in a specific width
+        // and inserting the lines into a List of Strings, as we do here with the List lang and the text artOfWar.
         StringKit.wrap(lang, artOfWar, gridWidth - 2);
+        // FakeLanguageGen.registered is an array of the hand-made languages in FakeLanguageGen, not any random ones and
+        // not most mixes of multiple languages. We get a random language from it with our RNG, and use that to build
+        // our current NaturalLanguageCipher. This NaturalLanguageCipher will act as an English-to-X dictionary for
+        // whatever X is our randomly chosen language, and will try to follow the loose rules English follows when
+        // it translates a word into an imaginary word in the fake language.
         translator = new NaturalLanguageCipher(rng.getRandomElement(FakeLanguageGen.registered));
         StringKit.wrap(lang, translator.cipher(artOfWar), gridWidth - 2);
+        // the 0L here can be used to adjust the languages generated; it acts a little like a seed for an RNG.
         translator.initialize(rng.getRandomElement(FakeLanguageGen.registered), 0L);
 
         // this is a big one.
