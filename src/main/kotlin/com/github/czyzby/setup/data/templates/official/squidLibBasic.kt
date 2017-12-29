@@ -564,42 +564,27 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //monsters running in and out of our vision. If artifacts from previous frames show up, uncomment the next line.
         //display.clear();
 
-        double tm = (System.currentTimeMillis() & 0xffffffL) * 0.0015;
         for (int i = 0; i < bigWidth; i++) {
             for (int j = 0; j < bigHeight; j++) {
                 if(visible[i][j] > 0.0) {
-                    // There are a lot of numbers here; they're just chosen for aesthetic reasons. They affect
-                    // the brightness of a cell, using SeededNoise for a flickering torchlight effect that changes
-                    // as the time does, and also depends on the x,y position of the cell being lit. We use
-                    // SColor.lerpFloatColors() to take two floats that encode colors without using an object,
-                    // and mix them according to a third float between 0f and 1f. The two colors are the background
-                    // color of the cell, then very light yellow, while the third number is where the mess is. First it
-                    // gets a number using the visibility of the cell and the SeededNoise result. The higher the
-                    // visibility, the brighter the cell will be, and a small adjustment to that brightness is applied
-                    // with the noise result for the player's x position, y position, and the current time.
-                    // SeededNoise.noise() produces a double between -1.0 and 1.0, so the adjustments this makes to it
-                    // yield a number between 0.75 and 1.25. Multiplying that with the visibility, then multiplying by
-                    // 200 and adding 200 produces a number with a max that varies from 350 to 450 and a minimum of 0
-                    // (when visibility is 0). Since this number will always be between 0f and 512f, but we want a
-                    // number between 0 and 1 to provide the amount for the lighting color to affect the background
-                    // color, we effectively divide by 512 using multiplication by a rarely-seen hexadecimal float
-                    // literal, 0x1p-9f. Hex literals for floats and doubles are useful, and a small explanation is at
-                    // the bottom of this file.
-                    display.put(i, j, lineDungeon[i][j], colors[i][j],
-                            SColor.lerpFloatColors(bgColors[i][j], FLOAT_LIGHTING,(200f + (
-                                    200f * (float)(visible[i][j] * (1.0 + 0.25 * SeededNoise.noise(i * 0.3, j * 0.3, tm, 1)))))
-                                    * 0x1p-9f) // as above, "* 0x1p-9f" is roughly equivalent to "/ 512.0"
-                            );
+                    // SparseLayers.putWithLight() changes the background of a given x,y cell by mixing a
+                    // lighting color with the existing background color, optionally putting a character
+                    // there or using some kind of Noise to flicker the lighting over time.
+                    // Here, we use visible (calculated by FOV) to determine how much the lighting color should
+                    // mix into the background color, and adjust it with the default Noise by passing null last.
+                    display.putWithLight(i, j, lineDungeon[i][j], colors[i][j], bgColors[i][j], FLOAT_LIGHTING, (float) visible[i][j], null);
                 } else if(seen.contains(i, j))
-                    display.put(i, j, lineDungeon[i][j], colors[i][j], SColor.lerpFloatColors(bgColors[i][j], GRAY_FLOAT, 0.3f));
+                    // Here, we don't use Noise to adjust the lighting, since these cells are out of sight.
+                    display.putWithLight(i, j, lineDungeon[i][j], colors[i][j], bgColors[i][j], GRAY_FLOAT, 0.45f);
             }
         }
 
         Coord pt;
         for (int i = 0; i < toCursor.size(); i++) {
             pt = toCursor.get(i);
-            // use a brighter light to trace the path to the cursor, mixing the background color with mostly white.
-            display.put(pt.x, pt.y, SColor.lerpFloatColors(bgColors[pt.x][pt.y], SColor.FLOAT_WHITE, 0.85f));
+            // Uses a brighter light to trace the path to the cursor, mixing the background color with white.
+            // putWithLight() can take mix amounts greater than 1 or less than 0 to mix with extra bias.
+            display.putWithLight(pt.x, pt.y, bgColors[pt.x][pt.y], SColor.FLOAT_WHITE, 1.25f);
         }
         languageDisplay.clear(0);
         languageDisplay.fillBackground(languageDisplay.defaultPackedBackground);
@@ -694,7 +679,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
 	}
 }
 // An explanation of hexadecimal float/double literals was mentioned earlier, so here it is.
-// The literal 0x1p-9f was used earlier; it is essentially the same as writing 0.001953125f,
+// The literal 0x1p-9f is a good example; it is essentially the same as writing 0.001953125f,
 // (float)Math.pow(2.0, -9.0), or (1f / 512f), but is possibly faster than the last two if the
 // compiler can't optimize float division effectively, and is a good tool to have because these
 // hexadecimal float or double literals always represent numbers accurately. To contrast,
@@ -716,6 +701,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
 // Very large numbers can also benefit by using a large positive exponent; using p10 and p+10
 // as the last part of a hex literal are equivalent. You can see the hex literal for any given
 // float with Float.toHexString(float), or for a double with Double.toHexString(double) .
+// SColor provides the packed float versions of all color constants as hex literals in the
+// documentation for each SColor.
 // More information here: https://blogs.oracle.com/darcy/hexadecimal-floating-point-literals
 """
 
