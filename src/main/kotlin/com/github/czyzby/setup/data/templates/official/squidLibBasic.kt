@@ -35,6 +35,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import squidpony.ArrayTools;
 import squidpony.FakeLanguageGen;
 import squidpony.NaturalLanguageCipher;
 import squidpony.StringKit;
@@ -52,10 +53,10 @@ import squidpony.squidgrid.gui.gdx.SquidMouse;
 import squidpony.squidgrid.gui.gdx.TextCellFactory;
 import squidpony.squidgrid.mapping.DungeonGenerator;
 import squidpony.squidgrid.mapping.DungeonUtility;
+import squidpony.squidgrid.mapping.LineKit;
 import squidpony.squidmath.Coord;
 import squidpony.squidmath.GreasedRegion;
 import squidpony.squidmath.RNG;
-import squidpony.squidmath.SeededNoise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,13 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     private RNG rng;
     private SparseLayers display, languageDisplay;
     private DungeonGenerator dungeonGen;
-    private char[][] decoDungeon, bareDungeon, lineDungeon;
+    // decoDungeon stores the dungeon map with features like grass and water, if present, as chars like '"' and '~'.
+    // bareDungeon stores the dungeon map with just walls as '#' and anything not a wall as '.'.
+    // Both of the above maps use '#' for walls, and the next two use box-drawing characters instead.
+    // lineDungeon stores the whole map the same as decoDungeon except for walls, which are box-drawing characters here.
+    // prunedDungeon takes lineDungeon and adjusts it so unseen segments of wall (represented by box-drawing characters)
+    //   are removed from rendering; unlike the others, it is frequently changed.
+    private char[][] decoDungeon, bareDungeon, lineDungeon, prunedDungeon;
     private float[][] colors, bgColors;
 
     //Here, gridHeight refers to the total number of rows to be displayed on the screen.
@@ -327,6 +334,19 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // out of sight, and no further) instead of all invisible cells when figuring out if something is currently
         // impossible to enter.
         blockage.fringe8way();
+        
+        // prunedDungeon starts with the full lineDungeon, which includes features like water and grass but also stores
+        // all walls as box-drawing characters. The issue with using lineDungeon as-is is that a character like '┬' may
+        // be used because there are walls to the east, west, and south of it, even when the player is to the north of
+        // that cell and so has never seen the southern connecting wall, and would have no reason to know it is there.
+        // By calling LineKit.pruneLines(), we adjust prunedDungeon to hold a variant on lineDungeon that removes any
+        // line segments that haven't ever been visible. This is called again whenever seen changes. 
+        prunedDungeon = ArrayTools.copy(lineDungeon);
+        // We call pruneLines with an optional parameter here, LineKit.lightAlt, which will allow prunedDungeon to use
+        // the half-line chars "╴╵╶╷". These chars aren't supported by all fonts, but they are by the one we use here.
+        // The default is to use LineKit.light , which will replace '╴' and '╶' with '─' and '╷' and '╵' with '│'.
+        LineKit.pruneLines(lineDungeon, seen, LineKit.lightAlt, prunedDungeon);
+        
         //This is used to allow clicks or taps to take the player to the desired area.
         toCursor = new ArrayList<>(200);
         //When a path is confirmed by clicking, we draw from this List to find which cell is next to move into.
@@ -529,6 +549,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
             blockage.refill(visible, 0.0);
             seen.or(blockage.not());
             blockage.fringe8way();
+            // By calling LineKit.pruneLines(), we adjust prunedDungeon to hold a variant on lineDungeon that removes any
+            // line segments that haven't ever been visible. This is called again whenever seen changes.
+            LineKit.pruneLines(lineDungeon, seen, LineKit.lightAlt, prunedDungeon);
         }
         else
         {
@@ -564,18 +587,21 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //monsters running in and out of our vision. If artifacts from previous frames show up, uncomment the next line.
         //display.clear();
 
-        for (int i = 0; i < bigWidth; i++) {
-            for (int j = 0; j < bigHeight; j++) {
-                if(visible[i][j] > 0.0) {
-                    // SparseLayers.putWithLight() changes the background of a given x,y cell by mixing a
-                    // lighting color with the existing background color, optionally putting a character
-                    // there or using some kind of Noise to flicker the lighting over time.
-                    // Here, we use visible (calculated by FOV) to determine how much the lighting color should
-                    // mix into the background color, and adjust it with the default Noise by passing null last.
-                    display.putWithLight(i, j, lineDungeon[i][j], colors[i][j], bgColors[i][j], FLOAT_LIGHTING, (float) visible[i][j], null);
-                } else if(seen.contains(i, j))
-                    // Here, we don't use Noise to adjust the lighting, since these cells are out of sight.
-                    display.putWithLight(i, j, lineDungeon[i][j], colors[i][j], bgColors[i][j], GRAY_FLOAT, 0.45f);
+        for (int x = 0; x < bigWidth; x++) {
+            for (int y = 0; y < bigHeight; y++) {
+                if(visible[x][y] > 0.0) {
+                    // Here we use a convenience method in SparseLayers that puts a char at a specified position (the
+                    // first three parameters), with a foreground color for that char (fourth parameter), as well as
+                    // placing a background tile made of a one base color (fifth parameter) that is adjusted to bring it
+                    // closer to FLOAT_LIGHTING (sixth parameter) based on how visible the cell is (seventh parameter,
+                    // comes from the FOV calculations) in a way that fairly-quickly changes over time.
+                    // This effect appears to shrink and grow in a circular area around the player, with the lightest
+                    // cells around the player and dimmer ones near the edge of vision. This lighting is "consistent"
+                    // because all cells at the same distance will have the same amount of lighting applied.
+                    // We use prunedDungeon here so segments of walls that the player isn't aware of won't be shown.
+                    display.putWithConsistentLight(x, y, prunedDungeon[x][y], colors[x][y], bgColors[x][y], FLOAT_LIGHTING, visible[x][y]);
+                } else if(seen.contains(x, y))
+                    display.put(x, y, prunedDungeon[x][y], colors[x][y], SColor.lerpFloatColors(bgColors[x][y], GRAY_FLOAT, 0.45f));
             }
         }
 
@@ -653,8 +679,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     }
 
     @Override
-	public void resize(int width, int height) {
-		super.resize(width, height);
+    public void resize(int width, int height) {
+        super.resize(width, height);
 
         // message box won't respond to clicks on the far right if the stage hasn't been updated with a larger size
         float currentZoomX = (float)width / gridWidth;
@@ -676,7 +702,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         stage.getViewport().update(width, height, false);
         stage.getViewport().setScreenBounds(0, (int)languageDisplay.getHeight(),
                 width, height - (int)languageDisplay.getHeight());
-	}
+    }
 }
 // An explanation of hexadecimal float/double literals was mentioned earlier, so here it is.
 // The literal 0x1p-9f is a good example; it is essentially the same as writing 0.001953125f,
