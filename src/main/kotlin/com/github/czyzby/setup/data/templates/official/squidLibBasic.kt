@@ -64,7 +64,7 @@ import java.util.List;
 /**
  * This is a small, not-overly-simple demo that presents some important features of SquidLib and shows a faster,
  * cleaner, and more recently-introduced way of displaying the map and other text. Features include dungeon map
- * generation, field of view, pathfinding (to the mouse position), simplex noise (used for a flickering torch effect),
+ * generation, field of view, pathfinding (to the mouse position), continuous noise (used for a wavering torch effect),
  * language generation/ciphering, a colorful glow effect, and ever-present random number generation (with a seed).
  * You can increase the size of the map on most target platforms (but GWT struggles with large... anything) by
  * changing gridHeight and gridWidth to affect the visible area or bigWidth and bigHeight to adjust the size of the
