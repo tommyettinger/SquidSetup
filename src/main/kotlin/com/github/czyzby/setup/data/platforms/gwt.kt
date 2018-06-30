@@ -35,7 +35,7 @@ class GWT : Platform {
     override fun createGradleFile(project: Project): GradleFile = GWTGradleFile(project)
 
     override fun initiate(project: Project) {
-        project.rootGradle.buildDependencies.add("\"de.richsource.gradle.plugins:gwt-gradle-plugin:\$gwtPluginVersion\"")
+        project.rootGradle.buildDependencies.add("\"org.wisepersist:gwt-gradle-plugin:\$gwtPluginVersion\"")
 
         addGradleTaskDescription(project, "superDev", "compiles GWT sources and runs the application in SuperDev mode. It will be available at [localhost:8080/${id}](http://localhost:8080/${id}). Use only during development.")
         addGradleTaskDescription(project, "dist", "compiles GWT sources. The compiled application can be found at `${id}/build/dist`: you can use any HTTP server to deploy it.")
@@ -47,7 +47,7 @@ class GWT : Platform {
         // Adding GWT definition to core project:
         project.files.add(SourceFile(projectName = Core.ID, packageName = project.basic.rootPackage,
                 fileName = "${project.basic.mainClass}.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "https://gwt.googlesource.com/gwt/+/${project.advanced.gwtVersion}/distro-source/core/src/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
 <module>
     <source path="" />${(project.reflectedClasses + project.reflectedPackages).joinToString(separator = "\n", prefix = "\n") { "    <extend-configuration-property name=\"gdx.reflect.include\" value=\"$it\" />" }}
 </module>"""))
@@ -57,7 +57,7 @@ class GWT : Platform {
         if (project.hasPlatform(Shared.ID)) {
             project.files.add(SourceFile(projectName = Shared.ID, packageName = project.basic.rootPackage,
                     fileName = "Shared.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "https://gwt.googlesource.com/gwt/+/${project.advanced.gwtVersion}/distro-source/core/src/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
 <module>
     <source path="" />
 </module>"""))
@@ -67,7 +67,7 @@ class GWT : Platform {
         // Adding GWT definition:
         project.files.add(SourceFile(projectName = ID, packageName = project.basic.rootPackage,
                 fileName = "GdxDefinition.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "https://gwt.googlesource.com/gwt/+/${project.advanced.gwtVersion}/distro-source/core/src/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
 <module rename-to="html">
     <source path="" />
 ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\n") { "    <inherits name=\"$it\" />" }}
@@ -79,11 +79,13 @@ ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\
         // Adding SuperDev definition:
         project.files.add(SourceFile(projectName = ID, packageName = project.basic.rootPackage,
                 fileName = "GdxDefinitionSuperdev.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "https://gwt.googlesource.com/gwt/+/${project.advanced.gwtVersion}/distro-source/core/src/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
 <module rename-to="html">
     <inherits name="${project.basic.rootPackage}.GdxDefinition" />
     <collapse-all-properties />
-    <set-configuration-property name="user.home" value="" />
+    <add-linker name="xsiframe"/>
+    <set-configuration-property name="devModeRedirectEnabled" value="true"/>
+    <set-configuration-property name="xsiframe.failIfScriptTag" value="FALSE"/>
 </module>"""))
 
         // Copying webapp files:
@@ -98,11 +100,11 @@ ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\
     private fun addSoundManagerSource(project: Project) {
         val version = LibGdxVersion.parseLibGdxVersion(project.advanced.gdxVersion)
         val soundManagerSource = when {
-            // Invalid, user-entered LibGDX version - defaulting to current SoundManager:
+        // Invalid, user-entered LibGDX version - defaulting to current SoundManager:
             version == null -> "soundmanager2-jsmin.js"
-            // Pre-1.9.6: using old SoundManager sources:
+        // Pre-1.9.6: using old SoundManager sources:
             version < LibGdxVersion(major = 1, minor = 9, revision = 6) -> "soundmanager2-jsmin_old.js"
-            // Recent LibGDX version - using latest SoundManager:
+        // Recent LibGDX version - using latest SoundManager:
             else -> "soundmanager2-jsmin.js"
         }
         project.files.add(CopiedFile(projectName = id,
@@ -124,12 +126,11 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
     override fun getContent(): String = """
 apply plugin: "gwt"
 apply plugin: "war"
-apply plugin: "jetty"
 
 gwt {
-  gwtVersion="${'$'}gwtFrameworkVersion" // Should match the gwt version used for building the gwt backend
-  maxHeapSize="1G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
-  minHeapSize="1G"
+  gwtVersion = "${'$'}gwtFrameworkVersion" // Should match the version used for building the GWT backend. See gradle.properties.
+  maxHeapSize = '1G' // Default 256m is not enough for the GWT compiler. GWT is HUNGRY.
+  minHeapSize = '1G'
 
   src = files(file('src/main/java')) // Needs to be in front of "modules" below.
   modules '${project.basic.rootPackage}.GdxDefinition'
@@ -140,19 +141,33 @@ gwt {
   compiler.disableCastChecking = true
 }
 
+import org.wisepersist.gradle.plugins.gwt.GwtSuperDev
+
+def HttpFileServer server = null
+def httpFilePort = 8080
+task startHttpServer () {
+  dependsOn draftCompileGwt
+  String output = project.buildDir.path + "/gwt/draftOut"
+  doLast {
+    copy {
+      from "webapp"
+      into output
+    }
+    copy {
+      from "war"
+      into output
+    }
+    server = new SimpleHttpFileServerFactory().start(new File(output), httpFilePort)
+    println "Server started in directory " + server.getContentRoot() + ", http://localhost:" + server.getPort() + "/index.html"
+  }
+}
+
 dependencies {
 ${joinDependencies(dependencies)}
 }
 
-task draftRun(type: JettyRunWar) {
-    dependsOn draftWar
-    dependsOn.remove('war')
-    webApp=draftWar.archivePath
-    daemon=true
-}
-
-task superDev(type: de.richsource.gradle.plugins.gwt.GwtSuperDev) {
-    dependsOn draftRun
+task superDev(type: GwtSuperDev) {
+    dependsOn startHttpServer
     doFirst {
         gwt.modules = gwt.devModules
     }
@@ -168,18 +183,13 @@ task dist(dependsOn: [clean, compileGwt]) {
         copy {
             from "webapp"
             into "build/dist"
-        }
+            }
         copy {
             from "war"
             into "build/dist"
         }
     }
 }
-
-draftWar {
-    from "war"
-}
-
 task addSource {
   doLast {
 ${buildDependencies.joinToString(separator = "") {
@@ -191,10 +201,9 @@ ${buildDependencies.joinToString(separator = "") {
 tasks.compileGwt.dependsOn(addSource)
 tasks.draftCompileGwt.dependsOn(addSource)
 
-sourceCompatibility = ${project.advanced.javaVersion}
+sourceCompatibility = 1.7
 sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 
-eclipse.project {
-    name = appName + "-html"
-}"""
+eclipse.project.name = appName + "-html"
+"""
 }

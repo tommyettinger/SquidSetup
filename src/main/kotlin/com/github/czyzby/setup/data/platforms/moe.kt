@@ -67,7 +67,7 @@ class MOEGradleFile(val project: Project) : GradleFile(MOE.ID) {
 test { exclude '**' }
 
 task copyNatives << {
-    file("xcode/native/ios/").mkdirs();
+    file("xcode/native/ios/").mkdirs()
     def LD_FLAGS = "LIBGDX_NATIVES = "
     configurations.natives.files.each { jar->
         def outputDir = null
@@ -85,7 +85,7 @@ task copyNatives << {
             }
         }
     }
-    def outFlags = file("xcode/ios-moe/custom.xcconfig");
+    def outFlags = file("xcode/ios-moe/custom.xcconfig")
     outFlags.write LD_FLAGS
 
     def proguard = file("proguard.append.cfg")

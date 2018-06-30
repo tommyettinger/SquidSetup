@@ -1,9 +1,5 @@
 package com.github.czyzby.setup.data.platforms
 
-import com.badlogic.gdx.utils.ObjectMap
-import com.github.czyzby.autumn.annotation.Component
-import com.github.czyzby.autumn.annotation.Initiate
-import com.github.czyzby.autumn.mvc.config.AutumnActionPriority
 import com.github.czyzby.setup.data.files.CopiedFile
 import com.github.czyzby.setup.data.files.path
 import com.github.czyzby.setup.data.gradle.GradleFile
@@ -43,6 +39,6 @@ interface Platform {
     }
 
     fun addGradleTaskDescription(project: Project, task: String, description: String) {
-        project.addGradleTaskDescription(id + ":" + task, description);
+        project.addGradleTaskDescription("$id:$task", description)
     }
 }

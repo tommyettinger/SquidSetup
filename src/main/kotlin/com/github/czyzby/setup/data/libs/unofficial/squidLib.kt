@@ -34,7 +34,7 @@ const val REPO_PATH = "com.github.SquidPony.SquidLib"
 @Extension()
 class RegExodus : ThirdPartyExtension() {
     override val id = "regExodus"
-    override val defaultVersion = "0.1.9"
+    override val defaultVersion = "0.1.10"
     override val url = "https://github.com/tommyettinger/RegExodus"
 
     override fun initiateDependencies(project: Project) {

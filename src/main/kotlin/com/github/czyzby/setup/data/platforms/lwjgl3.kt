@@ -18,7 +18,7 @@ class LWJGL3 : Platform {
 
     override val id = ID
     override val isGraphical = false // LWJGL3 is an alternative to the default desktop project.
-    override fun createGradleFile(project: Project): GradleFile = Lwjgl3GradleFile(project);
+    override fun createGradleFile(project: Project): GradleFile = Lwjgl3GradleFile(project)
     override fun initiate(project: Project) {
         // Adding game icons:
         arrayOf(16, 32, 64, 128)

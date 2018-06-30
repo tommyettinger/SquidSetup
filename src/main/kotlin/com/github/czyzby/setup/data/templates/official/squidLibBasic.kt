@@ -183,7 +183,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     @Override
     public void create () {
         // gotta have a random number generator. We can seed an RNG with any long we want, or even a String.
-        rng = new RNG("SquidLib!");
+        rng = new RNG("Welcome to SquidLib!");
 
         //Some classes in SquidLib need access to a batch to render certain things, so it's a good idea to have one.
         batch = new SpriteBatch();
@@ -195,26 +195,28 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //Here we make sure our Stage, which holds any text-based grids we make, uses our Batch.
         stage = new Stage(mainViewport, batch);
         languageStage = new Stage(languageViewport, batch);
-        // the font will try to load Iosevka Slab as an embedded bitmap font with a distance field effect.
+        // the font will try to load Iosevka Slab as an embedded bitmap font with a (MSDF) distance field effect.
         // the distance field effect allows the font to be stretched without getting blurry or grainy too easily.
         // this font is covered under the SIL Open Font License (fully free), so there's no reason it can't be used.
         // It is included in the assets folder if this project was made with SquidSetup, along with other fonts
-        // Another option to consider is DefaultResources.getSlabFamily(), which uses the same font (Iosevka Slab) but
-        // treats it differently, and can be used to draw bold and/or italic text at the expense of the font being
+        // Another option to consider is DefaultResources.getCrispSlabFamily(), which uses the same font (Iosevka Slab)
+        // but treats it differently, and can be used to draw bold and/or italic text at the expense of the font being
         // slightly less detailed visually and some rare glyphs being omitted. Bold and italic text are usually handled
         // with markup in text that is passed to SquidLib's GDXMarkup class; see GDXMarkup's docs for more info.
         // There are also several other distance field fonts, including two more font families like
-        // DefaultResources.getSlabFamily() that allow bold/italic text. Although some BitmapFont assets are available
-        // without a distance field effect, they are discouraged for most usage because they can't cleanly resize
-        // without loading a different BitmapFont per size, and there's usually just one size in DefaultResources.
+        // DefaultResources.getCrispSlabFamily() that allow bold/italic text. In addition to Crisp fonts, there are also
+        // Stretchable fonts which use a SDF distance field effect, which is slightly slower to render and isn't as
+        // detailed at high sizes, but stays sharp when resizing to very small sizes. Although some BitmapFont assets
+        // are available without a distance field effect, they are discouraged for most usage because they can't cleanly
+        // resize without loading a different BitmapFont per size, and there's usually one size in DefaultResources.
         display = new SparseLayers(bigWidth, bigHeight + bonusHeight, cellWidth, cellHeight,
-                DefaultResources.getStretchableSlabFont());
+                DefaultResources.getCrispSlabFont());
 
         // A bit of a hack to increase the text height slightly without changing the size of the cells they're in.
         // This causes a tiny bit of overlap between cells, which gets rid of an annoying gap between solid lines.
         // If you use '#' for walls instead of box drawing chars, you don't need this.
-        // If you don't use DefaultResources.getStretchableSlabFont(), you may need to adjust the multipliers here.
-        display.font.tweakWidth(cellWidth * 1.05f).tweakHeight(cellHeight * 1.1f).initBySize();
+        // If you don't use DefaultResources.getCrispSlabFont(), you may need to adjust the multipliers here.
+        display.font.tweakHeight(cellHeight * 1.1f).initBySize();
 
         languageDisplay = new SparseLayers(gridWidth, bonusHeight - 1, cellWidth, cellHeight, display.font);
         // SparseLayers doesn't currently use the default background fields, but this isn't really a problem; we can
@@ -601,7 +603,21 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     // We use prunedDungeon here so segments of walls that the player isn't aware of won't be shown.
                     display.putWithConsistentLight(x, y, prunedDungeon[x][y], colors[x][y], bgColors[x][y], FLOAT_LIGHTING, visible[x][y]);
                 } else if(seen.contains(x, y))
+                {
+                    // If a position isn't currently visible but was before, it will be in seen.
+                    // Here, we don't show the changing light because this part of the map is remembered, not currently
+                    // lit by a torch. SColor.lerpFloatColors is used very often inside SquidLib because it allows
+                    // getting a mix of two colors without creating any new objects (no Color or SColor needs to be
+                    // involved), and that really helps performance on Android and GWT, where the garbage collector
+                    // isn't as good as on desktop JVMs.
                     display.put(x, y, prunedDungeon[x][y], colors[x][y], SColor.lerpFloatColors(bgColors[x][y], GRAY_FLOAT, 0.45f));
+                }
+                // Note that if a position isn't visible or previously seen, we don't  put anything in display.
+                // A full screen being replaced every round slows GWT to a crawl, though it's still rather fast on
+                // desktop platforms. SparseLayers won't draw what it doesn't have to, so if nothing was placed in a
+                // position, it skips over it entirely. This also applies to Glyph objects that can move, but are
+                // currently in a cell with a clear background (the default); clear cells are used for cells that aren't
+                // getting drawn in, so those Glyphs won't be rendered either unless you specifically draw one.
             }
         }
 
