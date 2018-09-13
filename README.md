@@ -25,20 +25,28 @@ handle the graphics yourself).
 ## Usage
 
   - Get the latest `SquidSetup.jar` from the [Releases tab](https://github.com/tommyettinger/SquidSetup/releases) of this project.
-    - You may want the latest possible code using the [3.0.0-SNAPSHOT Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-SNAPSHOT),
-      or you may want a more-stable beta version. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
+    - You probably want the latest possible code using the [3.0.0-SNAPSHOT Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-SNAPSHOT),
+      but you may want a more-stable beta version. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
       will be obtained from Maven Central. The latest commit is determined by the library `jcabi-github`, and involves an API call to GitHub when using
-      the snapshot release (not any beta or stable releases); the API call may be slow or might not complete if GitHub is having issues.
+      the snapshot release (not any beta or stable releases); the API call may be a little slow or might not complete if GitHub is having issues. However,
+      because the code at that commit is the same at any point in the future, the snapshot commits won't "suddenly stop working" like a dependency
+      on a nightly build might; you update when you want to, and if something breaks, you can always go back to an older commit that you know works.
   - Regardless of what platforms you intend to target, make sure the steps
     [described by the LibGDX wiki here](https://github.com/libgdx/libgdx/wiki/Setting-up-your-Development-Environment-%28Eclipse%2C-Intellij-IDEA%2C-NetBeans%29)
     are taken care of.
   - Run the JAR. Plug in whatever options you see fit:
     - Desktop and/or LWJGL3 should usually be checked, so you can test on the same computer
       you develop on.
-    - iOS should probably not be checked if you aren't running MacOS.
+      - LWJGL3 is almost the same as Desktop, but because it has better support for new hardware
+        (such as high-DPI displays), it should probably be preferred.
+    - iOS should probably not be checked if you aren't running MacOS and don't intend to later
+      build an iOS app on a Mac.
     - Android should only be checked if you've set up your computer for Android development,
       and may cause some hassles even in other projects if you use Android Studio or IntelliJ
-      IDEA before the upcoming version 2017.3, when a bug is expected to be fixed.
+      IDEA. This has been true for more than a year, with Google and JetBrains acting out the
+      Three Stooges using their users as a third stooge. To help with this, you should absolutely
+      make sure that IDEA has "configure on demand" disabled; under settings you can search for
+      "demand" to find it. Android Studio should always have it disabled now by default.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -53,6 +61,16 @@ handle the graphics yourself).
     
 Now you'll have a project all set up with a sample.
 
+  - The project will have a lot of font resources in the `assets/` folder. You should probably
+    delete or move any you don't need. `Iosevka-Slab-msdf.fnt` and `Iosevka-Slab-msdf.png` are
+    needed to run the generated basic demo, and if you intend to keep using them you should
+    also include `Iosevka-License.md` to abide by Iosevka's license. You don't need any other
+    files unless you intend to use a different font, such as `Iosevka-Family-msdf` to get bold
+    and italic support, `NotoSerif-Family-msdf` to have a nice variable-width font that also
+    has bold and italic support, `SourceHanCodeJP-Regular-distance` to get excellent support
+    for Japanese text, or `Monty-4x10` if you want your users to go blind staring at one of the
+    smallest fonts possible. The class `DefaultResources` has documentation on what exact files
+    are needed to use which fonts and other assets, such as icons.
   - If you use Android Studio or IntelliJ IDEA and have an Android project, you'll need to use
     Gradle tasks to do any part of the build/run process, thanks to a long-standing issue in
     IDEA's Android plugin.  The simplest way to do this is in the IDE itself, via

@@ -3,7 +3,9 @@ apply plugin: 'application'
 
 buildscript {
   repositories {
+    mavenLocal()
     mavenCentral()
+    jcenter()
   }
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -34,7 +36,7 @@ repositories {
 dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   compile "org.apache.commons:commons-exec:$commonsExecVersion"
-
+  compile 'org.slf4j:slf4j-nop:1.7.25'
   compile "com.badlogicgames.gdx:gdx:$gdxVersion"
   compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"

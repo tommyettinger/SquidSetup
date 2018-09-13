@@ -30,7 +30,7 @@ class Project(val basic: BasicProjectData, val platforms: Map<String, Platform>,
     val files = mutableListOf<ProjectFile>()
     val rootGradle: RootGradleFile
     val properties = mutableMapOf(
-            "org.gradle.daemon" to "true",
+            "org.gradle.daemon" to "false",
             "org.gradle.jvmargs" to "-Xms128m -Xmx512m",
             "org.gradle.configureondemand" to "false")
     val postGenerationTasks = mutableListOf<(Project) -> Unit>()
@@ -85,109 +85,219 @@ class Project(val basic: BasicProjectData, val platforms: Map<String, Platform>,
         template.apply(this)
         addPlatforms()
         ////SQUIDSETUP CHANGE
-        arrayOf(
-                "BoxedIn-License.txt",
-                "BoxedIn-distance.fnt",
-                "BoxedIn-distance.png",
-                "CM-Custom-distance.fnt",
-                "CM-Custom-distance.png",
-                "DejaVuSansMono-License.txt",
-                "DejaVuSansMono-distance.fnt",
-                "DejaVuSansMono-distance.png",
-                "DejaVuSansMono-msdf.fnt",
-                "DejaVuSansMono-msdf.png",
-                "Gentium-distance.fnt",
-                "Gentium-distance.png",
-                "GoMono-Family-distance.fnt",
-                "GoMono-Family-distance.png",
-                "GoMono-License.txt",
-                "Inconsolata-LGC-12x24.fnt",
-                "Inconsolata-LGC-12x24.png",
-                "Inconsolata-LGC-8x18.fnt",
-                "Inconsolata-LGC-8x18.png",
-                "Inconsolata-LGC-Custom-distance.fnt",
-                "Inconsolata-LGC-Custom-distance.png",
-                "Inconsolata-LGC-Square-25x25.fnt",
-                "Inconsolata-LGC-Square-25x25.png",
-                "Inconsolata-LGC-Square-distance.fnt",
-                "Inconsolata-LGC-Square-distance.png",
-                "Inconsolata-LGC-Square.fnt",
-                "Inconsolata-LGC-Square.png",
-                "Iosevka-distance.fnt",
-                "Iosevka-distance.png",
-                "Iosevka-Family-distance.fnt",
-                "Iosevka-Family-distance.png",
-                "Iosevka-Family-msdf.fnt",
-                "Iosevka-Family-msdf.png",
-                "Iosevka-License.md",
-                "Iosevka-Light-distance.fnt",
-                "Iosevka-Light-distance.png",
-                "Iosevka-msdf.fnt",
-                "Iosevka-msdf.png",
-                "Iosevka-Oblique-msdf.fnt",
-                "Iosevka-Oblique-msdf.png",
-                "Iosevka-Slab-Family-distance.fnt",
-                "Iosevka-Slab-Family-distance.png",
-                "Iosevka-Slab-Light-distance.fnt",
-                "Iosevka-Slab-Light-distance.png",
-                "Iosevka-Slab-Thin-distance.fnt",
-                "Iosevka-Slab-Thin-distance.png",
-                "Iosevka-Slab-distance.fnt",
-                "Iosevka-Slab-distance.png",
-                "Iosevka-Slab-Family-msdf.fnt",
-                "Iosevka-Slab-Family-msdf.png",
-                "Iosevka-Slab-msdf.fnt",
-                "Iosevka-Slab-msdf.png",
-                "Iosevka-Slab-Oblique-msdf.fnt",
-                "Iosevka-Slab-Oblique-msdf.png",
-                "Iosevka-Wide-Light-distance.fnt",
-                "Iosevka-Wide-Light-distance.png",
-                "Iosevka-Wide-Slab-Light-distance.fnt",
-                "Iosevka-Wide-Slab-Light-distance.png",
-                "Iosevka-Wide-Slab-distance.fnt",
-                "Iosevka-Wide-Slab-distance.png",
-                "Iosevka-Wide-distance.fnt",
-                "Iosevka-Wide-distance.png",
-                "Mandrill-12x32.fnt",
-                "Mandrill-12x32.png",
-                "Mandrill-6x16.fnt",
-                "Mandrill-6x16.png",
-                "Noto-Sans-distance.fnt",
-                "Noto-Sans-distance.png",
-                "NotoSerif-Family-msdf.fnt",
-                "NotoSerif-Family-msdf.png",
-                "NotoSerif-license.txt",
-                "Orbitron-distance.fnt",
-                "Orbitron-distance.png",
-                "README.md",
-                "Rogue-Zodiac-12x24.fnt",
-                "Rogue-Zodiac-12x24_0.png",
-                "Rogue-Zodiac-18x36.fnt",
-                "Rogue-Zodiac-18x36_0.png",
-                "Rogue-Zodiac-6x12.fnt",
-                "Rogue-Zodiac-6x12_0.png",
-                "SourceCodePro-License.txt",
-                "SourceCodePro-Medium-distance.fnt",
-                "SourceCodePro-Medium-distance.png",
-                "SourceHanCodeJP-license.txt",
-                "SourceHanCodeJP-Regular-distance.fnt",
-                "SourceHanCodeJP-Regular-distance.png",
-                "square-License.txt",                 
-                "square-msdf.fnt",
-                "square-msdf.png",
-                "Tentacle-128.png",
-                "Tentacle-16.png",
-                "Tentacle-32.png",
-                "Tentacle-64.png",
-                "Tentacle.png",
-                "Zodiac-Square-12x12.fnt",
-                "Zodiac-Square-12x12.png",
-                "Zodiac-Square-24x24.fnt",
-                "Zodiac-Square-24x24.png",
-                "icons-license.txt",
-                "icons.atlas",
-                "icons.png"
-        ).forEach {
+"""
+BoxedIn-License.txt
+BoxedIn-distance.fnt
+BoxedIn-distance.png
+CM-Custom-distance.fnt
+CM-Custom-distance.png
+DejaVuSansMono-License.txt
+DejaVuSansMono-distance.fnt
+DejaVuSansMono-distance.png
+DejaVuSansMono-msdf.fnt
+DejaVuSansMono-msdf.png
+Font-Awesome-license.txt
+Gentium-distance.fnt
+Gentium-distance.png
+GoMono-Family-distance.fnt
+GoMono-Family-distance.png
+GoMono-License.txt
+Inconsolata-LGC-12x24.fnt
+Inconsolata-LGC-12x24.png
+Inconsolata-LGC-8x18.fnt
+Inconsolata-LGC-8x18.png
+Inconsolata-LGC-Custom-distance.fnt
+Inconsolata-LGC-Custom-distance.png
+Inconsolata-LGC-Square-25x25.fnt
+Inconsolata-LGC-Square-25x25.png
+Inconsolata-LGC-Square-distance.fnt
+Inconsolata-LGC-Square-distance.png
+Inconsolata-LGC-Square.fnt
+Inconsolata-LGC-Square.png
+Iosevka-Family-distance.fnt
+Iosevka-Family-distance.png
+Iosevka-Family-msdf.fnt
+Iosevka-Family-msdf.png
+Iosevka-License.md
+Iosevka-Light-distance.fnt
+Iosevka-Light-distance.png
+Iosevka-Oblique-msdf.fnt
+Iosevka-Oblique-msdf.png
+Iosevka-Slab-Family-distance.fnt
+Iosevka-Slab-Family-distance.png
+Iosevka-Slab-Family-msdf.fnt
+Iosevka-Slab-Family-msdf.png
+Iosevka-Slab-Light-distance.fnt
+Iosevka-Slab-Light-distance.png
+Iosevka-Slab-Oblique-msdf.fnt
+Iosevka-Slab-Oblique-msdf.png
+Iosevka-Slab-Thin-distance.fnt
+Iosevka-Slab-Thin-distance.png
+Iosevka-Slab-distance.fnt
+Iosevka-Slab-distance.png
+Iosevka-Slab-msdf.fnt
+Iosevka-Slab-msdf.png
+Iosevka-Wide-Light-distance.fnt
+Iosevka-Wide-Light-distance.png
+Iosevka-Wide-Slab-Light-distance.fnt
+Iosevka-Wide-Slab-Light-distance.png
+Iosevka-Wide-Slab-distance.fnt
+Iosevka-Wide-Slab-distance.png
+Iosevka-Wide-distance.fnt
+Iosevka-Wide-distance.png
+Iosevka-distance.fnt
+Iosevka-distance.png
+Iosevka-msdf.fnt
+Iosevka-msdf.png
+Mandrill-12x32.fnt
+Mandrill-12x32.png
+Mandrill-6x16.fnt
+Mandrill-6x16.png
+Monty-4x10.fnt
+Monty-4x10.png
+Monty-license.txt
+Noto-Sans-distance.fnt
+Noto-Sans-distance.png
+NotoSerif-Family-msdf.fnt
+NotoSerif-Family-msdf.png
+NotoSerif-license.txt
+Orbitron-distance.fnt
+Orbitron-distance.png
+README.md
+Rogue-Zodiac-12x24.fnt
+Rogue-Zodiac-12x24_0.png
+Rogue-Zodiac-18x36.fnt
+Rogue-Zodiac-18x36_0.png
+Rogue-Zodiac-6x12.fnt
+Rogue-Zodiac-6x12_0.png
+SourceCodePro-License.txt
+SourceCodePro-Medium-distance.fnt
+SourceCodePro-Medium-distance.png
+SourceHanCodeJP-Regular-distance.fnt
+SourceHanCodeJP-Regular-distance.png
+SourceHanCodeJP-license.txt
+Tentacle-128.png
+Tentacle-16.png
+Tentacle-32.png
+Tentacle-64.png
+Tentacle.png
+Zodiac-Square-12x12.fnt
+Zodiac-Square-12x12.png
+Zodiac-Square-24x24.fnt
+Zodiac-Square-24x24.png
+awesome-solid-msdf.fnt
+awesome-solid-msdf.png
+icons-license.txt
+icons.atlas
+icons.png
+square-License.txt
+square-msdf.fnt
+square-msdf.png
+""".split('\n')
+//        arrayOf(
+//                "BoxedIn-License.txt",
+//                "BoxedIn-distance.fnt",
+//                "BoxedIn-distance.png",
+//                "CM-Custom-distance.fnt",
+//                "CM-Custom-distance.png",
+//                "DejaVuSansMono-License.txt",
+//                "DejaVuSansMono-distance.fnt",
+//                "DejaVuSansMono-distance.png",
+//                "DejaVuSansMono-msdf.fnt",
+//                "DejaVuSansMono-msdf.png",
+//                "Gentium-distance.fnt",
+//                "Gentium-distance.png",
+//                "GoMono-Family-distance.fnt",
+//                "GoMono-Family-distance.png",
+//                "GoMono-License.txt",
+//                "Inconsolata-LGC-12x24.fnt",
+//                "Inconsolata-LGC-12x24.png",
+//                "Inconsolata-LGC-8x18.fnt",
+//                "Inconsolata-LGC-8x18.png",
+//                "Inconsolata-LGC-Custom-distance.fnt",
+//                "Inconsolata-LGC-Custom-distance.png",
+//                "Inconsolata-LGC-Square-25x25.fnt",
+//                "Inconsolata-LGC-Square-25x25.png",
+//                "Inconsolata-LGC-Square-distance.fnt",
+//                "Inconsolata-LGC-Square-distance.png",
+//                "Inconsolata-LGC-Square.fnt",
+//                "Inconsolata-LGC-Square.png",
+//                "Iosevka-distance.fnt",
+//                "Iosevka-distance.png",
+//                "Iosevka-Family-distance.fnt",
+//                "Iosevka-Family-distance.png",
+//                "Iosevka-Family-msdf.fnt",
+//                "Iosevka-Family-msdf.png",
+//                "Iosevka-License.md",
+//                "Iosevka-Light-distance.fnt",
+//                "Iosevka-Light-distance.png",
+//                "Iosevka-msdf.fnt",
+//                "Iosevka-msdf.png",
+//                "Iosevka-Oblique-msdf.fnt",
+//                "Iosevka-Oblique-msdf.png",
+//                "Iosevka-Slab-Family-distance.fnt",
+//                "Iosevka-Slab-Family-distance.png",
+//                "Iosevka-Slab-Light-distance.fnt",
+//                "Iosevka-Slab-Light-distance.png",
+//                "Iosevka-Slab-Thin-distance.fnt",
+//                "Iosevka-Slab-Thin-distance.png",
+//                "Iosevka-Slab-distance.fnt",
+//                "Iosevka-Slab-distance.png",
+//                "Iosevka-Slab-Family-msdf.fnt",
+//                "Iosevka-Slab-Family-msdf.png",
+//                "Iosevka-Slab-msdf.fnt",
+//                "Iosevka-Slab-msdf.png",
+//                "Iosevka-Slab-Oblique-msdf.fnt",
+//                "Iosevka-Slab-Oblique-msdf.png",
+//                "Iosevka-Wide-Light-distance.fnt",
+//                "Iosevka-Wide-Light-distance.png",
+//                "Iosevka-Wide-Slab-Light-distance.fnt",
+//                "Iosevka-Wide-Slab-Light-distance.png",
+//                "Iosevka-Wide-Slab-distance.fnt",
+//                "Iosevka-Wide-Slab-distance.png",
+//                "Iosevka-Wide-distance.fnt",
+//                "Iosevka-Wide-distance.png",
+//                "Mandrill-12x32.fnt",
+//                "Mandrill-12x32.png",
+//                "Mandrill-6x16.fnt",
+//                "Mandrill-6x16.png",
+//                "Noto-Sans-distance.fnt",
+//                "Noto-Sans-distance.png",
+//                "NotoSerif-Family-msdf.fnt",
+//                "NotoSerif-Family-msdf.png",
+//                "NotoSerif-license.txt",
+//                "Orbitron-distance.fnt",
+//                "Orbitron-distance.png",
+//                "README.md",
+//                "Rogue-Zodiac-12x24.fnt",
+//                "Rogue-Zodiac-12x24_0.png",
+//                "Rogue-Zodiac-18x36.fnt",
+//                "Rogue-Zodiac-18x36_0.png",
+//                "Rogue-Zodiac-6x12.fnt",
+//                "Rogue-Zodiac-6x12_0.png",
+//                "SourceCodePro-License.txt",
+//                "SourceCodePro-Medium-distance.fnt",
+//                "SourceCodePro-Medium-distance.png",
+//                "SourceHanCodeJP-license.txt",
+//                "SourceHanCodeJP-Regular-distance.fnt",
+//                "SourceHanCodeJP-Regular-distance.png",
+//                "square-License.txt",                 
+//                "square-msdf.fnt",
+//                "square-msdf.png",
+//                "Tentacle-128.png",
+//                "Tentacle-16.png",
+//                "Tentacle-32.png",
+//                "Tentacle-64.png",
+//                "Tentacle.png",
+//                "Zodiac-Square-12x12.fnt",
+//                "Zodiac-Square-12x12.png",
+//                "Zodiac-Square-24x24.fnt",
+//                "Zodiac-Square-24x24.png",
+//                "icons-license.txt",
+//                "icons.atlas",
+//                "icons.png"
+//        )
+        .forEach {
             files.add(CopiedFile(projectName = "assets", path = it,
                     original = path("generator", "assets", it)))
         }
