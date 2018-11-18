@@ -45,7 +45,6 @@ class Android : Platform {
     package="${project.basic.rootPackage}"
     android:versionCode="1"
     android:versionName="1.0" >
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="${project.advanced.androidSdkVersion}" />
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -97,7 +96,6 @@ class AndroidGradleFile(val project: Project) : GradleFile(Android.ID) {
     override fun getContent(): String = """${plugins.joinToString(separator = "\n") { "apply plugin: '$it'" }}
 
 android {
-  buildToolsVersion '${project.advanced.androidToolsVersion}'
   compileSdkVersion ${project.advanced.androidSdkVersion}
   sourceSets {
     main {
@@ -130,6 +128,11 @@ android {
     minSdkVersion 14
     targetSdkVersion ${project.advanced.androidSdkVersion}
   }
+}
+
+repositories {
+  // needed for AAPT2, may be needed for other tools
+  google()
 }
 
 configurations { natives }
