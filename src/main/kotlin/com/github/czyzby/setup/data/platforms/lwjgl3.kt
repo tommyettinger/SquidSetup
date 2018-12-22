@@ -7,7 +7,7 @@ import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.GdxPlatform
 
 /**
- * Represents the LWJGL3 backend, which is likely to replace the default desktop platform some day.
+ * Represents the LWJGL3 backend, which runs on all desktop platforms and supports more features than LWJGL2.
  * @author MJ
  */
 @GdxPlatform
@@ -17,7 +17,7 @@ class LWJGL3 : Platform {
     }
 
     override val id = ID
-    override val isGraphical = false // LWJGL3 is an alternative to the default desktop project.
+    //override val isGraphical = true // true is the default, and we want to prefer this to desktop
     override fun createGradleFile(project: Project): GradleFile = Lwjgl3GradleFile(project)
     override fun initiate(project: Project) {
         // Adding game icons:

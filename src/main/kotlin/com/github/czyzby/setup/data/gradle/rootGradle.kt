@@ -15,9 +15,9 @@ class RootGradleFile(val project: Project) : GradleFile("") {
         buildDependencies.add("\"com.badlogicgames.gdx:gdx-tools:\$gdxVersion\"")
         buildRepositories.add("mavenLocal()")
         buildRepositories.add("mavenCentral()")
-        buildRepositories.add("jcenter()")
         buildRepositories.add("google()")
         buildRepositories.add("maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }")
+        buildRepositories.add("jcenter()")
     }
 
     override fun getContent(): String = """buildscript {
@@ -52,9 +52,9 @@ subprojects {
   repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
+    jcenter()
   }
 }
 

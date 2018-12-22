@@ -7,7 +7,7 @@ import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.GdxPlatform
 
 /**
- * Represents Desktop backend.
+ * Represents the legacy Desktop backend, which has been replaced in practice by LWJGL3. 
  * @author MJ
  */
 @GdxPlatform
@@ -17,7 +17,7 @@ class Desktop : Platform {
     }
 
     override val id = ID
-
+    override val isGraphical = false // use lwjgl3 instead
     override fun createGradleFile(project: Project): GradleFile = DesktopGradleFile(project)
 
     override fun initiate(project: Project) {

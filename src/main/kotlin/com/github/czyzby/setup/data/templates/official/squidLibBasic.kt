@@ -55,8 +55,8 @@ import squidpony.squidgrid.mapping.DungeonGenerator;
 import squidpony.squidgrid.mapping.DungeonUtility;
 import squidpony.squidgrid.mapping.LineKit;
 import squidpony.squidmath.Coord;
+import squidpony.squidmath.GWTRNG;
 import squidpony.squidmath.GreasedRegion;
-import squidpony.squidmath.RNG;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +76,10 @@ import java.util.List;
  */
 public class ${project.basic.mainClass} extends ApplicationAdapter {
     SpriteBatch batch;
-
-    private RNG rng;
+    
+    // SquidLib has many methods that expect an IRNG instance, and there's several classes to choose from.
+    // In this program we'll use GWTRNG, which will behave better on the HTML target than other generators.
+    private GWTRNG rng;
     private SparseLayers display, languageDisplay;
     private DungeonGenerator dungeonGen;
     // decoDungeon stores the dungeon map with features like grass and water, if present, as chars like '"' and '~'.
@@ -182,8 +184,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
 
     @Override
     public void create () {
-        // gotta have a random number generator. We can seed an RNG with any long we want, or even a String.
-        rng = new RNG("Welcome to SquidLib!");
+        // gotta have a random number generator. We can seed a GWTRNG with any long we want, or even a String.
+        rng = new GWTRNG("Welcome to SquidLib!");
 
         //Some classes in SquidLib need access to a batch to render certain things, so it's a good idea to have one.
         batch = new SpriteBatch();
@@ -225,11 +227,11 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //SparseLayers has fillBackground() and fillArea() methods for coloring all or part of the backgrounds.
         languageDisplay.defaultPackedBackground = FLOAT_LIGHTING;
 
-        //This uses the seeded RNG we made earlier to build a procedural dungeon using a method that takes rectangular
-        //sections of pre-drawn dungeon and drops them into place in a tiling pattern. It makes good winding dungeons
-        //with rooms by default, but in the later call to dungeonGen.generate(), you can use a TilesetType such as
-        //TilesetType.ROUND_ROOMS_DIAGONAL_CORRIDORS or TilesetType.CAVES_LIMIT_CONNECTIVITY to change the sections that
-        //this will use, or just pass in a full 2D char array produced from some other generator, such as
+        //This uses the seeded GWTRNG we made earlier to build a procedural dungeon using a method that takes
+        //rectangular sections of pre-drawn dungeon and drops them into place in a tiling pattern. It makes good winding
+        //dungeons with rooms by default, but in the later call to dungeonGen.generate(), you can use a TilesetType such
+        //as TilesetType.ROUND_ROOMS_DIAGONAL_CORRIDORS or TilesetType.CAVES_LIMIT_CONNECTIVITY to change the sections
+        //that this will use, or just pass in a full 2D char array produced from some other generator, such as
         //SerpentMapGenerator, OrganicMapGenerator, or DenseRoomMapGenerator.
         dungeonGen = new DungeonGenerator(bigWidth, bigHeight, rng);
         //uncomment this next line to randomly add water to the dungeon in pools.
@@ -308,9 +310,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         floors = new GreasedRegion(bareDungeon, '.');
         //player is, here, just a Coord that stores his position. In a real game, you would probably have a class for
         //creatures, and possibly a subclass for the player. The singleRandom() method on GreasedRegion finds one Coord
-        //in that region that is "on," or -1,-1 if there are no such cells. It takes an RNG object as a parameter, and
-        //if you gave a seed to the RNG constructor, then the cell this chooses will be reliable for testing. If you
-        //don't seed the RNG, any valid cell should be possible.
+        //in that region that is "on," or -1,-1 if there are no such cells. It takes an IRNG object as a parameter, and
+        //if you gave a seed to the GWTRNG constructor, then the cell this chooses will be reliable for testing. If you
+        //don't seed the GWTRNG, any valid cell should be possible.
         player = floors.singleRandom(rng);
 
         //These need to have their positions set before adding any entities if there is an offset involved.
@@ -386,7 +388,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // and inserting the lines into a List of Strings, as we do here with the List lang and the text artOfWar.
         StringKit.wrap(lang, artOfWar, gridWidth - 2);
         // FakeLanguageGen.registered is an array of the hand-made languages in FakeLanguageGen, not any random ones and
-        // not most mixes of multiple languages. We get a random language from it with our RNG, and use that to build
+        // not most mixes of multiple languages. We get a random language from it with our GWTRNG, and use that to build
         // our current NaturalLanguageCipher. This NaturalLanguageCipher will act as an English-to-X dictionary for
         // whatever X is our randomly chosen language, and will try to follow the loose rules English follows when
         // it translates a word into an imaginary word in the fake language.

@@ -35,18 +35,40 @@ handle the graphics yourself).
     [described by the LibGDX wiki here](https://github.com/libgdx/libgdx/wiki/Setting-up-your-Development-Environment-%28Eclipse%2C-Intellij-IDEA%2C-NetBeans%29)
     are taken care of.
   - Run the JAR. Plug in whatever options you see fit:
-    - Desktop and/or LWJGL3 should usually be checked, so you can test on the same computer
-      you develop on.
-      - LWJGL3 is almost the same as Desktop, but because it has better support for new hardware
-        (such as high-DPI displays), it should probably be preferred.
-    - iOS should probably not be checked if you aren't running MacOS and don't intend to later
-      build an iOS app on a Mac.
-    - Android should only be checked if you've set up your computer for Android development,
-      and may cause some hassles even in other projects if you use Android Studio or IntelliJ
-      IDEA. This has been true for more than a year, with Google and JetBrains acting out the
-      Three Stooges using their users as a third stooge. To help with this, you should absolutely
-      make sure that IDEA has "configure on demand" disabled; under settings you can search for
-      "demand" to find it. Android Studio should always have it disabled now by default.
+    - For the Platforms tab, you can technically use the "Toggle Client Platforms" button to enable LWJGL3 (which works
+      on all desktop/laptop platforms), Android, iOS (which will only build on a MacOS machine), and HTML. This
+      isn't always a good idea because downloading iOS and HTML dependencies can take some time, so just check the
+      platforms you want to target. You can re-run the setup, make a new project with the same settings (in a different
+      folder), and copy in the existing code if you want to quickly add a platform or platforms.
+      - Desktop and/or LWJGL3 should usually be checked, so you can test on the same computer
+        you develop on.
+        - LWJGL3 is almost the same as Desktop, but because it has better support for new hardware
+          (such as high-DPI displays), it should probably be preferred. It also allows multiple windows and drag+drop.
+      - iOS should probably not be checked if you aren't running MacOS and don't intend to later
+        build an iOS app on a Mac.
+      - Android should only be checked if you've set up your computer for Android development,
+        and may cause some hassles even in other projects if you use Android Studio or IntelliJ
+        IDEA. This has been true for more than a year, with Google and JetBrains acting out the
+        Three Stooges using their users as a third stooge. To help with this, you should absolutely
+        make sure that IDEA has "configure on demand" disabled; under settings you can search for
+        "demand" to find it. Android Studio should always have it disabled now by default.
+      - HTML is a more-involved target, with some perfectly-normal code on all other platforms acting completely
+        different on HTML due to the tool used, Google Web Toolkit (GWT). It's almost always possible to work around
+        these differences and make things like random seeds act the same on all platforms, but it takes work. Mostly,
+        you need to be careful with the `long` and `int` number types.
+        - `long` is emulated by GWT, producing identical results for math with that type on HTML and desktop (it's much
+          slower, though), but a `long` field can't be seen by reflection, making libGDX's `Json` class and
+          squidlib-extra's Json-related classes unable to automatically save a long (it can be done manually).
+        - `int` has its own issues, since GWT will internally represent an `int` with a JavaScript `Number`, and that's
+          effectively a `double`. Math with `int` is as fast as it gets on HTML, but instead of a result overflowing
+          numerically, which all other platforms do in a standardized way (on desktop, Android, and iOS, you can rely on
+          `Integer.MAX_VALUE + 1 == Integer.MIN_VALUE` being `true`), the value will go up to a number that can't be
+          written in Java code as one value, will print as being larger than `Integer.MAX_VALUE` or smaller than
+          `Integer.MIN_VALUE`, and, if it gets far enough away from 0, will lose precision, eventually being unable to
+          represent large spans of valid integers. You can force a Number that has gone out-of-range back into a 32-bit
+          value between `Integer.MIN_VALUE` and `Integer.MAX_VALUE` by using any bitwise math on it. The simplest thing
+          to recommend is when a value `int over;` has potentially overflowed, to assign it `over = over | 0`, which
+          works like overflow on desktop as long as `over` hasn't already lost precision from going too far from 0. 
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -103,6 +125,19 @@ Now you'll have a project all set up with a sample.
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
     case they don't immediately work.
+  - All builds currently use Gradle 4.6 with the currently-deprecated `compile` configuration in use,
+    so a harmless warning will be issued about using `api` and `implementation`. Those are not actual
+    full replacements, so the warning is incorrect, and if you stay using Gradle 4.6, the warning should
+    stay merely a warning in the future. If not, there will be some horrible hackery needed to get `api`
+    and `implementation` working with `dist` tasks, and it would be in some future SquidSetup release.
+  - You may need to refresh the Gradle project after the initial import if some dependencies timed-out;
+    JitPack takes a minute or two to build SquidLib, and it usually doesn't take long before the SquidLib
+    dependencies can be downloaded in full. In IntelliJ IDEA, the `Refresh all projects` button is a pair
+    of circling arrows in the Gradle tool window, which can be opened with `View -> Tool Windows -> Gradle`.
+  - Out of an abundance of caution, [the dependency impersonation issue reported here by Márton
+    Braun](https://blog.autsoft.hu/a-confusing-dependency/) is handled the way he handled it, by putting
+    `jcenter()` last in the repositories lists. I don't know if any other tools have done the same, but it's
+    an easy fix and I encourage them to do so.
     
 Good luck, and I hope you make something great!
 
