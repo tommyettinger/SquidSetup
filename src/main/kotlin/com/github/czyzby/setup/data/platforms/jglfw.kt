@@ -48,8 +48,9 @@ dependencies {
 ${joinDependencies(dependencies)}}
 
 jar {
-  archiveName "${'$'}{appName}-${'$'}{version}.jar"
-  from { configurations.compile.collect { zipTree(it) } }
+  archiveFileName "${'$'}{appName}-${'$'}{version}.jar"
+  from files(sourceSets.main.output.classesDirs)
+  from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
   manifest {
     attributes 'Main-Class': project.mainClassName
   }

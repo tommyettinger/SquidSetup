@@ -9,8 +9,8 @@ import com.github.czyzby.setup.data.project.Project
  * @author MJ
  */
 class Java : Language {
-    override val id = "java"
-    override val version = "1.6"
+    override val id = "java-library"
+    override val version = "1.7"
 
     override fun initiate(project: Project) {
         project.rootGradle.plugins.add(id)

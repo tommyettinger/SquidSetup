@@ -23,7 +23,7 @@ jar {
     attributes 'JCabi-Build': "4bb75e3"
     attributes 'JCabi-Date': "2015-04-24T18:33:15"
   }
-  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+  from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 repositories {
@@ -34,17 +34,16 @@ repositories {
 }
 
 dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-  compile "org.apache.commons:commons-exec:$commonsExecVersion"
-  compile 'org.slf4j:slf4j-nop:1.7.25'
-  compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-  compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-  compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-
-  compile "com.github.czyzby:gdx-autumn-mvc:$autumnVersion"
-  compile "com.github.czyzby:gdx-autumn-fcs:$autumnVersion"
-  compile "com.github.czyzby:gdx-lml-vis:$autumnVersion"
-  compile "com.jcabi:jcabi-github:0.23"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  implementation "org.apache.commons:commons-exec:$commonsExecVersion"
+  implementation 'org.slf4j:slf4j-nop:1.7.25'
+  implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  implementation "com.github.czyzby:gdx-autumn-mvc:$autumnVersion"
+  implementation "com.github.czyzby:gdx-autumn-fcs:$autumnVersion"
+  implementation "com.github.czyzby:gdx-lml-vis:$autumnVersion"
+  implementation "com.jcabi:jcabi-github:0.23"
 }
 
 task pack {

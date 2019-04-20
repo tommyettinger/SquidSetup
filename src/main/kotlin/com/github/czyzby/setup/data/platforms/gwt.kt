@@ -74,6 +74,10 @@ ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\
     <entry-point class="${project.basic.rootPackage}.gwt.GwtLauncher" />
     <set-configuration-property name="gdx.assetpath" value="../assets" />
     <set-configuration-property name="xsiframe.failIfScriptTag" value="FALSE"/>
+    <!-- These two lines reduce the work GWT has to do during compilation and also shrink output size. -->
+    <set-property name="user.agent" value="gecko1_8, safari"/>
+	<collapse-property name="user.agent" values="*" />
+    <!-- Remove the "user.agent" lines above if you encounter issues with Safari or other Gecko browsers. -->
 </module>"""))
 
         // Adding SuperDev definition:

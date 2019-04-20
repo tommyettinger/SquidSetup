@@ -41,7 +41,6 @@ configure(subprojects${if (project.hasPlatform(Android.ID)) {
 ${plugins.joinToString(separator = "\n") { "  apply plugin: '$it'" }}
   sourceCompatibility = ${project.advanced.javaVersion}
   compileJava {
-    options.fork = true
     options.incremental = true
   }
 }

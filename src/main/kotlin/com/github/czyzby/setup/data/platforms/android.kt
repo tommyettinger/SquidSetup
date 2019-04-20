@@ -207,7 +207,7 @@ eclipse {
   }
 
   classpath {
-    plusConfigurations += [ project.configurations.compile ]
+    plusConfigurations += [ project.configurations.compileClasspath ]
     containers 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK', 'com.android.ide.eclipse.adt.LIBRARIES'
   }
 
@@ -226,7 +226,7 @@ eclipse {
 idea {
   module {
     sourceDirs += file("src/main/java")
-    scopes = [ COMPILE: [plus:[project.configurations.compile]]]
+    scopes = [ COMPILE: [plus:[project.configurations.compileClasspath]]]
     iml {
       withXml {
         def node = it.asNode()

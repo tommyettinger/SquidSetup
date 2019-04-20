@@ -25,12 +25,14 @@ handle the graphics yourself).
 ## Usage
 
   - Get the latest `SquidSetup.jar` from the [Releases tab](https://github.com/tommyettinger/SquidSetup/releases) of this project.
-    - You probably want the latest possible code using the [3.0.0-SNAPSHOT Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-SNAPSHOT),
+    - You probably want the latest possible code using the [3.0.0-JITPACK Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-JITPACK),
       but you may want a more-stable beta version. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
       will be obtained from Maven Central. The latest commit is determined by the library `jcabi-github`, and involves an API call to GitHub when using
       the snapshot release (not any beta or stable releases); the API call may be a little slow or might not complete if GitHub is having issues. However,
       because the code at that commit is the same at any point in the future, the snapshot commits won't "suddenly stop working" like a dependency
       on a nightly build might; you update when you want to, and if something breaks, you can always go back to an older commit that you know works.
+    - There is also a [3.0.0-SNAPSHOT Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-SNAPSHOT); it uses an older Gradle version and
+      is available in case something is failing in the project layout produced by 3.0.0-JITPACK.
   - Regardless of what platforms you intend to target, make sure the steps
     [described by the LibGDX wiki here](https://github.com/libgdx/libgdx/wiki/Setting-up-your-Development-Environment-%28Eclipse%2C-Intellij-IDEA%2C-NetBeans%29)
     are taken care of.
@@ -44,31 +46,19 @@ handle the graphics yourself).
         you develop on.
         - LWJGL3 is almost the same as Desktop, but because it has better support for new hardware
           (such as high-DPI displays), it should probably be preferred. It also allows multiple windows and drag+drop.
-      - iOS should probably not be checked if you aren't running MacOS and don't intend to later
-        build an iOS app on a Mac.
+      - iOS should probably not be checked if you aren't running MacOS and don't intend to later build an iOS
+        app on a Mac. It needs some large dependencies to be downloaded when you first import the project.
       - Android should only be checked if you've set up your computer for Android development,
         and may cause some hassles even in other projects if you use Android Studio or IntelliJ
-        IDEA. This has been true for more than a year, with Google and JetBrains acting out the
-        Three Stooges using their users as a third stooge. To help with this, you should absolutely
-        make sure that IDEA has "configure on demand" disabled; under settings you can search for
+        IDEA. Personally, I avoid creating Android modules as part of a larger project unless they only target
+        Android, since if there's only a core and an android module, nothing will interfere. You should
+        absolutely make sure that IDEA has "configure on demand" disabled; under settings you can search for
         "demand" to find it. Android Studio should always have it disabled now by default.
       - HTML is a more-involved target, with some perfectly-normal code on all other platforms acting completely
         different on HTML due to the tool used, Google Web Toolkit (GWT). It's almost always possible to work around
         these differences and make things like random seeds act the same on all platforms, but it takes work. Mostly,
-        you need to be careful with the `long` and `int` number types.
-        - `long` is emulated by GWT, producing identical results for math with that type on HTML and desktop (it's much
-          slower, though), but a `long` field can't be seen by reflection, making libGDX's `Json` class and
-          squidlib-extra's Json-related classes unable to automatically save a long (it can be done manually).
-        - `int` has its own issues, since GWT will internally represent an `int` with a JavaScript `Number`, and that's
-          effectively a `double`. Math with `int` is as fast as it gets on HTML, but instead of a result overflowing
-          numerically, which all other platforms do in a standardized way (on desktop, Android, and iOS, you can rely on
-          `Integer.MAX_VALUE + 1 == Integer.MIN_VALUE` being `true`), the value will go up to a number that can't be
-          written in Java code as one value, will print as being larger than `Integer.MAX_VALUE` or smaller than
-          `Integer.MIN_VALUE`, and, if it gets far enough away from 0, will lose precision, eventually being unable to
-          represent large spans of valid integers. You can force a Number that has gone out-of-range back into a 32-bit
-          value between `Integer.MIN_VALUE` and `Integer.MAX_VALUE` by using any bitwise math on it. The simplest thing
-          to recommend is when a value `int over;` has potentially overflowed, to assign it `over = over | 0`, which
-          works like overflow on desktop as long as `over` hasn't already lost precision from going too far from 0. 
+        you need to be careful with the `long` and `int` number types, and relates to `int` not overflowing as it
+        would on desktop, and `long` not being visible to reflection. See [this small guide to GWT](GWT.md) for more.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -101,21 +91,15 @@ Now you'll have a project all set up with a sample.
     method, you may encounter strange issues, but this shouldn't happen with Gradle tasks.
     This also shouldn't happen if you avoid creating an Android module in the first place
     (if you didn't check Android in the setup, this problem shouldn't apply).
-  - If you had the Desktop and SquidLib options checked in the setup, you can try to run the
-    Desktop module right away, with a simple pathfinding/FOV/text-gen demo that responds to
+  - If you had the LWJGL3 (or Desktop) and SquidLib options checked in the setup, you can try to run the
+    LWJGL3 or Desktop module right away, with a simple pathfinding/FOV/text-gen demo that responds to
     mouse and keyboard input in a random dungeon (the random number generator is seeded the
     same every time by default, but you can change the RNG constructor as a way to experiment).
   - If you had the Android option checked in the setup and are using the SquidLib Basic template,
     you can try to run the Android module on an emulator or a connected Android device.
   - If you had the GWT option checked in the setup and are using the SquidLib Basic template,
     you can go through the lengthy, but simple, build for GWT, probably using the `superDev`
-    task for the `gwt` module, or also possibly the `dist` task in that module. Using superDev
-    defaults to printing a message about starting the code server at a specific URL on a specific
-    port. This isn't enough info, because the code server doesn't really link to your running
-    game. That would be, by default, at http://127.0.0.1:9090/index.html , and you may need to
-    click the circular arrow button in the upper left to reload changes (which you can do after
-    just saving your files in your editor, it doesn't need you to stop and re-run a task if you
-    recompile using the button in the webpage).
+    task for the `gwt` module, or also possibly the `dist` task in that module. 
   - If you had the iOS and SquidLib options checked in the setup, you're running Mac OS X,
     you have jumped through Apple's now-infamous process described at the LibGDX wiki at the
     earlier link, you've made the blood sacrifice to your iAltar, and the Black Turtleneck
@@ -125,11 +109,9 @@ Now you'll have a project all set up with a sample.
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
     case they don't immediately work.
-  - All builds currently use Gradle 4.6 with the currently-deprecated `compile` configuration in use,
-    so a harmless warning will be issued about using `api` and `implementation`. Those are not actual
-    full replacements, so the warning is incorrect, and if you stay using Gradle 4.6, the warning should
-    stay merely a warning in the future. If not, there will be some horrible hackery needed to get `api`
-    and `implementation` working with `dist` tasks, and it would be in some future SquidSetup release.
+  - All builds currently use Gradle 5.4 with the "api/implementation/compile fiasco" resolved. Adding dependencies
+    will use the `api` keyword instead of the `compile` keyword it used in earlier versions. All modules use the
+    `java-library` plugin, which enables the `api` keyword for dependencies.
   - You may need to refresh the Gradle project after the initial import if some dependencies timed-out;
     JitPack takes a minute or two to build SquidLib, and it usually doesn't take long before the SquidLib
     dependencies can be downloaded in full. In IntelliJ IDEA, the `Refresh all projects` button is a pair

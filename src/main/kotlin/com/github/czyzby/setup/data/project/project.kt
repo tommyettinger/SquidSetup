@@ -177,6 +177,9 @@ Zodiac-Square-24x24.fnt
 Zodiac-Square-24x24.png
 awesome-solid-msdf.fnt
 awesome-solid-msdf.png
+bloccus-license.txt
+bloccus-msdf.fnt
+bloccus-msdf.png
 icons-license.txt
 icons.atlas
 icons.png

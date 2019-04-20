@@ -214,12 +214,6 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         display = new SparseLayers(bigWidth, bigHeight + bonusHeight, cellWidth, cellHeight,
                 DefaultResources.getCrispSlabFont());
 
-        // A bit of a hack to increase the text height slightly without changing the size of the cells they're in.
-        // This causes a tiny bit of overlap between cells, which gets rid of an annoying gap between solid lines.
-        // If you use '#' for walls instead of box drawing chars, you don't need this.
-        // If you don't use DefaultResources.getCrispSlabFont(), you may need to adjust the multipliers here.
-        display.font.tweakHeight(cellHeight * 1.1f).initBySize();
-
         languageDisplay = new SparseLayers(gridWidth, bonusHeight - 1, cellWidth, cellHeight, display.font);
         // SparseLayers doesn't currently use the default background fields, but this isn't really a problem; we can
         // set the background colors directly as floats with the SparseLayers.backgrounds field, and it can be handy
