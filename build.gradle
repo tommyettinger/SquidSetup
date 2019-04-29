@@ -1,4 +1,5 @@
 apply plugin: 'kotlin'
+apply plugin: 'java-library'
 apply plugin: 'application'
 
 buildscript {
@@ -19,10 +20,11 @@ mainClassName = 'com.github.czyzby.setup.MainKt'
 jar {
   manifest {
     attributes 'Main-Class': mainClassName
-    attributes 'JCabi-Version': "0.23"
-    attributes 'JCabi-Build': "4bb75e3"
-    attributes 'JCabi-Date': "2015-04-24T18:33:15"
+//    attributes 'JCabi-Version': "0.23"
+//    attributes 'JCabi-Build': "4bb75e3"
+//    attributes 'JCabi-Date': "2015-04-24T18:33:15"
   }
+  from files(sourceSets.main.output.classesDirs)
   from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
@@ -34,16 +36,21 @@ repositories {
 }
 
 dependencies {
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-  implementation "org.apache.commons:commons-exec:$commonsExecVersion"
-  implementation 'org.slf4j:slf4j-nop:1.7.25'
-  implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-  implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-  implementation "com.github.czyzby:gdx-autumn-mvc:$autumnVersion"
-  implementation "com.github.czyzby:gdx-autumn-fcs:$autumnVersion"
-  implementation "com.github.czyzby:gdx-lml-vis:$autumnVersion"
-  implementation "com.jcabi:jcabi-github:0.23"
+  api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  api "org.apache.commons:commons-exec:$commonsExecVersion"
+  api 'org.slf4j:slf4j-nop:1.7.25'
+  api "com.badlogicgames.gdx:gdx:$gdxVersion"
+  api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  api "com.github.czyzby:gdx-autumn-mvc:$autumnVersion"
+  api "com.github.czyzby:gdx-autumn-fcs:$autumnVersion"
+  api "com.github.czyzby:gdx-lml-vis:$autumnVersion"
+  // all dependencies below are for jcabi-github to be usable at runtime... ugh.
+  api "org.glassfish:javax.json:1.0.4"
+  api "org.glassfish.jersey.core:jersey-common:2.17"
+  api "javax.ws.rs:javax.ws.rs-api:2.1.1"
+  api "org.apache.httpcomponents:httpclient:4.5.3"
+  api "com.jcabi:jcabi-github:1.0"
 }
 
 task pack {
