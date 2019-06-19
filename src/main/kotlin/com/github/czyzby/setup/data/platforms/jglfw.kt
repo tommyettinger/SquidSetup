@@ -16,7 +16,7 @@ class JGLFW : Platform {
     }
 
     override val id = ID
-    override val isGraphical = false // JGLFW is an alternative to the default desktop project.
+    override val isStandard = false // JGLFW is an alternative to the default desktop project.
     override fun createGradleFile(project: Project): GradleFile = JglfwGradleFile(project)
     override fun initiate(project: Project) {
         // JGLFW platform requires no additional dependencies.
@@ -48,16 +48,16 @@ dependencies {
 ${joinDependencies(dependencies)}}
 
 jar {
-  archiveFileName = "${'$'}{appName}-${'$'}{version}.jar"
-  from files(sourceSets.main.output.classesDirs)
-  from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
-  manifest {
-    attributes 'Main-Class': project.mainClassName
-  }
+	archiveFileName = "${'$'}{appName}-${'$'}{version}.jar"
+	from files(sourceSets.main.output.classesDirs)
+	from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
+	manifest {
+		attributes 'Main-Class': project.mainClassName
+	}
 }
 
 run {
-  ignoreExitValue = true
+	ignoreExitValue = true
 }
 """
 

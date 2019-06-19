@@ -32,7 +32,6 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import squidpony.ArrayTools;
@@ -44,6 +43,7 @@ import squidpony.squidgrid.Direction;
 import squidpony.squidgrid.FOV;
 import squidpony.squidgrid.Radius;
 import squidpony.squidgrid.gui.gdx.DefaultResources;
+import squidpony.squidgrid.gui.gdx.FilterBatch;
 import squidpony.squidgrid.gui.gdx.MapUtility;
 import squidpony.squidgrid.gui.gdx.PanelEffect;
 import squidpony.squidgrid.gui.gdx.SColor;
@@ -75,11 +75,18 @@ import java.util.List;
  * use out of the assets directory when you produce a release JAR, APK, or GWT build.
  */
 public class ${project.basic.mainClass} extends ApplicationAdapter {
-    SpriteBatch batch;
+    // FilterBatch is exactly like libGDX' SpriteBatch, except it is a fair bit faster when the Batch color is set often
+    // (which is always true for SquidLib's text-based display), and it allows a FloatFilter to be optionally set that
+    // can adjust colors in various ways. The FloatFilter isn't used here, we just want faster rendering, but you ar
+    //encouraged to play with FloatFilter use when you're polishing a game. The FloatFilters class defines some already.
+    private FilterBatch batch;
     
     // SquidLib has many methods that expect an IRNG instance, and there's several classes to choose from.
     // In this program we'll use GWTRNG, which will behave better on the HTML target than other generators.
     private GWTRNG rng;
+    // We have two SparseLayers objects here; display shows the dungeon map, and languageDisplay shows some basic UI
+    // text that doesn't disappear just because the display moved. A SparseLayers can show a grid of chars layered over
+    // other chars, but because it is sparse, any empty cells on that grid aren't rendered.
     private SparseLayers display, languageDisplay;
     private DungeonGenerator dungeonGen;
     // decoDungeon stores the dungeon map with features like grass and water, if present, as chars like '"' and '~'.
@@ -87,7 +94,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     // Both of the above maps use '#' for walls, and the next two use box-drawing characters instead.
     // lineDungeon stores the whole map the same as decoDungeon except for walls, which are box-drawing characters here.
     // prunedDungeon takes lineDungeon and adjusts it so unseen segments of wall (represented by box-drawing characters)
-    //   are removed from rendering; unlike the others, it is frequently changed.
+    // are removed from rendering; unlike the others, it is frequently changed.
     private char[][] decoDungeon, bareDungeon, lineDungeon, prunedDungeon;
     private float[][] colors, bgColors;
 
@@ -184,11 +191,18 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
 
     @Override
     public void create () {
-        // gotta have a random number generator. We can seed a GWTRNG with any long we want, or even a String.
+        // Gotta have a random number generator. We can seed a GWTRNG with any long we want, or even a String.
+        // You can give no seed to the constructor to use a random one, which will make dungeons different every time.
+        // It's better during development to be able to reproduce the conditions that produced some situation, so a seed
+        // is given by default. If you give a long seed to a GWTRNG (but not necessarily an RNG), then the random
+        // numbers it produces should be the same regardless of SquidLib version or the platform you run on. If you give
+        // a String seed, SquidLib version changes may rarely change what seed that String will produce, which can
+        // change the generated random number sequence. If reproducible behavior for random numbers doesn't matter to
+        // you, just give no arguments to `new GWTRNG()` .
         rng = new GWTRNG("Welcome to SquidLib!");
 
         //Some classes in SquidLib need access to a batch to render certain things, so it's a good idea to have one.
-        batch = new SpriteBatch();
+        batch = new FilterBatch();
         StretchViewport mainViewport = new StretchViewport(gridWidth * cellWidth, gridHeight * cellHeight),
                 languageViewport = new StretchViewport(gridWidth * cellWidth, bonusHeight * cellHeight);
         mainViewport.setScreenBounds(0, 0, gridWidth * cellWidth, gridHeight * cellHeight);
@@ -205,12 +219,13 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // but treats it differently, and can be used to draw bold and/or italic text at the expense of the font being
         // slightly less detailed visually and some rare glyphs being omitted. Bold and italic text are usually handled
         // with markup in text that is passed to SquidLib's GDXMarkup class; see GDXMarkup's docs for more info.
-        // There are also several other distance field fonts, including two more font families like
+        // There are also several other distance field fonts, including more font families like
         // DefaultResources.getCrispSlabFamily() that allow bold/italic text. In addition to Crisp fonts, there are also
         // Stretchable fonts which use a SDF distance field effect, which is slightly slower to render and isn't as
         // detailed at high sizes, but stays sharp when resizing to very small sizes. Although some BitmapFont assets
         // are available without a distance field effect, they are discouraged for most usage because they can't cleanly
         // resize without loading a different BitmapFont per size, and there's usually one size in DefaultResources.
+        // They do provide a better look when you want pixels to be sharp at one size, without any smoothing.
         display = new SparseLayers(bigWidth, bigHeight + bonusHeight, cellWidth, cellHeight,
                 DefaultResources.getCrispSlabFont());
 

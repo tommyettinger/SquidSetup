@@ -17,7 +17,7 @@ class Desktop : Platform {
     }
 
     override val id = ID
-    override val isGraphical = false // use lwjgl3 instead
+    override val isStandard = false // use lwjgl3 instead
     override fun createGradleFile(project: Project): GradleFile = DesktopGradleFile(project)
 
     override fun initiate(project: Project) {
@@ -56,16 +56,16 @@ dependencies {
 ${joinDependencies(dependencies)}}
 
 jar {
-  archiveFileName = "${'$'}{appName}-${'$'}{version}.jar"
-  from files(sourceSets.main.output.classesDirs)
-  from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
-  manifest {
-    attributes 'Main-Class': project.mainClassName
-  }
+	archiveFileName = "${'$'}{appName}-${'$'}{version}.jar"
+	from files(sourceSets.main.output.classesDirs)
+	from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
+	manifest {
+		attributes 'Main-Class': project.mainClassName
+	}
 }
 
 run {
-  ignoreExitValue = true
+	ignoreExitValue = true
 }
 """
 

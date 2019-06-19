@@ -15,7 +15,7 @@ class Server : Platform {
     }
 
     override val id = ID
-    override val isGraphical = false
+    override val isStandard = false
 
     override fun createGradleFile(project: Project): GradleFile = ServerGradleFile(project)
 
@@ -42,10 +42,10 @@ dependencies {
 ${joinDependencies(dependencies)}}
 
 jar {
-  from files(sourceSets.main.output.classesDirs)
-  from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
-  manifest {
-    attributes 'Main-Class': project.mainClassName
-  }
+	from files(sourceSets.main.output.classesDirs)
+	from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
+	manifest {
+		attributes 'Main-Class': project.mainClassName
+	}
 }"""
 }
