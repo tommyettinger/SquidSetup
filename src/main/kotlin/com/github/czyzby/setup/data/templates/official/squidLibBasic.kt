@@ -32,18 +32,22 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import squidpony.ArrayTools;
 import squidpony.FakeLanguageGen;
 import squidpony.NaturalLanguageCipher;
-import squidpony.StringKit;
+import squidpony.panel.IColoredString;
 import squidpony.squidai.DijkstraMap;
 import squidpony.squidgrid.Direction;
 import squidpony.squidgrid.FOV;
+import squidpony.squidgrid.Measurement;
 import squidpony.squidgrid.Radius;
 import squidpony.squidgrid.gui.gdx.DefaultResources;
 import squidpony.squidgrid.gui.gdx.FilterBatch;
+import squidpony.squidgrid.gui.gdx.FloatFilters;
+import squidpony.squidgrid.gui.gdx.GDXMarkup;
 import squidpony.squidgrid.gui.gdx.MapUtility;
 import squidpony.squidgrid.gui.gdx.PanelEffect;
 import squidpony.squidgrid.gui.gdx.SColor;
@@ -57,9 +61,9 @@ import squidpony.squidgrid.mapping.LineKit;
 import squidpony.squidmath.Coord;
 import squidpony.squidmath.GWTRNG;
 import squidpony.squidmath.GreasedRegion;
+import squidpony.squidmath.NumberTools;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is a small, not-overly-simple demo that presents some important features of SquidLib and shows a faster,
@@ -75,26 +79,21 @@ import java.util.List;
  * use out of the assets directory when you produce a release JAR, APK, or GWT build.
  */
 public class ${project.basic.mainClass} extends ApplicationAdapter {
-    // FilterBatch is exactly like libGDX' SpriteBatch, except it is a fair bit faster when the Batch color is set often
-    // (which is always true for SquidLib's text-based display), and it allows a FloatFilter to be optionally set that
-    // can adjust colors in various ways. The FloatFilter isn't used here, we just want faster rendering, but you ar
-    //encouraged to play with FloatFilter use when you're polishing a game. The FloatFilters class defines some already.
+    // FilterBatch is almost the same as SpriteBatch, but is a bit faster with SquidLib and allows color filtering
     private FilterBatch batch;
-    
-    // SquidLib has many methods that expect an IRNG instance, and there's several classes to choose from.
-    // In this program we'll use GWTRNG, which will behave better on the HTML target than other generators.
+    // a type of random number generator, see below
     private GWTRNG rng;
-    // We have two SparseLayers objects here; display shows the dungeon map, and languageDisplay shows some basic UI
-    // text that doesn't disappear just because the display moved. A SparseLayers can show a grid of chars layered over
-    // other chars, but because it is sparse, any empty cells on that grid aren't rendered.
+    // rendering classes that show only the chars and backgrounds that they've been told to render, unlike some earlier
+    // classes in SquidLib.
     private SparseLayers display, languageDisplay;
+    // generates a dungeon as a 2D char array; can also fill some simple features into the dungeon.
     private DungeonGenerator dungeonGen;
     // decoDungeon stores the dungeon map with features like grass and water, if present, as chars like '"' and '~'.
     // bareDungeon stores the dungeon map with just walls as '#' and anything not a wall as '.'.
     // Both of the above maps use '#' for walls, and the next two use box-drawing characters instead.
     // lineDungeon stores the whole map the same as decoDungeon except for walls, which are box-drawing characters here.
     // prunedDungeon takes lineDungeon and adjusts it so unseen segments of wall (represented by box-drawing characters)
-    // are removed from rendering; unlike the others, it is frequently changed.
+    //   are removed from rendering; unlike the others, it is frequently changed.
     private char[][] decoDungeon, bareDungeon, lineDungeon, prunedDungeon;
     private float[][] colors, bgColors;
 
@@ -131,17 +130,23 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     private Stage stage, languageStage;
     private DijkstraMap playerToCursor;
     private Coord cursor, player;
-    private List<Coord> toCursor;
-    private List<Coord> awaitedMoves;
+    private ArrayList<Coord> toCursor;
+    private ArrayList<Coord> awaitedMoves;
+
+    private Vector2 screenPosition;
+
+
     // a passage from the ancient text The Art of War, which remains relevant in any era but is mostly used as a basis
     // for translation to imaginary languages using the NaturalLanguageCipher and FakeLanguageGen classes.
+    // markup has been added to color some words differently and italicize/bold/upper-case/lower-case others.
+    // see GDXMarkup's docs for more info.
     private final String artOfWar =
-            "Sun Tzu said: In the practical art of war, the best thing of all is to take the " +
-                    "enemy's country whole and intact; to shatter and destroy it is not so good. So, " +
+            "[@ 0.8 0.06329113 0.30980393][/]Sun Tzu[/] said: In the [!]practical[!] art of war, the best thing of all is " +
+                    "to take the enemy's country whole and intact; to shatter and destroy it is not so good. So, " +
                     "too, it is better to recapture an army entire than to destroy it, to capture " +
                     "a regiment, a detachment or a company entire than to destroy them. Hence to fight " +
-                    "and conquer in all your battles is not supreme excellence; supreme excellence " +
-                    "consists in breaking the enemy's resistance without fighting.";
+                    "and conquer in all your battles is not [!]supreme[,] excellence; [!]supreme[=] EXCELLENCE[,] " +
+                    "consists in breaking the enemy's resistance without fighting.[]";
     // A translation dictionary for going back and forth between English and an imaginary language that this generates
     // words for, using some of the rules that the English language tends to follow to determine if two words should
     // share a common base word (such as "read" and "reader" needing similar translations). This is given randomly
@@ -153,7 +158,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     // this is initialized with the word-wrapped contents of artOfWar, then has translations of that text to imaginary
     // languages appended after the plain-English version. The contents have the first item removed with each step, and
     // have new translations added whenever the line count is too low.
-    private ArrayList<String> lang;
+    private ArrayList<IColoredString<Color>> lang;
     private double[][] resistance;
     private double[][] visible;
     // GreasedRegion is a hard-to-explain class, but it's an incredibly useful one for map generation and many other
@@ -166,7 +171,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     // Here, we use a GreasedRegion to store all floors that the player can walk on, a small rim of cells just beyond
     // the player's vision that blocks pathfinding to areas we can't see a path to, and we also store all cells that we
     // have seen in the past in a GreasedRegion (in most roguelikes, there would be one of these per dungeon floor).
-    private GreasedRegion floors, blockage, seen;
+    private GreasedRegion floors, blockage, seen, currentlySeen;
     // a Glyph is a kind of scene2d Actor that only holds one char in a specific color, but is drawn using the behavior
     // of TextCellFactory (which most text in SquidLib is drawn with) instead of the different and not-very-compatible
     // rules of Label, which older SquidLib code used when it needed text in an Actor. Glyphs are also lighter-weight in
@@ -184,25 +189,32 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
     // of that SColor as a background and foreground when used with other colors, plus more info like the hue,
     // saturation, and value of the color. Here we just use the packed floats directly from the SColor docs, but we also
     // mention what color it is in a line comment, which is a good habit so you can see a preview if needed.
-    // The format used for the floats is a hex literal; these are explained at the bottom of this file, in case you
-    // aren't familiar with them (they're a rather obscure feature of Java 5 and newer).
     private static final float FLOAT_LIGHTING = -0x1.cff1fep126F, // same result as SColor.COSMIC_LATTE.toFloatBits()
             GRAY_FLOAT = -0x1.7e7e7ep125F; // same result as SColor.CW_GRAY_BLACK.toFloatBits()
-
+    // This filters colors in a way we adjust over time, producing a sort of hue shift effect.
+    // It can also be used to over- or under-saturate colors, change their brightness, or any combination of these. 
+    private FloatFilters.YCwCmFilter warmMildFilter;
     @Override
     public void create () {
-        // Gotta have a random number generator. We can seed a GWTRNG with any long we want, or even a String.
-        // You can give no seed to the constructor to use a random one, which will make dungeons different every time.
-        // It's better during development to be able to reproduce the conditions that produced some situation, so a seed
-        // is given by default. If you give a long seed to a GWTRNG (but not necessarily an RNG), then the random
-        // numbers it produces should be the same regardless of SquidLib version or the platform you run on. If you give
-        // a String seed, SquidLib version changes may rarely change what seed that String will produce, which can
-        // change the generated random number sequence. If reproducible behavior for random numbers doesn't matter to
-        // you, just give no arguments to `new GWTRNG()` .
-        rng = new GWTRNG("Welcome to SquidLib!");
+        // gotta have a random number generator. We can seed an RNG with any long we want, or even a String.
+        // if the seed is identical between two runs, any random factors will also be identical (until user input may
+        // cause the usage of an RNG to change). You can randomize the dungeon and several other initial settings by
+        // just removing the String seed, making the line "rng = new GWTRNG();" . Keeping the seed as a default allows
+        // changes to be more easily reproducible, and using a fixed seed is strongly recommended for tests. 
 
-        //Some classes in SquidLib need access to a batch to render certain things, so it's a good idea to have one.
-        batch = new FilterBatch();
+        // SquidLib has many methods that expect an IRNG instance, and there's several classes to choose from.
+        // In this program we'll use GWTRNG, which will behave better on the HTML target than other generators.
+        rng = new GWTRNG(artOfWar);
+        // YCwCmFilter multiplies the brightness (Y), warmth (Cw), and mildness (Cm) of a color 
+        warmMildFilter = new FloatFilters.YCwCmFilter(0.875f, 0.6f, 0.6f);
+
+        // FilterBatch is exactly like libGDX' SpriteBatch, except it is a fair bit faster when the Batch color is set
+        // often (which is always true for SquidLib's text-based display), and it allows a FloatFilter to be optionally
+        // set that can adjust colors in various ways. The FloatFilter here, a YCwCmFilter, can have its adjustments to
+        // brightness (Y, also called luma), warmth (blue/green vs. red/yellow) and mildness (blue/red vs. green/yellow)
+        // changed at runtime, and the putMap() method does this. This can be very powerful; you might increase the
+        // warmth of all colors (additively) if the player is on fire, for instance.
+        batch = new FilterBatch(warmMildFilter);
         StretchViewport mainViewport = new StretchViewport(gridWidth * cellWidth, gridHeight * cellHeight),
                 languageViewport = new StretchViewport(gridWidth * cellWidth, bonusHeight * cellHeight);
         mainViewport.setScreenBounds(0, 0, gridWidth * cellWidth, gridHeight * cellHeight);
@@ -211,36 +223,33 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //Here we make sure our Stage, which holds any text-based grids we make, uses our Batch.
         stage = new Stage(mainViewport, batch);
         languageStage = new Stage(languageViewport, batch);
-        // the font will try to load Iosevka Slab as an embedded bitmap font with a (MSDF) distance field effect.
-        // the distance field effect allows the font to be stretched without getting blurry or grainy too easily.
+        // the font will try to load Iosevka Slab as an embedded bitmap font with a MSDF effect (multi scale distance
+        // field, a way to allow a bitmap font to stretch while still keeping sharp corners and round curves).
+        // the MSDF effect is handled internally by a shader in SquidLib, and will switch to a different shader if a SDF
+        // effect is used (SDF is called "Stretchable" in DefaultResources, where MSDF is called "Crisp").
         // this font is covered under the SIL Open Font License (fully free), so there's no reason it can't be used.
-        // It is included in the assets folder if this project was made with SquidSetup, along with other fonts
-        // Another option to consider is DefaultResources.getCrispSlabFamily(), which uses the same font (Iosevka Slab)
-        // but treats it differently, and can be used to draw bold and/or italic text at the expense of the font being
-        // slightly less detailed visually and some rare glyphs being omitted. Bold and italic text are usually handled
-        // with markup in text that is passed to SquidLib's GDXMarkup class; see GDXMarkup's docs for more info.
-        // There are also several other distance field fonts, including more font families like
-        // DefaultResources.getCrispSlabFamily() that allow bold/italic text. In addition to Crisp fonts, there are also
-        // Stretchable fonts which use a SDF distance field effect, which is slightly slower to render and isn't as
-        // detailed at high sizes, but stays sharp when resizing to very small sizes. Although some BitmapFont assets
-        // are available without a distance field effect, they are discouraged for most usage because they can't cleanly
-        // resize without loading a different BitmapFont per size, and there's usually one size in DefaultResources.
-        // They do provide a better look when you want pixels to be sharp at one size, without any smoothing.
+        // it also includes 4 text faces (regular, bold, oblique, and bold oblique) so methods in GDXMarkup can make
+        // italic or bold text without switching fonts (they can color sections of text too).
         display = new SparseLayers(bigWidth, bigHeight + bonusHeight, cellWidth, cellHeight,
-                DefaultResources.getCrispSlabFont());
+                DefaultResources.getCrispSlabFamily());
+
+        // a bit of a hack to increase the text height slightly without changing the size of the cells they're in.
+        // this causes a tiny bit of overlap between cells, which gets rid of an annoying gap between vertical lines.
+        // if you use '#' for walls instead of box drawing chars, you don't need this.
+        //display.font.tweakWidth(cellWidth * 1.075f).tweakHeight(cellHeight * 1.1f).initBySize();
 
         languageDisplay = new SparseLayers(gridWidth, bonusHeight - 1, cellWidth, cellHeight, display.font);
-        // SparseLayers doesn't currently use the default background fields, but this isn't really a problem; we can
-        // set the background colors directly as floats with the SparseLayers.backgrounds field, and it can be handy
+        // SparseDisplay doesn't currently use the default background fields, but this isn't really a problem; we can
+        // set the background colors directly as floats with the SparseDisplay.backgrounds field, and it can be handy
         // to hold onto the current color we want to fill that with in the defaultPackedBackground field.
-        //SparseLayers has fillBackground() and fillArea() methods for coloring all or part of the backgrounds.
-        languageDisplay.defaultPackedBackground = FLOAT_LIGHTING;
+        // SparseLayers has fillBackground() and fillArea() methods for coloring all or part of the backgrounds.
+        languageDisplay.defaultPackedBackground = FLOAT_LIGHTING; // happens to be the same color used for lighting
 
-        //This uses the seeded GWTRNG we made earlier to build a procedural dungeon using a method that takes
-        //rectangular sections of pre-drawn dungeon and drops them into place in a tiling pattern. It makes good winding
-        //dungeons with rooms by default, but in the later call to dungeonGen.generate(), you can use a TilesetType such
-        //as TilesetType.ROUND_ROOMS_DIAGONAL_CORRIDORS or TilesetType.CAVES_LIMIT_CONNECTIVITY to change the sections
-        //that this will use, or just pass in a full 2D char array produced from some other generator, such as
+        //This uses the seeded RNG we made earlier to build a procedural dungeon using a method that takes rectangular
+        //sections of pre-drawn dungeon and drops them into place in a tiling pattern. It makes good winding dungeons
+        //with rooms by default, but in the later call to dungeonGen.generate(), you can use a TilesetType such as
+        //TilesetType.ROUND_ROOMS_DIAGONAL_CORRIDORS or TilesetType.CAVES_LIMIT_CONNECTIVITY to change the sections that
+        //this will use, or just pass in a full 2D char array produced from some other generator, such as
         //SerpentMapGenerator, OrganicMapGenerator, or DenseRoomMapGenerator.
         dungeonGen = new DungeonGenerator(bigWidth, bigHeight, rng);
         //uncomment this next line to randomly add water to the dungeon in pools.
@@ -319,35 +328,26 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         floors = new GreasedRegion(bareDungeon, '.');
         //player is, here, just a Coord that stores his position. In a real game, you would probably have a class for
         //creatures, and possibly a subclass for the player. The singleRandom() method on GreasedRegion finds one Coord
-        //in that region that is "on," or -1,-1 if there are no such cells. It takes an IRNG object as a parameter, and
-        //if you gave a seed to the GWTRNG constructor, then the cell this chooses will be reliable for testing. If you
-        //don't seed the GWTRNG, any valid cell should be possible.
+        // in that region that is "on," or -1,-1 if there are no such cells. It takes an RNG object as a parameter, and
+        // if you gave a seed to the RNG constructor, then the cell this chooses will be reliable for testing. If you
+        // don't seed the RNG, any valid cell should be possible.
         player = floors.singleRandom(rng);
 
         //These need to have their positions set before adding any entities if there is an offset involved.
         //There is no offset used here, but it's still a good practice here to set positions early on.
+//        display.setPosition(gridWidth * cellWidth * 0.5f - display.worldX(player.x),
+//                gridHeight * cellHeight * 0.5f - display.worldY(player.y));
         display.setPosition(0f, 0f);
         // Uses shadowcasting FOV and reuses the visible array without creating new arrays constantly.
-        FOV.reuseFOV(resistance, visible, player.x, player.y, 9.0, Radius.CIRCLE);
-        // 0.0 is the upper bound (inclusive), so any Coord in visible that is more well-lit than 0.0 will _not_ be in
-        // the blockage Collection, but anything 0.0 or less will be in it. This lets us use blockage to prevent access
+        FOV.reuseFOV(resistance, visible, player.x, player.y, 9.0, Radius.CIRCLE);//, (System.currentTimeMillis() & 0xFFFF) * 0x1p-4, 60.0);
+        
+        // 0.01 is the upper bound (inclusive), so any Coord in visible that is more well-lit than 0.01 will _not_ be in
+        // the blockage Collection, but anything 0.01 or less will be in it. This lets us use blockage to prevent access
         // to cells we can't see from the start of the move.
         blockage = new GreasedRegion(visible, 0.0);
-        // Here we mark the initially seen cells as anything that wasn't included in the unseen "blocked" region.
-        // We invert the copy's contents to prepare for a later step, which makes blockage contain only the cells that
-        // are above 0.0, then copy it to save this step as the seen cells. We will modify seen later independently of
-        // the blocked cells, so a copy is correct here. Most methods on GreasedRegion objects will modify the
-        // GreasedRegion they are called on, which can greatly help efficiency on long chains of operations.
         seen = blockage.not().copy();
-        // Here is one of those methods on a GreasedRegion; fringe8way takes a GreasedRegion (here, the set of cells
-        // that are visible to the player), and modifies it to contain only cells that were not in the last step, but
-        // were adjacent to a cell that was present in the last step. This can be visualized as taking the area just
-        // beyond the border of a region, using 8-way adjacency here because we specified fringe8way instead of fringe.
-        // We do this because it means pathfinding will only have to work with a small number of cells (the area just
-        // out of sight, and no further) instead of all invisible cells when figuring out if something is currently
-        // impossible to enter.
+        currentlySeen = seen.copy();
         blockage.fringe8way();
-        
         // prunedDungeon starts with the full lineDungeon, which includes features like water and grass but also stores
         // all walls as box-drawing characters. The issue with using lineDungeon as-is is that a character like '┬' may
         // be used because there are walls to the east, west, and south of it, even when the player is to the north of
@@ -359,25 +359,25 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // the half-line chars "╴╵╶╷". These chars aren't supported by all fonts, but they are by the one we use here.
         // The default is to use LineKit.light , which will replace '╴' and '╶' with '─' and '╷' and '╵' with '│'.
         LineKit.pruneLines(lineDungeon, seen, LineKit.lightAlt, prunedDungeon);
-        
+
         //This is used to allow clicks or taps to take the player to the desired area.
         toCursor = new ArrayList<>(200);
         //When a path is confirmed by clicking, we draw from this List to find which cell is next to move into.
         awaitedMoves = new ArrayList<>(200);
         //DijkstraMap is the pathfinding swiss-army knife we use here to find a path to the latest cursor position.
         //DijkstraMap.Measurement is an enum that determines the possibility or preference to enter diagonals. Here, the
-        //MANHATTAN value is used, which means 4-way movement only, no diagonals possible. Alternatives are CHEBYSHEV,
-        //which allows 8 directions of movement at the same cost for all directions, and EUCLIDEAN, which allows 8
-        //directions, but will prefer orthogonal moves unless diagonal ones are clearly closer "as the crow flies."
-        playerToCursor = new DijkstraMap(decoDungeon, DijkstraMap.Measurement.MANHATTAN);
+        // MANHATTAN value is used, which means 4-way movement only, no diagonals possible. Alternatives are CHEBYSHEV,
+        // which allows 8 directions of movement at the same cost for all directions, and EUCLIDEAN, which allows 8
+        // directions, but will prefer orthogonal moves unless diagonal ones are clearly closer "as the crow flies."
+        playerToCursor = new DijkstraMap(decoDungeon, Measurement.MANHATTAN);
         //These next two lines mark the player as something we want paths to go to or from, and get the distances to the
         // player from all walkable cells in the dungeon.
+        playerToCursor.setGoal(player);
         playerToCursor.setGoal(player);
         // DijkstraMap.partialScan only finds the distance to get to a cell if that distance is less than some limit,
         // which is 13 here. It also won't try to find distances through an impassable cell, which here is the blockage
         // GreasedRegion that contains the cells just past the edge of the player's FOV area.
         playerToCursor.partialScan(13, blockage);
-
 
         //The next three lines set the background color for anything we don't draw on, but also create 2D arrays of the
         //same size as decoDungeon that store the colors for the foregrounds and backgrounds of each cell as packed
@@ -387,23 +387,27 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         SColor.LIMITED_PALETTE[3] = SColor.DB_GRAPHITE;
         colors = MapUtility.generateDefaultColorsFloat(decoDungeon);
         bgColors = MapUtility.generateDefaultBGColorsFloat(decoDungeon);
-
-
+//        for (int x = 0; x < bigWidth; x++) {
+//            for (int y = 0; y < bigHeight; y++) {
+//                colors[x][y] = f(colors[x][y]);
+//                bgColors[x][y] = f(bgColors[x][y]);
+//            }
+//        }
         //places the player as an '@' at his position in orange.
-        pg = display.glyph('@', SColor.SAFETY_ORANGE.toFloatBits(), player.x, player.y);
+        pg = display.glyph('@', SColor.SAFETY_ORANGE, player.x, player.y);
 
+        // here we build up a List of IColoredString values formed by formatting the artOfWar text (this colors the
+        // whole thing dark gray and puts the name at the start in italic/oblique face) and wrapping it to fit within
+        // the width we want, filling up lang with the results.
         lang = new ArrayList<>(16);
-        // StringKit has various utilities for dealing with text, including wrapping text so it fits in a specific width
-        // and inserting the lines into a List of Strings, as we do here with the List lang and the text artOfWar.
-        StringKit.wrap(lang, artOfWar, gridWidth - 2);
-        // FakeLanguageGen.registered is an array of the hand-made languages in FakeLanguageGen, not any random ones and
-        // not most mixes of multiple languages. We get a random language from it with our GWTRNG, and use that to build
-        // our current NaturalLanguageCipher. This NaturalLanguageCipher will act as an English-to-X dictionary for
-        // whatever X is our randomly chosen language, and will try to follow the loose rules English follows when
-        // it translates a word into an imaginary word in the fake language.
+        GDXMarkup.instance.colorString(artOfWar).wrap(gridWidth - 2, lang);
+        // here we choose a random language from all the hand-made FakeLanguageGen text generators, and make a
+        // NaturalLanguageCipher out of it. This Cipher takes words it finds in artOfWar and translates them to the
+        // fictional language it selected.
         translator = new NaturalLanguageCipher(rng.getRandomElement(FakeLanguageGen.registered));
-        StringKit.wrap(lang, translator.cipher(artOfWar), gridWidth - 2);
-        // the 0L here can be used to adjust the languages generated; it acts a little like a seed for an RNG.
+        // this is just like the call above except we work on the translated artOfWar text instead of the original.
+        GDXMarkup.instance.colorString(translator.cipher(artOfWar)).wrap(gridWidth - 2, lang);
+        // now we change the language again and tell the NaturalLanguageCipher, translator, what we chose.
         translator.initialize(rng.getRandomElement(FakeLanguageGen.registered), 0L);
 
         // this is a big one.
@@ -423,9 +427,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                 switch (key)
                 {
                     case SquidInput.UP_ARROW:
-                    case 'k':
+//                    case 'k':
+//                    case 'K':
                     case 'w':
-                    case 'K':
                     case 'W':
                     {
                         toCursor.clear();
@@ -434,9 +438,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                         break;
                     }
                     case SquidInput.DOWN_ARROW:
-                    case 'j':
+//                    case 'j':
+//                    case 'J':
                     case 's':
-                    case 'J':
                     case 'S':
                     {
                         toCursor.clear();
@@ -445,9 +449,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                         break;
                     }
                     case SquidInput.LEFT_ARROW:
-                    case 'h':
+//                    case 'h':
+//                    case 'H':
                     case 'a':
-                    case 'H':
                     case 'A':
                     {
                         toCursor.clear();
@@ -455,9 +459,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                         break;
                     }
                     case SquidInput.RIGHT_ARROW:
-                    case 'l':
+//                    case 'l':
+//                    case 'L':
                     case 'd':
-                    case 'L':
                     case 'D':
                     {
                         toCursor.clear();
@@ -471,6 +475,12 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                         Gdx.app.exit();
                         break;
                     }
+                    case 'c':
+                    case 'C':
+                    {
+                        seen.fill(true);
+                        break;
+                    }
                 }
             }
         },
@@ -480,12 +490,37 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                 // and screenY as 2 (since 51 divided by 20 rounded down is 2)).
                 new SquidMouse(cellWidth, cellHeight, gridWidth, gridHeight, 0, 0, new InputAdapter() {
 
-            // if the user clicks and mouseMoved hasn't already assigned a path to toCursor, then we call mouseMoved
-            // ourselves and copy toCursor over to awaitedMoves.
+            // if the user clicks and there are no awaitedMoves queued up, generate toCursor if it
+            // hasn't been generated already by mouseMoved, then copy it over to awaitedMoves.
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                mouseMoved(screenX, screenY);
-                awaitedMoves.addAll(toCursor);
+                // This is needed because we center the camera on the player as he moves through a dungeon that is three
+                // screens wide and three screens tall, but the mouse still only can receive input on one screen's worth
+                // of cells. (gridWidth >> 1) halves gridWidth, pretty much, and that we use to get the centered
+                // position after adding to the player's position (along with the gridHeight).
+                screenX += player.x - (gridWidth >> 1);
+                screenY += player.y - (gridHeight >> 1);
+                // we also need to check if screenX or screenY is out of bounds.
+                if (screenX < 0 || screenY < 0 || screenX >= bigWidth || screenY >= bigHeight)
+                    return false;
+                if (awaitedMoves.isEmpty()) {
+                    if (toCursor.isEmpty()) {
+                        cursor = Coord.get(screenX, screenY);
+                        //This uses DijkstraMap.findPathPreScannned() to get a path as a List of Coord from the current
+                        // player position to the position the user clicked on. The "PreScanned" part is an optimization
+                        // that's special to DijkstraMap; because the whole map has already been fully analyzed by the
+                        // DijkstraMap.scan() method at the start of the program, and re-calculated whenever the player
+                        // moves, we only need to do a fraction of the work to find the best path with that info.
+                        toCursor.clear();
+                        playerToCursor.findPathPreScanned(toCursor, cursor);
+                        //findPathPreScanned includes the current cell (goal) by default, which is helpful when
+                        // you're finding a path to a monster or loot, and want to bump into it, but here can be
+                        // confusing because you would "move into yourself" as your first move without this.
+                        if(!toCursor.isEmpty())
+                            toCursor.remove(0);
+                    }
+                    awaitedMoves.addAll(toCursor);
+                }
                 return true;
             }
 
@@ -500,8 +535,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
             public boolean mouseMoved(int screenX, int screenY) {
                 if(!awaitedMoves.isEmpty())
                     return false;
-                // This is needed because we center the camera on the player as he moves through a dungeon that is
-                // multiple screens wide and tall, but the mouse still only can receive input on one screen's worth
+                // This is needed because we center the camera on the player as he moves through a dungeon that is three
+                // screens wide and three screens tall, but the mouse still only can receive input on one screen's worth
                 // of cells. (gridWidth >> 1) halves gridWidth, pretty much, and that we use to get the centered
                 // position after adding to the player's position (along with the gridHeight).
                 screenX += player.x - (gridWidth >> 1);
@@ -513,22 +548,19 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     return false;
                 }
                 cursor = Coord.get(screenX, screenY);
-                // This uses DijkstraMap.findPathPreScannned() to get a path as a List of Coord from the current
+                //This uses DijkstraMap.findPathPreScannned() to get a path as a List of Coord from the current
                 // player position to the position the user clicked on. The "PreScanned" part is an optimization
-                // that's special to DijkstraMap; because the part of the map that is viable to move into has
-                // already been fully analyzed by the DijkstraMap.partialScan() method at the start of the
-                // program, and re-calculated whenever the player moves, we only need to do a fraction of the
-                // work to find the best path with that info.
-                toCursor = playerToCursor.findPathPreScanned(cursor);
-                // findPathPreScanned includes the current cell (goal) by default, which is helpful when
+                // that's special to DijkstraMap; because the whole map has already been fully analyzed by the
+                // DijkstraMap.scan() method at the start of the program, and re-calculated whenever the player
+                // moves, we only need to do a fraction of the work to find the best path with that info.
+
+                toCursor.clear();
+                playerToCursor.findPathPreScanned(toCursor, cursor);
+                //findPathPreScanned includes the current cell (goal) by default, which is helpful when
                 // you're finding a path to a monster or loot, and want to bump into it, but here can be
                 // confusing because you would "move into yourself" as your first move without this.
-                // Getting a sublist avoids potential performance issues with removing from the start of an
-                // ArrayList, since it keeps the original list around and only gets a "view" of it.
-                if(!toCursor.isEmpty())
-                {
-                    toCursor = toCursor.subList(1, toCursor.size());
-                }
+                if(!toCursor.isEmpty()) 
+                    toCursor.remove(0);
                 return false;
             }
         }));
@@ -536,12 +568,11 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, input));
         //You might be able to get by with the next line instead of the above line, but the former is preferred.
         //Gdx.input.setInputProcessor(input);
-        //we add display, our one visual component that moves, to the list of things that act in the main Stage.
+        // and then add display, our one visual component, to the list of things that act in Stage.
         stage.addActor(display);
-        //we add languageDisplay to languageStage, where it will be unchanged by camera moves in the main Stage.
         languageStage.addActor(languageDisplay);
 
-
+        screenPosition = new Vector2(cellWidth, cellHeight);
     }
     /**
      * Move the player if he isn't bumping into a wall or trying to go off the map somehow.
@@ -549,18 +580,22 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
      * @param xmod
      * @param ymod
      */
-    private void move(int xmod, int ymod) {
+    private void move(final int xmod, final int ymod) {
         int newX = player.x + xmod, newY = player.y + ymod;
         if (newX >= 0 && newY >= 0 && newX < bigWidth && newY < bigHeight
                 && bareDungeon[newX][newY] != '#')
         {
-            display.slide(pg, player.x, player.y, newX, newY, 0.11f, null);
+            // we can call some methods on a SparseLayers to show effects on Glyphs it knows about.
+            // sliding pg, the player glyph, makes that '@' move smoothly between grid cells.
+            display.slide(pg, player.x, player.y, newX, newY, 0.12f, null);
+            // this just moves the grid position of the player as it is internally tracked.
             player = player.translate(xmod, ymod);
+            // calculates field of vision around the player again, in a circle of radius 9.0 .
             FOV.reuseFOV(resistance, visible, player.x, player.y, 9.0, Radius.CIRCLE);
             // This is just like the constructor used earlier, but affects an existing GreasedRegion without making
             // a new one just for this movement.
             blockage.refill(visible, 0.0);
-            seen.or(blockage.not());
+            seen.or(currentlySeen.remake(blockage.not()));
             blockage.fringe8way();
             // By calling LineKit.pruneLines(), we adjust prunedDungeon to hold a variant on lineDungeon that removes any
             // line segments that haven't ever been visible. This is called again whenever seen changes.
@@ -570,14 +605,28 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         {
             // A SparseLayers knows how to move a Glyph (like the one for the player, pg) out of its normal alignment
             // on the grid, and also how to move it back again. Using bump() will move pg quickly about a third of the
-            // way into a wall, then back to its former position at normal speed.
+            // way into a wall, then back to its former position at normal speed. Direction.getRoughDirection is a
+            // simple way to get which of the 8-way directions small xmod and ymod values point in.
             display.bump(pg, Direction.getRoughDirection(xmod, ymod), 0.25f);
-            // PanelEffect is a type of Action (from libGDX) that can run on a SparseLayers or SquidPanel.
+            // PanelEffect (from SquidLib) is a type of Action (from libGDX) that can run on a SparseLayers.
             // This particular kind of PanelEffect creates a purple glow around the player when he bumps into a wall.
             // Other kinds can make explosions or projectiles appear.
-            display.addAction(new PanelEffect.PulseEffect(display, 1f, floors, player, 3
+            display.addAction(new PanelEffect.PulseEffect(display, 1f, currentlySeen, player, 3
                     , new float[]{SColor.CW_FADED_PURPLE.toFloatBits()}
                     ));
+            // recolor() will change the color of a cell over time from what it is currently to a target color, which is
+            // DB_BLOOD here from a DawnBringer palette. We give it a Runnable to run after the effect finishes, which
+            // permanently sets the color of the cell you bumped into to the color of your bloody nose. Without such a 
+            // Runnable, the cell would get drawn over with its normal wall color.
+            display.recolor(0f, player.x + xmod, player.y + ymod, 0, SColor.DB_BLOOD.toFloatBits(), 0.4f, new Runnable() {
+                int x = player.x + xmod;
+                int y = player.y + ymod;
+                @Override
+                public void run() {
+                    colors[x][y] = SColor.DB_BLOOD.toFloatBits();
+                }
+            });
+            //display.addAction(new PanelEffect.ExplosionEffect(display, 1f, floors, player, 6));
         }
         // removes the first line displayed of the Art of War text or its translation.
         lang.remove(0);
@@ -585,7 +634,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // lines using a randomly selected fake language to translate the same Art of War text.
         while (lang.size() < bonusHeight - 1)
         {
-            StringKit.wrap(lang, translator.cipher(artOfWar), gridWidth - 2);
+            // refills lang with wrapped lines from the translated artOfWar text
+            GDXMarkup.instance.colorString(translator.cipher(artOfWar)).wrap(gridWidth - 2, lang);
             translator.initialize(rng.getRandomElement(FakeLanguageGen.registered), 0L);
         }
     }
@@ -599,10 +649,18 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //past from affecting the current frame. This isn't a problem here, but would probably be an issue if we had
         //monsters running in and out of our vision. If artifacts from previous frames show up, uncomment the next line.
         //display.clear();
-
-        for (int x = 0; x < bigWidth; x++) {
-            for (int y = 0; y < bigHeight; y++) {
-                if(visible[x][y] > 0.0) {
+        
+        // causes colors to cycle semi-randomly from warm reds and browns to cold cyan-blues
+        warmMildFilter.cwMul = NumberTools.swayRandomized(123456789L, (System.currentTimeMillis() & 0x1FFFFFL) * 0x1.2p-10f) * 1.75f;
+        
+        // The loop here only will draw tiles if they are potentially in the visible part of the map.
+        // It starts at an x,y position equal to the player's position minus half of the shown gridWidth and gridHeight,
+        // minus one extra cell to allow the camera some freedom to move. This position won't go lower than 0. The
+        // rendering in each direction ends when the edge of the map (bigWidth or bigHeight) is reached, or if
+        // gridWidth/gridHeight + 2 cells have been rendered (the + 2 is also for the camera movement).
+        for (int x = Math.max(0, player.x - (gridWidth >> 1) - 1), i = 0; x < bigWidth && i < gridWidth + 2; x++, i++) {
+            for (int y = Math.max(0, player.y - (gridHeight >> 1) - 1), j = 0; y < bigHeight && j < gridHeight + 2; y++, j++) {
+                if (visible[x][y] > 0.0) {
                     // Here we use a convenience method in SparseLayers that puts a char at a specified position (the
                     // first three parameters), with a foreground color for that char (fourth parameter), as well as
                     // placing a background tile made of a one base color (fifth parameter) that is adjusted to bring it
@@ -613,36 +671,20 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     // because all cells at the same distance will have the same amount of lighting applied.
                     // We use prunedDungeon here so segments of walls that the player isn't aware of won't be shown.
                     display.putWithConsistentLight(x, y, prunedDungeon[x][y], colors[x][y], bgColors[x][y], FLOAT_LIGHTING, visible[x][y]);
-                } else if(seen.contains(x, y))
-                {
-                    // If a position isn't currently visible but was before, it will be in seen.
-                    // Here, we don't show the changing light because this part of the map is remembered, not currently
-                    // lit by a torch. SColor.lerpFloatColors is used very often inside SquidLib because it allows
-                    // getting a mix of two colors without creating any new objects (no Color or SColor needs to be
-                    // involved), and that really helps performance on Android and GWT, where the garbage collector
-                    // isn't as good as on desktop JVMs.
+                } else if (seen.contains(x, y))
                     display.put(x, y, prunedDungeon[x][y], colors[x][y], SColor.lerpFloatColors(bgColors[x][y], GRAY_FLOAT, 0.45f));
-                }
-                // Note that if a position isn't visible or previously seen, we don't  put anything in display.
-                // A full screen being replaced every round slows GWT to a crawl, though it's still rather fast on
-                // desktop platforms. SparseLayers won't draw what it doesn't have to, so if nothing was placed in a
-                // position, it skips over it entirely. This also applies to Glyph objects that can move, but are
-                // currently in a cell with a clear background (the default); clear cells are used for cells that aren't
-                // getting drawn in, so those Glyphs won't be rendered either unless you specifically draw one.
             }
         }
-
         Coord pt;
         for (int i = 0; i < toCursor.size(); i++) {
             pt = toCursor.get(i);
-            // Uses a brighter light to trace the path to the cursor, mixing the background color with white.
-            // putWithLight() can take mix amounts greater than 1 or less than 0 to mix with extra bias.
-            display.putWithLight(pt.x, pt.y, bgColors[pt.x][pt.y], SColor.FLOAT_WHITE, 1.25f);
+            // use a brighter light to trace the path to the cursor, mixing the background color with mostly white.
+            display.put(pt.x, pt.y, SColor.lightenFloat(bgColors[pt.x][pt.y], 0.85f));
         }
         languageDisplay.clear(0);
         languageDisplay.fillBackground(languageDisplay.defaultPackedBackground);
         for (int i = 0; i < 6; i++) {
-            languageDisplay.put(1, i, lang.get(i), SColor.DB_LEAD);
+            languageDisplay.put(1, i, lang.get(i));
         }
     }
     @Override
@@ -651,11 +693,9 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         Gdx.gl.glClearColor(bgColor.r / 255.0f, bgColor.g / 255.0f, bgColor.b / 255.0f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // center the camera on the player's position
         stage.getCamera().position.x = pg.getX();
         stage.getCamera().position.y =  pg.getY();
 
-        // need to display the map every frame, since we clear the screen to avoid artifacts.
         putMap();
         // if the user clicked, we have a list of moves to perform.
         if(!awaitedMoves.isEmpty())
@@ -676,8 +716,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
                     // the next line marks the player as a "goal" cell, which seems counter-intuitive, but it works because all
                     // cells will try to find the distance between themselves and the nearest goal, and once this is found, the
                     // distances don't change as long as the goals don't change. Since the mouse will move and new paths will be
-                    // found, but the player doesn't move until a cell is clicked, the "goal" is the non-changing cell, so the
-                    // player's position, and the "target" of a pathfinding method like DijkstraMap.findPathPreScanned() is the
+                    // found, but the player doesn't move until a cell is clicked, the "goal" is the non-changing cell (the
+                    // player's position), and the "target" of a pathfinding method like DijkstraMap.findPathPreScanned() is the
                     // currently-moused-over cell, which we only need to set where the mouse is being handled.
                     playerToCursor.setGoal(player);
                     // DijkstraMap.partialScan only finds the distance to get to a cell if that distance is less than some limit,
@@ -691,6 +731,8 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         else if(input.hasNext()) {
             input.next();
         }
+        //else
+        //    move(0,0);
         // we need to do some work with viewports here so the language display (or game info messages in a real game)
         // will display in the same place even though the map view will move around. We have the language stuff set up
         // its viewport so it is in place and won't be altered by the map. Then we just tell the Stage for the language
@@ -702,7 +744,14 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         // we have the main stage set itself up after the language stage has already drawn.
         stage.getViewport().apply(false);
         // stage has its own batch and must be explicitly told to draw().
-        stage.draw();
+        batch.setProjectionMatrix(stage.getCamera().combined);
+        screenPosition.set(cellWidth * 12, cellHeight);
+        stage.screenToStageCoordinates(screenPosition);
+        batch.begin();
+        stage.getRoot().draw(batch, 1);
+        display.font.draw(batch, Gdx.graphics.getFramesPerSecond() + " FPS", screenPosition.x, screenPosition.y);
+        batch.end();
+        Gdx.graphics.setTitle("SparseLayers Demo running at FPS: " + Gdx.graphics.getFramesPerSecond());
     }
 
     @Override
