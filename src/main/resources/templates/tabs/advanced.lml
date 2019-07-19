@@ -13,7 +13,7 @@
         <:column column="1" growX="true" minWidth="50"/>
         <:column column="3" growX="true" minWidth="50"/>
         @gdxVersion
-        <textField id="gdxVersion" tooltip="@gdxVersionTip|$gdxVersion">1.9.9</textField>
+        <textField id="gdxVersion" tooltip="@gdxVersionTip|$gdxVersion">1.9.10</textField>
         @version
         <textField id="version" tooltip="@versionTip" row="true">0.0.1-SNAPSHOT</textField>
         @javaVersion
@@ -44,7 +44,7 @@
             </:for>
         </selectBox>
         @gwtPlugin
-        <textField id="gwtPlugin" tooltip="@gwtPluginTip" growX="true">1.0.6</textField>
+        <textField id="gwtPlugin" tooltip="@gwtPluginTip" growX="true">1.0.9</textField>
     </table>
     </scrollPane>
     <table growX="true" defaultPad="2" defaultSpaceRight="10" defaultSpaceLeft="10">

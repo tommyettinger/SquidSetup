@@ -268,7 +268,7 @@ class Joice : ThirdPartyExtension() {
 @Extension
 class TypingLabel : ThirdPartyExtension() {
     override val id = "typingLabel"
-    override val defaultVersion = "1.0.3"
+    override val defaultVersion = "1.1.0"
     override val url = "https://github.com/rafaskb/typing-label"
 
     override fun initiateDependencies(project: Project) {
