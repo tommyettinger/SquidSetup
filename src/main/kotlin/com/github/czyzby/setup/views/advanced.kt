@@ -3,7 +3,6 @@ package com.github.czyzby.setup.views
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.github.czyzby.kiwi.util.common.Strings
 import com.github.czyzby.lml.annotation.LmlActor
-import com.kotcrab.vis.ui.widget.VisSelectBox
 import com.kotcrab.vis.ui.widget.VisTextField
 import com.kotcrab.vis.ui.widget.spinner.IntSpinnerModel
 import com.kotcrab.vis.ui.widget.spinner.Spinner
@@ -14,14 +13,12 @@ import com.kotcrab.vis.ui.widget.spinner.Spinner
  */
 class AdvancedData {
     @LmlActor("version") private lateinit var versionField: VisTextField
-    @LmlActor("gdxVersion") private lateinit var gdxVersionField: VisTextField
     @LmlActor("javaVersion") private lateinit var javaVersionField: Spinner
     @LmlActor("sdkVersion") private lateinit var sdkVersionField: Spinner
     @LmlActor("toolsVersion") private lateinit var toolsVersionField: VisTextField
     @LmlActor("androidPluginVersion") private lateinit var androidPluginVersionField: VisTextField
     @LmlActor("robovmVersion") private lateinit var robovmVersionField: VisTextField
     @LmlActor("moeVersion") private lateinit var moeVersionField: VisTextField
-    @LmlActor("gwtVersion") private lateinit var gwtVersionField: VisSelectBox<String>
     @LmlActor("gwtPlugin") private lateinit var gwtPluginVersionField: VisTextField
     @LmlActor("serverJavaVersion") private lateinit var serverJavaVersionField: Spinner
     @LmlActor("desktopJavaVersion") private lateinit var desktopJavaVersionField: Spinner
@@ -35,7 +32,7 @@ class AdvancedData {
         get() = versionField.text
 
     val gdxVersion: String
-        get() = gdxVersionField.text
+        get() = "1.9.10"
 
     val javaVersion: String
         get() = javaVersionField.model.text
@@ -64,7 +61,7 @@ class AdvancedData {
         get() = moeVersionField.text
 
     val gwtVersion: String
-        get() = gwtVersionField.selected
+        get() = "2.8.2"
 
     val gwtPluginVersion: String
         get() = gwtPluginVersionField.text
