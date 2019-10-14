@@ -42,7 +42,7 @@ class JglfwGradleFile(val project: Project) : GradleFile(JGLFW.ID) {
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = '${project.basic.rootPackage}.jglfw.JglfwLauncher'
 eclipse.project.name = appName + '-jglfw'
-sourceCompatibility = ${project.advanced.desktopJavaVersion}
+sourceCompatibility = ${project.advanced.javaVersion}
 
 dependencies {
 ${joinDependencies(dependencies)}}

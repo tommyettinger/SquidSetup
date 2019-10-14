@@ -226,26 +226,5 @@ eclipse {
 	}
 }
 
-// Sets up the Android Idea project using the old Ant based build.
-idea {
-	module {
-		sourceDirs += file("src/main/java")
-		scopes = [ COMPILE: [plus:[project.configurations.compileClasspath]]]
-		iml {
-			withXml {
-				def node = it.asNode()
-				def builder = NodeBuilder.newInstance()
-				builder.current = node
-				builder.component(name: "FacetManager") {
-					facet(type: "android", name: "Android") {
-						configuration {
-							option(name: "UPDATE_PROPERTY_FILES", value:"true")
-						}
-					}
-				}
-			}
-		}
-	}
-}
 """
 }

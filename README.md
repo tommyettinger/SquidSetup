@@ -109,10 +109,11 @@ Now you'll have a project all set up with a sample.
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
     case they don't immediately work. The iOS-MOE target is even less likely to work.
-  - All builds currently use Gradle 5.4.1 with the "api/implementation/compile fiasco" resolved; importantly,
-    this also enables using Java 10 or newer with SquidSetup, where those versions won't work with the official
-    setup jar. Adding dependencies will use the `api` keyword instead of the `compile` keyword it used in
-    earlier versions. All modules use the `java-library` plugin, which enables the `api` keyword for dependencies.
+  - All builds currently use Gradle 5.6.2 with the "api/implementation/compile fiasco" resolved.
+    Java 13 doesn't currently work with any stable release of Gradle, but it should with Gradle 6 whenever
+    that is released (SquidSetup will be updated for Gradle 6 as well). Adding dependencies will use the
+    `api` keyword instead of the `compile` keyword it used in earlier versions. All modules use the
+    `java-library` plugin, which enables the `api` keyword for dependencies.
   - You may need to refresh the Gradle project after the initial import if some dependencies timed-out;
     JitPack takes a minute or two to build SquidLib, and it usually doesn't take long before the SquidLib
     dependencies can be downloaded in full. In IntelliJ IDEA, the `Refresh all projects` button is a pair
