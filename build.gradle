@@ -24,7 +24,6 @@ jar {
 //    attributes 'JCabi-Build': "4bb75e3"
 //    attributes 'JCabi-Date': "2015-04-24T18:33:15"
   }
-  from files(sourceSets.main.output.classesDirs)
   from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 

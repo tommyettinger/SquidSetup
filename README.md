@@ -109,15 +109,15 @@ Now you'll have a project all set up with a sample.
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
     case they don't immediately work. The iOS-MOE target is even less likely to work.
-  - All builds currently use Gradle 5.6.2 with the "api/implementation/compile fiasco" resolved.
-    Java 13 doesn't currently work with any stable release of Gradle, but it should with Gradle 6 whenever
-    that is released (SquidSetup will be updated for Gradle 6 as well). Adding dependencies will use the
-    `api` keyword instead of the `compile` keyword it used in earlier versions. All modules use the
-    `java-library` plugin, which enables the `api` keyword for dependencies.
+  - All builds currently use Gradle 6.0 with the "api/implementation/compile fiasco" resolved.
+    Java 13 now works with SquidSetup because Gradle 6.0 is the first Gradle release to support
+    it. Adding dependencies will use the `api` keyword instead of the `compile` keyword it used
+    in earlier versions. All modules use the `java-library` plugin, which enables the `api` keyword
+    for dependencies.
   - You may need to refresh the Gradle project after the initial import if some dependencies timed-out;
     JitPack takes a minute or two to build SquidLib, and it usually doesn't take long before the SquidLib
-    dependencies can be downloaded in full. In IntelliJ IDEA, the `Refresh all projects` button is a pair
-    of circling arrows in the Gradle tool window, which can be opened with `View -> Tool Windows -> Gradle`.
+    dependencies can be downloaded in full. In IntelliJ IDEA, the `Reimport all Gradle projects` button is
+    a pair of circling arrows in the Gradle tool window, which can be opened with `View -> Tool Windows -> Gradle`.
   - Out of an abundance of caution, [the dependency impersonation issue reported here by Márton
     Braun](https://blog.autsoft.hu/a-confusing-dependency/) is handled the way he handled it, by putting
     `jcenter()` last in the repositories lists. I don't know if any other tools have done the same, but it's

@@ -154,6 +154,11 @@ NotoSerif-license.txt
 Orbitron-distance.fnt
 Orbitron-distance.png
 README.md
+Roboto-Bold-msdf.fnt
+Roboto-Bold-msdf.png
+Roboto-License.txt
+Roboto-Regular-msdf.fnt
+Roboto-Regular-msdf.png
 Rogue-Zodiac-12x24.fnt
 Rogue-Zodiac-12x24_0.png
 Rogue-Zodiac-18x36.fnt
