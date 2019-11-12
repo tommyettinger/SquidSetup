@@ -16,6 +16,7 @@ class Android : Platform {
     }
 
     override val id = ID
+    override val isStandard = false // user should only jump through android hoops on request
     override fun initiate(project: Project) {
         project.rootGradle.buildDependencies.add("\"com.android.tools.build:gradle:\$androidPluginVersion\"")
         project.properties["androidPluginVersion"] = project.advanced.androidPluginVersion
@@ -42,22 +43,22 @@ class Android : Platform {
         project.files.add(SourceFile(projectName = ID, sourceFolderPath = "", packageName = "", fileName = "AndroidManifest.xml",
                 content = """<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="${project.basic.rootPackage}"
-    android:versionCode="1"
-    android:versionName="1.0" >
+          package="${project.basic.rootPackage}">
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/GdxTheme" >
-        <activity
-            android:name="${project.basic.rootPackage}.android.AndroidLauncher"
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:isGame="true"
+            android:appCategory="game"
             android:label="@string/app_name"
-            android:screenOrientation="landscape"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+            android:theme="@style/GdxTheme">
+        <activity
+                android:name="${project.basic.rootPackage}.android.AndroidLauncher"
+                android:label="@string/app_name"
+                android:screenOrientation="landscape"
+                android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
     </application>
@@ -87,7 +88,7 @@ class AndroidGradleFile(val project: Project) : GradleFile(Android.ID) {
         addNativeDependency("com.badlogicgames.gdx:gdx-platform:\$gdxVersion:natives-x86_64")
         plugins.add("com.android.application")
     }
-    
+
     fun insertLatePlugin() { latePlugin = true }
     /**
      * @param dependency will be added as "natives" dependency, quoted.
@@ -95,6 +96,7 @@ class AndroidGradleFile(val project: Project) : GradleFile(Android.ID) {
     fun addNativeDependency(dependency: String) = nativeDependencies.add("\"$dependency\"")
 
     override fun getContent(): String = """${plugins.joinToString(separator = "\n") { "apply plugin: '$it'" }}
+${if(latePlugin)"apply plugin: \'kotlin-android\'" else ""}
 
 android {
 	compileSdkVersion ${project.advanced.androidSdkVersion}
@@ -128,6 +130,8 @@ android {
 		applicationId '${project.basic.rootPackage}'
 		minSdkVersion 14
 		targetSdkVersion ${project.advanced.androidSdkVersion}
+		versionCode 1
+		versionName "1.0"
 	}
 }
 
@@ -169,9 +173,10 @@ task copyAndroidNatives() {
 				}
 			}
 		}
-		${if(latePlugin == true)"apply plugin: \'kotlin-android\'" else ""}
 	}
 }
+
+preBuild.dependsOn(copyAndroidNatives)
 
 task run(type: Exec) {
 	def path
@@ -194,37 +199,5 @@ task run(type: Exec) {
 	def adb = path + "/platform-tools/adb"
 	commandLine "${'$'}adb", 'shell', 'am', 'start', '-n', '${project.basic.rootPackage}/${project.basic.rootPackage}.android.AndroidLauncher'
 }
-
-// Sets up the Android Eclipse project using the old Ant based build.
-eclipse {
-	// needs to specify Java source sets explicitly, SpringSource Gradle Eclipse plugin
-	// ignores any nodes added in classpath.file.withXml
-	sourceSets {
-		main {
-			java.srcDirs 'src/main/java', 'gen'
-		}
-	}
-
-	jdt {
-		sourceCompatibility = ${project.advanced.javaVersion}
-		targetCompatibility = ${project.advanced.javaVersion}
-	}
-
-	classpath {
-		plusConfigurations += [ project.configurations.compileClasspath ]
-		containers 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK', 'com.android.ide.eclipse.adt.LIBRARIES'
-	}
-
-	project {
-		name = appName + "-android"
-		natures 'com.android.ide.eclipse.adt.AndroidNature'
-		buildCommands.clear()
-		buildCommand "com.android.ide.eclipse.adt.ResourceManagerBuilder"
-		buildCommand "com.android.ide.eclipse.adt.PreCompilerBuilder"
-		buildCommand "org.eclipse.jdt.core.javabuilder"
-		buildCommand "com.android.ide.eclipse.adt.ApkBuilder"
-	}
-}
-
 """
 }

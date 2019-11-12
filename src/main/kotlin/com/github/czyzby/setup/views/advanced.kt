@@ -20,8 +20,7 @@ class AdvancedData {
     @LmlActor("robovmVersion") private lateinit var robovmVersionField: VisTextField
     @LmlActor("moeVersion") private lateinit var moeVersionField: VisTextField
     @LmlActor("gwtPlugin") private lateinit var gwtPluginVersionField: VisTextField
-    @LmlActor("serverJavaVersion") private lateinit var serverJavaVersionField: Spinner
-    //@LmlActor("desktopJavaVersion") private lateinit var desktopJavaVersionField: Spinner
+    @LmlActor("serverJavaVersion") private lateinit var serverJavaVersionField: Spinner 
     @LmlActor("generateSkin") private lateinit var generateSkinButton: Button
     @LmlActor("generateUsl") private lateinit var generateUslButton: Button
     @LmlActor("generateReadme") private lateinit var generateReadmeButton: Button
