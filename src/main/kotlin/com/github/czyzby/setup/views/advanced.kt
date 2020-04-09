@@ -22,7 +22,6 @@ class AdvancedData {
     @LmlActor("gwtPlugin") private lateinit var gwtPluginVersionField: VisTextField
     @LmlActor("serverJavaVersion") private lateinit var serverJavaVersionField: Spinner 
     @LmlActor("generateSkin") private lateinit var generateSkinButton: Button
-    @LmlActor("generateUsl") private lateinit var generateUslButton: Button
     @LmlActor("generateReadme") private lateinit var generateReadmeButton: Button
     @LmlActor("gradleWrapper") private lateinit var gradleWrapperButton: Button
     @LmlActor("gradleTasks") private lateinit var gradleTasksField: VisTextField
@@ -73,9 +72,6 @@ class AdvancedData {
 
     val generateSkin: Boolean
         get() = generateSkinButton.isChecked
-
-    val generateUsl: Boolean
-        get() = generateUslButton.isChecked
 
     val generateReadme: Boolean
         get() = generateReadmeButton.isChecked

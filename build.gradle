@@ -51,14 +51,3 @@ dependencies {
   api "org.apache.httpcomponents:httpclient:4.5.3"
   api "com.jcabi:jcabi-github:1.0"
 }
-import com.badlogic.gdx.tools.texturepacker.TexturePacker
-
-task pack {
-  doLast {
-    TexturePacker.process(
-            file("raw").absolutePath,
-            file("src/main/resources/skin").absolutePath,
-            "tinted"
-    )
-  }
-}
