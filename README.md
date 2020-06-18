@@ -108,10 +108,10 @@ Now you'll have a project all set up with a sample.
     record of being the first person to run SquidLib on an iOS device... In case you can't
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
-    case they don't immediately work. The iOS-MOE target is even less likely to work.
-  - All builds currently use Gradle 6.0 with the "api/implementation/compile fiasco" resolved.
-    Java 13 now works with SquidSetup because Gradle 6.0 is the first Gradle release to support
-    it. Adding dependencies will use the `api` keyword instead of the `compile` keyword it used
+    case they don't immediately work.
+  - All builds currently use Gradle 6.5 with the "api/implementation/compile fiasco" resolved.
+    Java 13 and 14 work with SquidSetup because Gradle 6.5 supports Java from 8 to 14.
+    Adding dependencies will use the `api` keyword instead of the `compile` keyword it used
     in earlier versions. All modules use the `java-library` plugin, which enables the `api` keyword
     for dependencies.
   - You may need to refresh the Gradle project after the initial import if some dependencies timed-out;

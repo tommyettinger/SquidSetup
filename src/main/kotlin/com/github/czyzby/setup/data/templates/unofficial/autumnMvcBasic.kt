@@ -105,34 +105,6 @@ public class DesktopLauncher {
     }
 }"""
 
-    override fun getJglfwLauncherContent(project: Project): String = """package ${project.basic.rootPackage}.jglfw;
-
-import com.badlogic.gdx.backends.jglfw.JglfwApplication;
-import com.badlogic.gdx.backends.jglfw.JglfwApplicationConfiguration;
-import com.github.czyzby.autumn.fcs.scanner.DesktopClassScanner;
-import com.github.czyzby.autumn.mvc.application.AutumnApplication;
-import ${project.basic.rootPackage}.${project.basic.mainClass};
-
-/** Launches the desktop (JGLFW) application. */
-public class JglfwLauncher {
-    public static void main(final String[] args) {
-        createApplication();
-    }
-
-    private static JglfwApplication createApplication() {
-        return new JglfwApplication(new AutumnApplication(new DesktopClassScanner(), ${project.basic.mainClass}.class),
-                getDefaultConfiguration());
-    }
-
-    private static JglfwApplicationConfiguration getDefaultConfiguration() {
-        final JglfwApplicationConfiguration configuration = new JglfwApplicationConfiguration();
-        configuration.title = "${project.basic.name}";
-        configuration.width = ${width};
-        configuration.height = ${height};
-        return configuration;
-    }
-}"""
-
 
     override fun getLwjgl3LauncherContent(project: Project): String = """package ${project.basic.rootPackage}.lwjgl3;
 
@@ -262,35 +234,4 @@ public class IOSLauncher extends IOSApplication.Delegate {
     }
 }"""
 
-    override fun getMOELauncherContent(project: Project): String = """package ${project.basic.rootPackage}.moe;
-
-import com.badlogic.gdx.backends.iosmoe.IOSApplication;
-import com.badlogic.gdx.backends.iosmoe.IOSApplicationConfiguration;
-import org.moe.natj.general.Pointer;
-import com.github.czyzby.autumn.mvc.application.AutumnApplication;
-import com.github.czyzby.autumn.scanner.FixedClassScanner;
-import ${project.basic.rootPackage}.${project.basic.mainClass};
-
-import apple.uikit.c.UIKit;
-
-public class IOSMoeLauncher extends IOSApplication.Delegate {
-
-    protected IOSMoeLauncher(Pointer peer) {
-        super(peer);
-    }
-
-    @Override
-    protected IOSApplication createApplication() {
-        IOSApplicationConfiguration config = new IOSApplicationConfiguration();
-        config.useAccelerometer = false;
-        // Note: there is currently no automatic classpath scanning support on iOS. You have to register all component
-        // classes manually with FixedClassScanner. Generated template might not work out of the box because of this.
-        return new IOSApplication(new AutumnApplication(new FixedClassScanner(${project.basic.mainClass}.class),
-                ${project.basic.mainClass}.class), config);
-    }
-
-    public static void main(String[] argv) {
-        UIKit.UIApplicationMain(0, null, null, IOSMoeLauncher.class.getName());
-    }
-}"""
 }

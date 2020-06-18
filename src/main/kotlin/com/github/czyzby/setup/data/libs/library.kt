@@ -25,19 +25,13 @@ interface Library {
     }
 
     fun addDesktopDependency(project: Project, dependency: String) {
-        arrayOf(Desktop.ID, JGLFW.ID, LWJGL3.ID).forEach { addDependency(project, it, dependency) }
+        addDependency(project, Desktop.ID, dependency)
+        addDependency(project, LWJGL3.ID, dependency)
     }
 
     fun addNativeAndroidDependency(project: Project, dependency: String) {
         if (project.hasPlatform(Android.ID)) {
             val gradle = project.getGradleFile(Android.ID) as AndroidGradleFile
-            gradle.addNativeDependency(dependency)
-        }
-    }
-
-    fun addNativeMoeDependency(project: Project, dependency: String) {
-        if (project.hasPlatform(MOE.ID)) {
-            val gradle = project.getGradleFile(MOE.ID) as MOEGradleFile
             gradle.addNativeDependency(dependency)
         }
     }

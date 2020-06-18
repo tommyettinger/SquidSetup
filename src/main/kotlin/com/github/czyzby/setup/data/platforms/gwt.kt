@@ -32,7 +32,7 @@ class GWT : Platform {
 
 	override val id = ID
 	override val isStandard = false
-	
+
 	override fun createGradleFile(project: Project): GradleFile = GWTGradleFile(project)
 
 	override fun initiate(project: Project) {
@@ -103,17 +103,8 @@ ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\
 	}
 
 	private fun addSoundManagerSource(project: Project) {
-		val version = LibGdxVersion.parseLibGdxVersion(project.advanced.gdxVersion)
-		val soundManagerSource = when {
-		// Invalid, user-entered LibGDX version - defaulting to current SoundManager:
-			version == null -> "soundmanager2-jsmin.js"
-		// Pre-1.9.6: using old SoundManager sources:
-			version < LibGdxVersion(major = 1, minor = 9, revision = 6) -> "soundmanager2-jsmin_old.js"
-		// Recent LibGDX version - using latest SoundManager:
-			else -> "soundmanager2-jsmin.js"
-		}
 		project.files.add(CopiedFile(projectName = id,
-				original = path("generator", id, "webapp", soundManagerSource),
+				original = path("generator", id, "webapp", "soundmanager2-jsmin.js"),
 				path = path("webapp", "soundmanager2-jsmin.js")))
 	}
 }
@@ -129,8 +120,17 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
 	}
 
 	override fun getContent(): String = """
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'org.gretty:gretty:3.0.2'
+	}
+}
 apply plugin: "gwt"
 apply plugin: "war"
+apply plugin: "org.gretty"
 
 gwt {
 	gwtVersion = "${'$'}gwtFrameworkVersion" // Should match the version used for building the GWT backend. See gradle.properties.
@@ -146,38 +146,47 @@ gwt {
 	compiler.disableCastChecking = true
 }
 
-import org.wisepersist.gradle.plugins.gwt.GwtSuperDev
-
-def HttpFileServer server = null
-def httpFilePort = 8080
-task startHttpServer () {
-	dependsOn draftCompileGwt
-	String output = project.buildDir.path + "/gwt/draftOut"
-	doLast {
-		copy {
-			from "webapp"
-			into output
-		}
-		copy {
-			from "war"
-			into output
-		}
-		server = new SimpleHttpFileServerFactory().start(new File(output), httpFilePort)
-		println "Server started in directory " + server.getContentRoot() + ", http://localhost:" + server.getPort() + "/index.html"
-	}
-}
-
 dependencies {
 ${joinDependencies(dependencies)}
 }
 
-task superDev(type: GwtSuperDev) {
-		dependsOn startHttpServer
-		doFirst {
-				gwt.modules = gwt.devModules
+import org.akhikhl.gretty.AppBeforeIntegrationTestTask
+import org.wisepersist.gradle.plugins.gwt.GwtSuperDev
+
+gretty.httpPort = 8080
+gretty.resourceBase = project.buildDir.path + "/gwt/draftOut"
+gretty.contextPath = "/"
+gretty.portPropertiesFileName = "TEMP_PORTS.properties"
+
+task startHttpServer (dependsOn: [draftCompileGwt]) {
+	doFirst {
+		copy {
+			from "webapp"
+			into gretty.resourceBase
 		}
+		copy {
+			from "war"
+			into gretty.resourceBase
+		}
+	}
+}
+task beforeRun(type: AppBeforeIntegrationTestTask, dependsOn: startHttpServer) {
+    // The next line allows ports to be reused instead of
+    // needing a process to be manually terminated.
+	file("build/TEMP_PORTS.properties").delete()
+	// Somewhat of a hack; uses Gretty's support for wrapping a task in
+	// a start and then stop of a Jetty server that serves files while
+	// also running the SuperDev code server.
+	integrationTestTask 'superDev'
+	
+	interactive false
 }
 
+task superDev(type: GwtSuperDev) {
+	doFirst {
+		gwt.modules = gwt.devModules
+	}
+}
 task dist(dependsOn: [clean, compileGwt]) {
     doLast {
 		file("build/dist").mkdirs()
@@ -195,18 +204,18 @@ task dist(dependsOn: [clean, compileGwt]) {
 		}
 	}
 }
+
 task addSource {
 	doLast {
-${buildDependencies.joinToString(separator = "") {
-		"		sourceSets.main.compileClasspath += files($it.sourceSets.main.allJava.srcDirs)\n"
-		}}
+		sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
+		${if(project.hasPlatform(Shared.ID)) "sourceSets.main.compileClasspath += files(project(':shared').sourceSets.main.allJava.srcDirs)" else ""}
 	}
 }
 
 tasks.compileGwt.dependsOn(addSource)
 tasks.draftCompileGwt.dependsOn(addSource)
 
-sourceCompatibility = ${project.advanced.javaVersion}
+sourceCompatibility = 8.0
 sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 
 eclipse.project.name = appName + "-html"

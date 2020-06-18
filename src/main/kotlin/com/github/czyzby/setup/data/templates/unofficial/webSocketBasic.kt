@@ -299,34 +299,6 @@ public class DesktopLauncher {
     }
 }"""
 
-    override fun getJglfwLauncherContent(project: Project): String = """package ${project.basic.rootPackage}.jglfw;
-
-import com.badlogic.gdx.backends.jglfw.JglfwApplication;
-import com.badlogic.gdx.backends.jglfw.JglfwApplicationConfiguration;
-import com.github.czyzby.websocket.CommonWebSockets;
-import ${project.basic.rootPackage}.${project.basic.mainClass};
-
-/** Launches the desktop (JGLFW) application. */
-public class JglfwLauncher {
-    public static void main(final String[] args) {
-        // Initiating web sockets module:
-        CommonWebSockets.initiate();
-        createApplication();
-    }
-
-    private static JglfwApplication createApplication() {
-        return new JglfwApplication(new ${project.basic.mainClass}(), getDefaultConfiguration());
-    }
-
-    private static JglfwApplicationConfiguration getDefaultConfiguration() {
-        final JglfwApplicationConfiguration configuration = new JglfwApplicationConfiguration();
-        configuration.title = "${project.basic.name}";
-        configuration.width = ${width};
-        configuration.height = ${height};
-        return configuration;
-    }
-}"""
-
     override fun getLwjgl3LauncherContent(project: Project): String = """package ${project.basic.rootPackage}.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -405,35 +377,6 @@ public class IOSLauncher extends IOSApplication.Delegate {
     }
 }"""
 
-    override fun getMOELauncherContent(project: Project): String = """package ${project.basic.rootPackage};
-
-import com.badlogic.gdx.backends.iosmoe.IOSApplication;
-import com.badlogic.gdx.backends.iosmoe.IOSApplicationConfiguration;
-import org.moe.natj.general.Pointer;
-import com.github.czyzby.websocket.CommonWebSockets;
-import ${project.basic.rootPackage}.${project.basic.mainClass};
-
-import apple.uikit.c.UIKit;
-
-public class IOSMoeLauncher extends IOSApplication.Delegate {
-
-    protected IOSMoeLauncher(Pointer peer) {
-        super(peer);
-    }
-
-    @Override
-    protected IOSApplication createApplication() {
-        // Initiating web sockets module:
-        CommonWebSockets.initiate();
-        IOSApplicationConfiguration config = new IOSApplicationConfiguration();
-        config.useAccelerometer = false;
-        return new IOSApplication(new ${project.basic.mainClass}(), config);
-    }
-
-    public static void main(String[] argv) {
-        UIKit.UIApplicationMain(0, null, null, IOSMoeLauncher.class.getName());
-    }
-}"""
 }
 
 

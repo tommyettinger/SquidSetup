@@ -32,8 +32,6 @@
                    onChange="setToolsVersion" />
         @robovmVersion
         <textField id="robovmVersion" tooltip="@robovmVersionTip" row="true">2.3.7</textField>
-        @moeVersion
-        <textField id="moeVersion" tooltip="@moeVersionTip">1.4.0</textField>
         @gwtPlugin
         <textField id="gwtPlugin" tooltip="@gwtPluginTip" growX="true" row="true">1.0.13</textField>
     </table>

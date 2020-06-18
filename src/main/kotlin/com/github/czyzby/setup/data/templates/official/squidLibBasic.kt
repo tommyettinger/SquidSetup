@@ -365,7 +365,7 @@ public class ${project.basic.mainClass} extends ApplicationAdapter {
         //When a path is confirmed by clicking, we draw from this List to find which cell is next to move into.
         awaitedMoves = new ArrayList<>(200);
         //DijkstraMap is the pathfinding swiss-army knife we use here to find a path to the latest cursor position.
-        //DijkstraMap.Measurement is an enum that determines the possibility or preference to enter diagonals. Here, the
+        //Measurement is an enum that determines the possibility or preference to enter diagonals. Here, the
         // MANHATTAN value is used, which means 4-way movement only, no diagonals possible. Alternatives are CHEBYSHEV,
         // which allows 8 directions of movement at the same cost for all directions, and EUCLIDEAN, which allows 8
         // directions, but will prefer orthogonal moves unless diagonal ones are clearly closer "as the crow flies."

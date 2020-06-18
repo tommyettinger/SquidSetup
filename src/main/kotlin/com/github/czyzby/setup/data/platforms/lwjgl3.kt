@@ -67,8 +67,8 @@ run {
 	}
 }
 jar {
-	archiveFileName = "${'$'}{appName}-${'$'}{version}.jar"
-	from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
+	archiveFileName = "${'$'}{appName}-${'$'}{archiveVersion.get()}.jar"
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
 	manifest {
 		attributes 'Main-Class': project.mainClassName
 	}

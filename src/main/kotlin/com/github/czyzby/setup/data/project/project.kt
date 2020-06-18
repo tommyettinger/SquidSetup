@@ -118,16 +118,12 @@ Iosevka-Family-msdf.png
 Iosevka-License.md
 Iosevka-Light-distance.fnt
 Iosevka-Light-distance.png
-Iosevka-Oblique-msdf.fnt
-Iosevka-Oblique-msdf.png
 Iosevka-Slab-Family-distance.fnt
 Iosevka-Slab-Family-distance.png
 Iosevka-Slab-Family-msdf.fnt
 Iosevka-Slab-Family-msdf.png
 Iosevka-Slab-Light-distance.fnt
 Iosevka-Slab-Light-distance.png
-Iosevka-Slab-Oblique-msdf.fnt
-Iosevka-Slab-Oblique-msdf.png
 Iosevka-Slab-distance.fnt
 Iosevka-Slab-distance.png
 Iosevka-Slab-msdf.fnt

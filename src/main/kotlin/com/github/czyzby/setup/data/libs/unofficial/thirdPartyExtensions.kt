@@ -110,7 +110,6 @@ class Facebook : ThirdPartyExtension() {
         addDesktopDependency(project, "de.tomgrill.gdxfacebook:gdx-facebook-desktop")
 
         addDependency(project, iOS.ID, "de.tomgrill.gdxfacebook:gdx-facebook-ios")
-        addDependency(project, MOE.ID, "de.tomgrill.gdxfacebook:gdx-facebook-ios-moe")
 
         addDependency(project, GWT.ID, "de.tomgrill.gdxfacebook:gdx-facebook-core:sources")
         addDependency(project, GWT.ID, "de.tomgrill.gdxfacebook:gdx-facebook-html")
@@ -137,7 +136,6 @@ class Dialogs : ThirdPartyExtension() {
         addDesktopDependency(project, "de.tomgrill.gdxdialogs:gdx-dialogs-desktop")
 
         addDependency(project, iOS.ID, "de.tomgrill.gdxdialogs:gdx-dialogs-ios")
-        addDependency(project, MOE.ID, "de.tomgrill.gdxdialogs:gdx-dialogs-ios-moe")
 
         addDependency(project, GWT.ID, "de.tomgrill.gdxfacebook:gdx-dialogs-core:sources")
         addDependency(project, GWT.ID, "de.tomgrill.gdxfacebook:gdx-dialogs-html")
@@ -278,9 +276,10 @@ class TypingLabel : ThirdPartyExtension() {
 
     override fun initiateDependencies(project: Project) {
         addDependency(project, Core.ID, "com.rafaskoberg.gdx:typing-label")
-        
+
         addDependency(project, GWT.ID, "com.rafaskoberg.gdx:typing-label:sources")
         addGwtInherit(project, "com.rafaskoberg.gdx.typinglabel.typinglabel")
+        RegExodus().initiate(project)
     }
 }
 
@@ -309,13 +308,194 @@ class ShapeDrawer : ThirdPartyExtension() {
 @Extension
 class Formic : ThirdPartyExtension() {
     override val id = "formic"
-    override val defaultVersion = "0.1.1"
+    override val defaultVersion = "0.1.4"
     override val url = "https://github.com/tommyettinger/formic"
 
     override fun initiateDependencies(project: Project) {
         addDependency(project, Core.ID, "com.github.tommyettinger:formic")
 
         addDependency(project, GWT.ID, "com.github.tommyettinger:formic:sources")
-        addGwtInherit(project, "text.formic")
+        addGwtInherit(project, "formic")
     }
 }
+
+/**
+ * An alternative color model for changing the colors of sprites, including brightening.
+ * @author Tommy Ettinger
+ */
+@Extension
+class Colorful : ThirdPartyExtension() {
+    override val id = "colorful"
+    override val defaultVersion = "0.2.0"
+    override val url = "https://github.com/tommyettinger/colorful-gdx"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.tommyettinger:colorful")
+
+        addDependency(project, GWT.ID, "com.github.tommyettinger:colorful:sources")
+        addGwtInherit(project, "com.github.tommyettinger.colorful.colorful")
+    }
+}
+
+/**
+ * Support for writing animated GIF and animated PNG images from libGDX, as well as 8-bit-palette PNGs.
+ * @author Tommy Ettinger
+ */
+@Extension
+class Anim8 : ThirdPartyExtension() {
+    override val id = "anim8"
+    override val defaultVersion = "0.1.3"
+    override val url = "https://github.com/tommyettinger/anim8-gdx"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.tommyettinger:anim8-gdx")
+
+        addDependency(project, GWT.ID, "com.github.tommyettinger:anim8-gdx:sources")
+        addGwtInherit(project, "anim8")
+    }
+}
+
+/**
+ * Bonus features for 9-patch images, filling significant gaps in normal 9-patch functionality.
+ * @author Raymond Buckley
+ */
+@Extension
+class TenPatch : ThirdPartyExtension() {
+    override val id = "tenPatch"
+    override val defaultVersion = "5.0.0"
+    override val url = "https://github.com/raeleus/TenPatch"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.raeleus.TenPatch:tenpatch")
+
+        addDependency(project, GWT.ID, "com.github.raeleus.TenPatch:tenpatch:sources")
+        addGwtInherit(project, "com.ray3k.tenpatch.tenpatch")
+    }
+}
+
+/**
+ * The libGDX runtime for Spine, a commercial (and very powerful) skeletal-animation editor.
+ * You must have a license for Spine to use the runtime in your code.
+ * @author Esoteric Software
+ */
+@Extension
+class SpineRuntime : ThirdPartyExtension() {
+    override val id = "spineRuntime"
+    override val defaultVersion = "3.5.51.1"
+    override val url = "https://github.com/EsotericSoftware/spine-runtimes/tree/3.8/spine-libgdx"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.esotericsoftware.spine:spine-libgdx")
+
+        addDependency(project, GWT.ID, "com.esotericsoftware.spine:spine-libgdx:sources")
+        addGwtInherit(project, "com.esotericsoftware.spine")
+    }
+}
+
+
+/**
+ * MrStahlfelge's fantastic upgrades to controller support for desktop, Android, and GWT.
+ * If something doesn't work in the official controller extension, it's probably been fixed here.
+ * @author MrStahlfelge
+ */
+@Extension
+class ControllerUtils : ThirdPartyExtension() {
+    override val id = "controllerUtils"
+    override val defaultVersion = "1.0.0"
+    override val url = "https://github.com/MrStahlfelge/gdx-controllerutils"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "de.golfgl.gdxcontrollerutils:gdx-controllers-advanced")
+        addDependency(project, Desktop.ID, "de.golfgl.gdxcontrollerutils:gdx-controllers-jamepad")
+        addDependency(project, LWJGL3.ID, "de.golfgl.gdxcontrollerutils:gdx-controllers-jamepad")
+        addDependency(project, Android.ID, "de.golfgl.gdxcontrollerutils:gdx-controllers-android")
+        addDependency(project, iOS.ID, "de.golfgl.gdxcontrollerutils:gdx-controllers-iosrvm")
+
+        addDependency(project, GWT.ID, "de.golfgl.gdxcontrollerutils:gdx-controllers-gwt")
+        addDependency(project, GWT.ID, "de.golfgl.gdxcontrollerutils:gdx-controllers-gwt:sources")
+        addDependency(project, GWT.ID, "de.golfgl.gdxcontrollerutils:gdx-controllers-advanced:sources")
+        addGwtInherit(project, "com.badlogic.gdx.controllers.controllers-gwt")
+    }
+}
+
+
+/**
+ * MrStahlfelge's controller-imitating Scene2D widgets, for players who don't have a controller.
+ * <a href="https://github.com/MrStahlfelge/gdx-controllerutils/wiki/Button-operable-Scene2d">See the docs before using</a>.
+ * @author MrStahlfelge
+ */
+@Extension
+class ControllerScene2D : ThirdPartyExtension() {
+    override val id = "controllerScene2D"
+    override val defaultVersion = "1.0.0"
+    override val url = "https://github.com/MrStahlfelge/gdx-controllerutils/wiki/Button-operable-Scene2d"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "de.golfgl.gdxcontrollerutils:gdx-controllerutils-scene2d")
+
+        addDependency(project, GWT.ID, "de.golfgl.gdxcontrollerutils:gdx-controllerutils-scene2d:sources")
+        addGwtInherit(project, "de.golfgl.gdx.controllers.controller_scene2d")
+    }
+}
+
+/**
+ * Code for making post-processing effects without so much hassle.
+ * @author crashinvaders
+ * @author metaphore
+ */
+@Extension
+class GdxVfxCore : ThirdPartyExtension() {
+    override val id = "gdxVfxCore"
+    override val defaultVersion = "0.4.3"
+    override val url = "https://github.com/crashinvaders/gdx-vfx"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.crashinvaders.vfx:gdx-vfx-core")
+
+        addDependency(project, GWT.ID, "com.crashinvaders.vfx:gdx-vfx-core:sources")
+        addDependency(project, GWT.ID, "com.crashinvaders.vfx:gdx-vfx-gwt")
+        addDependency(project, GWT.ID, "com.crashinvaders.vfx:gdx-vfx-gwt:sources")
+        addGwtInherit(project, "com.crashinvaders.vfx.GdxVfxCore")
+        addGwtInherit(project, "com.crashinvaders.vfx.GdxVfxGwt")
+    }
+}
+
+/**
+ * A wide range of predefined post-processing effects using gdx-vfx core.
+ * @author crashinvaders
+ * @author metaphore
+ */
+@Extension
+class GdxVfxStandardEffects : ThirdPartyExtension() {
+    override val id = "gdxVfxEffects"
+    override val defaultVersion = "0.4.3"
+    override val url = "https://github.com/crashinvaders/gdx-vfx"
+
+    override fun initiateDependencies(project: Project) {
+        GdxVfxCore().initiate(project)
+        addDependency(project, Core.ID, "com.crashinvaders.vfx:gdx-vfx-effects")
+
+        addDependency(project, GWT.ID, "com.crashinvaders.vfx:gdx-vfx-effects:sources")
+        addGwtInherit(project, "com.crashinvaders.vfx.GdxVfxEffects")
+    }
+}
+
+/**
+ * Cross-platform regex utilities.
+ * @author Tommy Ettinger
+ */
+@Extension()
+class RegExodus : ThirdPartyExtension() {
+    override val id = "regExodus"
+    override val defaultVersion = "0.1.10"
+    override val url = "https://github.com/tommyettinger/RegExodus"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.tommyettinger:regexodus")
+
+        addDependency(project, GWT.ID, "com.github.tommyettinger:regexodus:sources")
+        addGwtInherit(project, "regexodus")
+    }
+}
+
+
