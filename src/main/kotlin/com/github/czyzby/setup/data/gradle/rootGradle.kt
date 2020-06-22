@@ -12,7 +12,7 @@ class RootGradleFile(val project: Project) : GradleFile("") {
     val buildRepositories = mutableSetOf<String>()
 
     init {
-        buildDependencies.add("\"com.badlogicgames.gdx:gdx-tools:\$gdxVersion\"")
+//        buildDependencies.add("\"com.badlogicgames.gdx:gdx-tools:\$gdxVersion\"")
         buildRepositories.add("mavenLocal()")
         buildRepositories.add("mavenCentral()")
         buildRepositories.add("google()")

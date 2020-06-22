@@ -57,7 +57,8 @@ ${joinDependencies(dependencies)}}
 
 jar {
 	archiveFileName = "${'$'}{appName}-${'$'}{archiveVersion.get()}.jar"
-	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
+	dependsOn configurations.runtimeClasspath
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 	manifest {
 		attributes 'Main-Class': project.mainClassName
 	}

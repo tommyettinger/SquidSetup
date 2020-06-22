@@ -190,6 +190,6 @@ class Tools : OfficialExtension() {
     override fun initiate(project: Project) {
         addDesktopDependency(project, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")
 
-        addDependency(project, Headless.ID, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")
+//        addDependency(project, Headless.ID, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")
     }
 }
