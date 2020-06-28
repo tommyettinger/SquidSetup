@@ -42,7 +42,6 @@ class GWT : Platform {
 		addGradleTaskDescription(project, "dist", "compiles GWT sources. The compiled application can be found at `${id}/build/dist`: you can use any HTTP server to deploy it.")
 
 		project.gwtInherits.add(BASIC_INHERIT)
-		project.properties["gwtFrameworkVersion"] = project.advanced.gwtVersion
 		project.properties["gwtPluginVersion"] = project.advanced.gwtPluginVersion
 
 		// Adding GWT definition to core project:
@@ -114,9 +113,9 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
 		buildDependencies.add("project(':${Core.ID}')")
 		dependencies.add("project(':${Core.ID}')")
 
-		addDependency("com.badlogicgames.gdx:gdx:\$gdxVersion:sources")
-		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion")
-		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion:sources")
+		addDependency("com.badlogicgames.gdx:gdx:1.9.10:sources")
+		addDependency("com.github.tommyettinger.gdx-backends:gdx-backend-gwt:v1.910.2")
+		addDependency("com.github.tommyettinger.gdx-backends:gdx-backend-gwt:v1.910.2:sources")
 	}
 
 	override fun getContent(): String = """
@@ -133,7 +132,7 @@ apply plugin: "war"
 apply plugin: "org.gretty"
 
 gwt {
-	gwtVersion = "${'$'}gwtFrameworkVersion" // Should match the version used for building the GWT backend. See gradle.properties.
+	gwtVersion = "2.9.0" // Should match the version used by the libGDX backend.
 	maxHeapSize = '1G' // Default 256m is not enough for the GWT compiler. GWT is HUNGRY.
 	minHeapSize = '1G'
 
@@ -144,6 +143,7 @@ gwt {
 
 	compiler.strict = true
 	compiler.disableCastChecking = true
+	${if(project.advanced.javaVersion != "1.8") "sourceLevel = 1." + project.advanced.javaVersion.toDouble().toInt() else ""}
 }
 
 dependencies {
@@ -215,7 +215,7 @@ task addSource {
 tasks.compileGwt.dependsOn(addSource)
 tasks.draftCompileGwt.dependsOn(addSource)
 
-sourceCompatibility = 8.0
+sourceCompatibility = ${project.advanced.javaVersion}
 sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 
 eclipse.project.name = appName + "-html"

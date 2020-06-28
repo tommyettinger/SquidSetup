@@ -17,23 +17,23 @@
         @version
         <textField id="version" tooltip="@versionTip" row="true">0.0.1-SNAPSHOT</textField>
         @javaVersion
-        <floatSpinner id="javaVersion" min="1.7" max="1.9" value="1.8" step="0.1" precision="1"
+        <floatSpinner id="javaVersion" min="7" max="14" value="8" step="1" precision="1"
                       tooltip="@javaVersionTip"/>
         @serverJavaVersion
-        <floatSpinner id="serverJavaVersion" min="1.7" max="1.9" value="1.8" step="0.1" precision="1" row="true"
+        <floatSpinner id="serverJavaVersion" min="7" max="14" value="8" step="1" precision="1" row="true"
                       tooltip="@serverJavaVersionTip"/>
         @androidPluginVersion
-        <textField id="androidPluginVersion" tooltip="@androidPluginVersionTip">3.5.0</textField>
+        <textField id="androidPluginVersion" tooltip="@androidPluginVersionTip">4.0.0</textField>
         @sdkVersion
-        <intSpinner id="sdkVersion" min="9" max="28" value="$getSdkVersion" onChange="setSdkVersion" step="1"
+        <intSpinner id="sdkVersion" min="9" max="30" value="$getSdkVersion" onChange="setSdkVersion" step="1"
                     tooltip="@sdkVersionTip" row="true"/>
         @toolsVersion
         <textField id="toolsVersion" tooltip="@toolsVersionTip" value="$getToolsVersion"
                    onChange="setToolsVersion" />
         @robovmVersion
-        <textField id="robovmVersion" tooltip="@robovmVersionTip" row="true">2.3.7</textField>
+        <textField id="robovmVersion" tooltip="@robovmVersionTip" row="true">2.3.9</textField>
         @gwtPlugin
-        <textField id="gwtPlugin" tooltip="@gwtPluginTip" growX="true" row="true">1.0.13</textField>
+        <textField id="gwtPlugin" tooltip="@gwtPluginTip" growX="true">1.0.13</textField>
     </table>
     </scrollPane>
     <table growX="true" defaultPad="2" defaultSpaceRight="10" defaultSpaceLeft="10">
