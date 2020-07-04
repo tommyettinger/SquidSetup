@@ -53,12 +53,15 @@ handle the graphics yourself).
         IDEA. Personally, I avoid creating Android modules as part of a larger project unless they only target
         Android, since if there's only a core and an android module, nothing will interfere. You should
         absolutely make sure that IDEA has "configure on demand" disabled; under settings you can search for
-        "demand" to find it. Android Studio should always have it disabled now by default.
+        "demand" to find it. Android Studio and IDEA should always have it disabled now by default.
       - HTML is a more-involved target, with some perfectly-normal code on all other platforms acting completely
         different on HTML due to the tool used, Google Web Toolkit (GWT). It's almost always possible to work around
         these differences and make things like random seeds act the same on all platforms, but it takes work. Mostly,
         you need to be careful with the `long` and `int` number types, and relates to `int` not overflowing as it
         would on desktop, and `long` not being visible to reflection. See [this small guide to GWT](GWT.md) for more.
+        - SquidSetup uses GWT 2.9.0 via [a custom backend](https://github.com/tommyettinger/gdx-backends), which enables
+          using Java 11 features, such as `var`, but not JDK 11 library code. The backend is closely related to the
+          libGDX version used, but SquidLib currently is only tested with libGDX 1.9.10.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -109,8 +112,8 @@ Now you'll have a project all set up with a sample.
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
     case they don't immediately work.
-  - All builds currently use Gradle 6.5 with the "api/implementation/compile fiasco" resolved.
-    Java 13 and 14 work with SquidSetup because Gradle 6.5 supports Java from 8 to 14.
+  - All builds currently use Gradle 6.5.1 with the "api/implementation/compile fiasco" resolved.
+    Java 13 and 14 work with SquidSetup because Gradle 6.5.1 supports Java from 8 to 14.
     Adding dependencies will use the `api` keyword instead of the `compile` keyword it used
     in earlier versions. All modules use the `java-library` plugin, which enables the `api` keyword
     for dependencies.

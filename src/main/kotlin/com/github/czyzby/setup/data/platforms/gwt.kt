@@ -114,8 +114,8 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
 		dependencies.add("project(':${Core.ID}')")
 
 		addDependency("com.badlogicgames.gdx:gdx:1.9.10:sources")
-		addDependency("com.github.tommyettinger.gdx-backends:gdx-backend-gwt:v1.910.2")
-		addDependency("com.github.tommyettinger.gdx-backends:gdx-backend-gwt:v1.910.2:sources")
+		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.910.2")
+		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.910.2:sources")
 	}
 
 	override fun getContent(): String = """
