@@ -344,7 +344,7 @@ class Colorful : ThirdPartyExtension() {
 @Extension
 class Anim8 : ThirdPartyExtension() {
     override val id = "anim8"
-    override val defaultVersion = "0.1.4"
+    override val defaultVersion = "0.1.5"
     override val url = "https://github.com/tommyettinger/anim8-gdx"
 
     override fun initiateDependencies(project: Project) {
@@ -477,6 +477,27 @@ class GdxVfxStandardEffects : ThirdPartyExtension() {
 
         addDependency(project, GWT.ID, "com.crashinvaders.vfx:gdx-vfx-effects:sources")
         addGwtInherit(project, "com.crashinvaders.vfx.GdxVfxEffects")
+    }
+}
+
+/**
+ * Loaders for the 3D GLTF format and ways to render GLTF scenes and objects nicely.
+ * <br>
+ * Note: this has a dependency on a commit from June 3, 2020 via JitPack. You may want to check if there is a newer
+ * commit or a release since then, or use a SNAPSHOT dependency: https://jitpack.io/#mgsx-dev/gdx-gltf
+ * @author mgsx-dev
+ */
+@Extension
+class GdxGltf : ThirdPartyExtension() {
+    override val id = "gdxGltf"
+    override val defaultVersion = "2d1374fd3c"
+    override val url = "https://github.com/mgsx-dev/gdx-gltf"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.mgsx-dev.gdx-gltf:gltf")
+
+        addDependency(project, GWT.ID, "com.github.mgsx-dev.gdx-gltf:gltf:sources")
+        addGwtInherit(project, "GLTF")
     }
 }
 
