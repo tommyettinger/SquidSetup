@@ -502,6 +502,27 @@ class GdxGltf : ThirdPartyExtension() {
 }
 
 /**
+ * Custom Scene2D widgets and utilities.
+ * <br>
+ * Note: this has a dependency on a commit from June 30, 2020 via JitPack. You may want to check if there is a newer
+ * commit or a release since then, or use a SNAPSHOT dependency: https://jitpack.io/#raeleus/stripe
+ * @author Raymond Buckley
+ */
+@Extension
+class Stripe : ThirdPartyExtension() {
+    override val id = "stripe"
+    override val defaultVersion = "d92965c0ea"
+    override val url = "https://github.com/raeleus/stripe"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.raeleus:stripe")
+
+        addDependency(project, GWT.ID, "com.github.raeleus:stripe:sources")
+        addGwtInherit(project, "com.ray3k.stripe")
+    }
+}
+
+/**
  * Cross-platform regex utilities.
  * @author Tommy Ettinger
  */
