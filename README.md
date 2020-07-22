@@ -61,7 +61,7 @@ handle the graphics yourself).
         would on desktop, and `long` not being visible to reflection. See [this small guide to GWT](GWT.md) for more.
         - SquidSetup uses GWT 2.9.0 via [a custom backend](https://github.com/tommyettinger/gdx-backends), which enables
           using Java 11 features, such as `var`, but not JDK 11 library code. The backend is closely related to the
-          libGDX version used, but SquidLib currently is only tested with libGDX 1.9.10.
+          libGDX version used, but SquidLib currently is only tested with libGDX 1.9.11.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
