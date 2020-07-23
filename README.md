@@ -25,14 +25,14 @@ handle the graphics yourself).
 ## Usage
 
   - Get the latest `SquidSetup.jar` from the [Releases tab](https://github.com/tommyettinger/SquidSetup/releases) of this project.
-    - You probably want the latest possible code using the [3.0.0-JITPACK Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-JITPACK),
+    - You may want the stable 3.0.0 release, which came out July 22, 2020 and won't change until another
+      stable release (which still won't make the stable SquidSetup act any differently).
+    - You may instead want the latest possible code using the [3.0.0-JITPACK Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-JITPACK),
       but you may want a more-stable beta version. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
       will be obtained from Maven Central. The latest commit is determined by the library `jcabi-github`, and involves an API call to GitHub when using
       the snapshot release (not any beta or stable releases); the API call may be a little slow or might not complete if GitHub is having issues. However,
       because the code at that commit is the same at any point in the future, the snapshot commits won't "suddenly stop working" like a dependency
       on a nightly build might; you update when you want to, and if something breaks, you can always go back to an older commit that you know works.
-    - There is also a [3.0.0-SNAPSHOT Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-SNAPSHOT); it uses an older Gradle version and
-      is available in case something is failing in the project layout produced by 3.0.0-JITPACK.
   - Regardless of what platforms you intend to target, make sure the steps
     [described by the LibGDX wiki here](https://github.com/libgdx/libgdx/wiki/Setting-up-your-Development-Environment-%28Eclipse%2C-Intellij-IDEA%2C-NetBeans%29)
     are taken care of.

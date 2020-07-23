@@ -14,9 +14,9 @@ import java.util.*
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-val SQUID_LIB_VERSION = // "v3.0.0-b10" 
-        RtGithub().repos().get(Coordinates.Simple("SquidPony", "SquidLib"))
-        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
+val SQUID_LIB_VERSION = "3.0.0" 
+//        RtGithub().repos().get(Coordinates.Simple("SquidPony", "SquidLib"))
+//        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
 
 /**
  * URL of SquidLib libraries.
@@ -25,8 +25,8 @@ val SQUID_LIB_VERSION = // "v3.0.0-b10"
  */
 const val SQUID_LIB_URL = "https://github.com/SquidPony/SquidLib"
 
-const val REPO_PATH = "com.github.SquidPony.SquidLib"
-//const val REPO_PATH = "com.squidpony"
+//const val REPO_PATH = "com.github.SquidPony.SquidLib"
+const val REPO_PATH = "com.squidpony"
 
 /**
  * Utilities for grid-based games.
