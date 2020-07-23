@@ -16,6 +16,8 @@ buildscript {
 version = "3.0.0"
 mainClassName = 'com.github.czyzby.setup.MainKt'
 
+sourceCompatibility = 1.8
+
 jar {
   manifest {
     attributes 'Main-Class': mainClassName
