@@ -30,7 +30,7 @@ class Project(val basic: BasicProjectData, val platforms: Map<String, Platform>,
     val rootGradle: RootGradleFile
     val properties = mutableMapOf(
             "org.gradle.daemon" to "false",
-            "org.gradle.jvmargs" to "-Xms128m -Xmx512m",
+            "org.gradle.jvmargs" to "-Xms128m -Xmx5g",
             "org.gradle.configureondemand" to "false")
     val postGenerationTasks = mutableListOf<(Project) -> Unit>()
     val gwtInherits = mutableSetOf<String>()

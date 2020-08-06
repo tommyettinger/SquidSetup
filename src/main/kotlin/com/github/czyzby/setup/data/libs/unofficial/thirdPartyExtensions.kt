@@ -220,7 +220,7 @@ class Noise4J : ThirdPartyExtension() {
 @Extension
 class BladeInk : ThirdPartyExtension() {
     override val id = "bladeInk"
-    override val defaultVersion = "0.7.3"
+    override val defaultVersion = "0.7.4"
     override val url = "https://github.com/bladecoder/blade-ink"
 
     override fun initiateDependencies(project: Project) {
@@ -248,6 +248,8 @@ class Joise : ThirdPartyExtension() {
 
 /**
  * Another 2D, 3D, 4D and 6D noise library, supporting some unusual types of noise.
+ * Mostly pulled from squidlib-util, so if you keep the default squidlib-util dep, you
+ * can use the FastNoise class instead.
  * @author Tommy Ettinger
  */
 @Extension
@@ -537,6 +539,24 @@ class RegExodus : ThirdPartyExtension() {
 
         addDependency(project, GWT.ID, "com.github.tommyettinger:regexodus:sources")
         addGwtInherit(project, "regexodus")
+    }
+}
+
+/**
+ * UI toolkit.
+ * @author Kotcrab
+ */
+@Extension
+class VisUI : ThirdPartyExtension() {
+    override val id = "visUi"
+    override val defaultVersion = "1.3.0"
+    override val url = "https://github.com/kotcrab/VisEditor/wiki/VisUI"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.kotcrab.vis:vis-ui")
+
+        addDependency(project, GWT.ID, "com.kotcrab.vis:vis-ui:sources")
+        addGwtInherit(project, "com.kotcrab.vis.vis-ui")
     }
 }
 

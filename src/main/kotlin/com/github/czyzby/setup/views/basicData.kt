@@ -8,7 +8,6 @@ import com.github.czyzby.kiwi.util.common.Strings
 import com.github.czyzby.lml.annotation.LmlActor
 import com.kotcrab.vis.ui.widget.VisTextField
 import com.kotcrab.vis.ui.widget.VisValidatableTextField
-import javax.print.attribute.standard.Destination
 
 /**
  * Filled by the LML parser, this class contains references to basic project data widgets.
@@ -68,14 +67,12 @@ class BasicProjectData {
 
     fun getLatestAndroidApiVersion(): Int = getAndroidApi { ver1, ver2 -> ver1 - ver2 }
     fun getOldestAndroidApiVersion(): Int = getAndroidApi { ver1, ver2 -> ver2 - ver1 }
-    fun getLatestBuildToolsVersion(): String = getAndroidBuildTools { ver1, ver2 -> ver1.compareTo(ver2) }
-    fun getOldestBuildToolsVersion(): String = getAndroidBuildTools { ver1, ver2 -> ver2.compareTo(ver1) }
-
+    
     private fun getAndroidApi(comparator: (Int, Int) -> Int): Int {
         if (!androidSdkPathField.isInputValid) {
             return 0
         }
-        var apiLevel: Int? = null;
+        var apiLevel: Int? = null
         androidSdk.child("platforms").list().forEach {
             val level = findProperty(it, "AndroidVersion.ApiLevel")
             if (apiLevel == null || (level != null && comparator(apiLevel!!, level.toInt()) < 0)) {
@@ -92,21 +89,7 @@ class BasicProjectData {
             sdkButtons.forEach { it.isDisabled = true }
         }
     }
-
-    private fun getAndroidBuildTools(comparator: (String, String) -> Int): String {
-        if (!androidSdkPathField.isInputValid || !androidSdk.child("build-tools").isDirectory) {
-            return "0.0.0"
-        }
-        var apiLevel: String? = null;
-        androidSdk.child("build-tools").list().forEach {
-            val level = findProperty(it, "Pkg.Revision")
-            if (apiLevel == null || (level != null && comparator(apiLevel!!, level) < 0)) {
-                apiLevel = level
-            }
-        }
-        return if (apiLevel == null) "0.0.0" else apiLevel!!
-    }
-
+    
     private fun findProperty(directory: FileHandle, property: String, file: String = "source.properties"): String? {
         val properties = directory.child(file)
         if (properties.exists()) {
