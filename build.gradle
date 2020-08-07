@@ -13,7 +13,7 @@ buildscript {
   }
 }
 
-version = "3.0.0-u1-SNAPSHOT"
+version = "3.0.0-u1"
 mainClassName = 'com.github.czyzby.setup.MainKt'
 
 sourceCompatibility = 1.8

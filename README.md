@@ -27,6 +27,8 @@ handle the graphics yourself).
   - Get the latest `SquidSetup.jar` from the [Releases tab](https://github.com/tommyettinger/SquidSetup/releases) of this project.
     - You may want the stable 3.0.0 release, which came out July 22, 2020 and won't change until another
       stable release (which still won't make the stable SquidSetup act any differently).
+    - You may want the slightly-cleaned-up 3.0.0-u1 (update 1) release, which mostly applies fixes to Android. Future changes
+      to SquidSetup for SquidLib 3.0.0 will be applied to -u2, -u3, etc.
     - You may instead want the latest possible code using the [3.0.0-JITPACK Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-JITPACK),
       but you may want a more-stable beta version. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
       will be obtained from Maven Central. The latest commit is determined by the library `jcabi-github`, and involves an API call to GitHub when using
@@ -126,5 +128,30 @@ Now you'll have a project all set up with a sample.
     `jcenter()` last in the repositories lists. I don't know if any other tools have done the same, but it's
     an easy fix and I encourage them to do so.
     
+## Recommended Settings
+
+These apply to the options on the Advanced tab, which may need some extra explanation.
+
+  - LibGDX version: 1.9.11
+    - Ths is a dependency of SquidLib 3.0.0.
+  - Application version: Your choice
+    - Maybe `0.0.1-SNAPSHOT` if it's going to change a lot. `-SNAPSHOT` has special meaning as a non-release.
+  - Java version: 8.0, 11.0, or 14.0
+    - 8.0 is the max for Android and iOS, but 11.0 can be used on GWT, and 14.0 for desktop/LWJGL3 only.
+  - Server Java version: Must be at least equal to `Java version`, maybe should be equal.
+    - Only matters if you have selected a Server project on the Platforms tab.
+  - Android plugin: 3.4.3
+    - The current version of the Android Gradle Plugin is 4.0.1, but it can have strange bugs.
+    - 3.4.3 is the most recent version to compile an APK successfully in IntelliJ IDEA, though
+      4.0.1 has worked from the command line.
+      - You can try to update `androidPluginVersion` in `gradle.properties` if you want to try
+        some newer features, and if the newer version doesn't work, you can downgrade there too. 
+  - Target Android API: 29
+    - This is required by the Play Store.
+  - RoboVM Version: 2.3.9
+    - This can be updated if there's a newer release, but only matters if you target iOS.
+  - GWT plugin version: 1.0.13
+    - This is the most recent version, and it works fine.
+
 Good luck, and I hope you make something great!
 
