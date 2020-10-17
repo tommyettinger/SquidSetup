@@ -1,7 +1,5 @@
 package com.github.czyzby.lml.vis.parser.impl.tag.spinner;
 
-import java.math.BigDecimal;
-
 import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.tag.LmlActorBuilder;
 import com.github.czyzby.lml.parser.tag.LmlTag;
@@ -9,6 +7,8 @@ import com.github.czyzby.lml.vis.parser.impl.tag.builder.StringRangeLmlActorBuil
 import com.kotcrab.vis.ui.widget.spinner.FloatSpinnerModel;
 import com.kotcrab.vis.ui.widget.spinner.Spinner;
 import com.kotcrab.vis.ui.widget.spinner.SpinnerModel;
+
+import java.math.BigDecimal;
 
 /** Constructs {@link Spinner} with {@link FloatSpinnerModel}. Data is stored in a {@link BigDecimal} internally. Mapped
  * to "floatSpinner", "spinner".

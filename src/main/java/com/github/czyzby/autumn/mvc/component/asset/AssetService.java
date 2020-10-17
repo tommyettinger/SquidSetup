@@ -16,11 +16,7 @@ import com.github.czyzby.autumn.annotation.Inject;
 import com.github.czyzby.autumn.context.Context;
 import com.github.czyzby.autumn.context.ContextDestroyer;
 import com.github.czyzby.autumn.context.ContextInitializer;
-import com.github.czyzby.autumn.mvc.component.asset.dto.injection.ArrayAssetInjection;
-import com.github.czyzby.autumn.mvc.component.asset.dto.injection.AssetInjection;
-import com.github.czyzby.autumn.mvc.component.asset.dto.injection.ObjectMapAssetInjection;
-import com.github.czyzby.autumn.mvc.component.asset.dto.injection.ObjectSetAssetInjection;
-import com.github.czyzby.autumn.mvc.component.asset.dto.injection.StandardAssetInjection;
+import com.github.czyzby.autumn.mvc.component.asset.dto.injection.*;
 import com.github.czyzby.autumn.mvc.component.asset.dto.provider.ArrayAssetProvider;
 import com.github.czyzby.autumn.mvc.component.asset.dto.provider.AssetProvider;
 import com.github.czyzby.autumn.mvc.component.asset.dto.provider.ObjectMapAssetProvider;
@@ -323,7 +319,7 @@ public class AssetService extends AbstractAnnotationProcessor<Asset> {
     private void handleRegularAssetInjection(final Object component, final Field field, final Asset assetData) {
         if (assetData.value().length != 1) {
             throw new GdxRuntimeException(
-                    "Regular fields can store only 1 asset. If the field is a collection, its type is not currently supported: only LibGDX Array, ObjectSet and ObjectMap are permitted. Regular arrays will not be supported. Found multiple assets in field: "
+                    "Regular fields can store only 1 asset. If the field is a collection, its type is not currently supported: only libGDX Array, ObjectSet and ObjectMap are permitted. Regular arrays will not be supported. Found multiple assets in field: "
                             + field + " of component: " + component);
         }
         final String assetPath = assetData.value()[0];

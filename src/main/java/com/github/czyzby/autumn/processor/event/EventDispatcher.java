@@ -1,7 +1,5 @@
 package com.github.czyzby.autumn.processor.event;
 
-import java.util.Iterator;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -14,6 +12,8 @@ import com.github.czyzby.autumn.context.error.ContextInitiationException;
 import com.github.czyzby.autumn.processor.AbstractAnnotationProcessor;
 import com.github.czyzby.autumn.processor.event.impl.ReflectionEventListener;
 import com.github.czyzby.kiwi.util.gdx.collection.lazy.LazyObjectMap;
+
+import java.util.Iterator;
 
 /** Processes events. Can be injected and used to invoke registered listeners with {@link #postEvent(Object)}. If this
  * processor is not injected into any component, it will mostly likely get garbage-collected after context initiation,
@@ -76,7 +76,7 @@ public class EventDispatcher extends AbstractAnnotationProcessor<OnEvent> {
     /**
      * @param listener will be registered.
      * @param eventType type of handled events.
-     * @param forceMainThread if true, listener will be invoked only on main LibGDX thread with
+     * @param forceMainThread if true, listener will be invoked only on main libGDX thread with
      * Gdx.app.postRunnable(Runnable). Otherwise the listener is invoked as soon as the event is posted.
      */
     public void addListener(final EventListener<?> listener, final Class<?> eventType, final boolean forceMainThread) {

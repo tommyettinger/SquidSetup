@@ -1,5 +1,15 @@
 package com.github.czyzby.autumn.nongwt.scanner;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.github.czyzby.autumn.scanner.ClassScanner;
+import com.github.czyzby.kiwi.util.common.Exceptions;
+import com.github.czyzby.kiwi.util.common.Strings;
+import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
+import com.github.czyzby.kiwi.util.tuple.immutable.Pair;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -10,16 +20,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
-import com.github.czyzby.autumn.scanner.ClassScanner;
-import com.github.czyzby.kiwi.util.common.Exceptions;
-import com.github.czyzby.kiwi.util.common.Strings;
-import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
-import com.github.czyzby.kiwi.util.tuple.immutable.Pair;
 
 /** Tries to scan class path resources if running from binaries (IDE), or .jar files otherwise. Has no external
  * dependencies. Will not work on GWT (is not available there) or mobile platforms.

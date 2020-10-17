@@ -4,9 +4,7 @@ import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.action.ActorConsumer;
 import com.github.czyzby.lml.parser.tag.LmlAttribute;
 import com.github.czyzby.lml.parser.tag.LmlTag;
-import com.kotcrab.vis.ui.widget.Menu;
 import com.kotcrab.vis.ui.widget.MenuBar;
-import com.kotcrab.vis.ui.widget.PopupMenu;
 
 /**
  * See {@link MenuBar#setMenuListener(MenuBar.MenuBarListener)}. Expects ID of an action that returns

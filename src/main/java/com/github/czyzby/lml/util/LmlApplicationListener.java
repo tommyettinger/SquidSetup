@@ -1,7 +1,5 @@
 package com.github.czyzby.lml.util;
 
-import java.io.Writer;
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -24,6 +22,8 @@ import com.github.czyzby.lml.parser.action.ActorConsumer;
 import com.github.czyzby.lml.parser.impl.AbstractLmlView;
 import com.github.czyzby.lml.parser.impl.tag.Dtd;
 
+import java.io.Writer;
+
 /** An {@link ApplicationListener} implementation that manages a list of {@link AbstractLmlView LML views}. Forces the
  * user to prepare a {@link LmlParser} with {@link #createParser()} method. Ensures smooth view transitions. Adds
  * default actions with {@link #addDefaultActions()} method: "exit" closes the application after smooth screen hiding,
@@ -37,7 +37,7 @@ import com.github.czyzby.lml.parser.impl.tag.Dtd;
  * sure to include their classes in GWT reflection mechanism.
  *
  * <p>
- * What LibGDX {@link com.badlogic.gdx.Game Game} is to {@link com.badlogic.gdx.Screen Screen}, this class is the same
+ * What libGDX {@link com.badlogic.gdx.Game Game} is to {@link com.badlogic.gdx.Screen Screen}, this class is the same
  * thing to {@link AbstractLmlView}. Except it adds much more functionalities.
  *
  * @author MJ */

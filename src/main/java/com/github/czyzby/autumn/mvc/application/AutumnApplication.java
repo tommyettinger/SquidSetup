@@ -17,16 +17,7 @@ import com.github.czyzby.autumn.mvc.component.sfx.processor.SoundEnabledAnnotati
 import com.github.czyzby.autumn.mvc.component.sfx.processor.SoundVolumeAnnotationProcessor;
 import com.github.czyzby.autumn.mvc.component.ui.InterfaceService;
 import com.github.czyzby.autumn.mvc.component.ui.SkinService;
-import com.github.czyzby.autumn.mvc.component.ui.processor.LmlMacroAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.LmlParserSyntaxAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.PreferenceAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.SkinAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.SkinAssetAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.StageViewportAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.ViewActionContainerAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.ViewAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.ViewDialogAnnotationProcessor;
-import com.github.czyzby.autumn.mvc.component.ui.processor.ViewStageAnnotationProcessor;
+import com.github.czyzby.autumn.mvc.component.ui.processor.*;
 import com.github.czyzby.autumn.mvc.stereotype.View;
 import com.github.czyzby.autumn.mvc.stereotype.ViewActionContainer;
 import com.github.czyzby.autumn.mvc.stereotype.ViewDialog;

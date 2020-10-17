@@ -1,12 +1,10 @@
 <!doctype html>
 <html>
 <head>
-	<title>LibGDX application</title>
+	<title>libGDX application</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta id="gameViewport" name="viewport" content="width=device-width initial-scale=1">
 	<link href="styles.css" rel="stylesheet" type="text/css">
-	<script src="soundmanager2-setup.js"></script>
-	<script src="soundmanager2-jsmin.js"></script>
 </head>
 
 <body>
@@ -16,9 +14,6 @@
 </body>
 
 <script>
-document.getElementById('gameViewport').setAttribute('content',
-	'width=device-width initial-scale=' + 1/window.devicePixelRatio);
-
 function handleMouseDown(evt) {
 	evt.preventDefault();
 	evt.stopPropagation();
@@ -33,5 +28,6 @@ function handleMouseUp(evt) {
 }
 document.getElementById('embed-html').addEventListener('mousedown', handleMouseDown, false);
 document.getElementById('embed-html').addEventListener('mouseup', handleMouseUp, false);
+
 </script>
 </html>

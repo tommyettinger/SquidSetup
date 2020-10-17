@@ -1,13 +1,13 @@
 package com.github.czyzby.lml.vis.parser.impl.nongwt.attribute.validator;
 
-import java.io.File;
-
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.tag.LmlAttribute;
 import com.github.czyzby.lml.parser.tag.LmlTag;
 import com.kotcrab.vis.ui.util.form.FormValidator.FileExistsValidator;
 import com.kotcrab.vis.ui.widget.VisTextField;
+
+import java.io.File;
 
 /** See {@link FileExistsValidator#setRelativeToFile(File)} and
  * {@link FileExistsValidator#setRelativeToTextField(VisTextField)}. Can handle both text field references and file

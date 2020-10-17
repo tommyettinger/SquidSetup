@@ -1,18 +1,13 @@
 package com.github.czyzby.lml.vis.parser.impl.attribute.spinner;
 
-import java.math.BigDecimal;
-
 import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.action.ActorConsumer;
 import com.github.czyzby.lml.parser.tag.LmlAttribute;
 import com.github.czyzby.lml.parser.tag.LmlTag;
 import com.github.czyzby.lml.util.LmlUtilities;
-import com.kotcrab.vis.ui.widget.spinner.ArraySpinnerModel;
-import com.kotcrab.vis.ui.widget.spinner.FloatSpinnerModel;
-import com.kotcrab.vis.ui.widget.spinner.IntSpinnerModel;
-import com.kotcrab.vis.ui.widget.spinner.SimpleFloatSpinnerModel;
-import com.kotcrab.vis.ui.widget.spinner.Spinner;
-import com.kotcrab.vis.ui.widget.spinner.SpinnerModel;
+import com.kotcrab.vis.ui.widget.spinner.*;
+
+import java.math.BigDecimal;
 
 /** In case of numeric spinners, this attribute allows to set the initial value. In case of array spinners, this marks
  * the index of the value that should be selected first. In case of numeric spinners, "value" attribute is preferred, as

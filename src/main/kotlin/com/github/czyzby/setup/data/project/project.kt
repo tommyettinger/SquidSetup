@@ -257,15 +257,24 @@ Zodiac-Square-24x24.png
 
     private fun addSkinAssets() {
         if (advanced.generateSkin) {
-            // Adding raw assets directory:
-            files.add(SourceDirectory("raw", "ui"))
             // Adding GUI assets directory:
             files.add(SourceDirectory(Assets.ID, "ui"))
-        }
 
-        if (advanced.generateSkin) {
-                files.add(CopiedFile(projectName = Assets.ID, path = path("ui", "skin.json"),
-                        original = path("generator", "assets", "ui", "skin.json")))
+            files.add(CopiedFile(projectName = Assets.ID, path = path("ui", "uiskin.atlas"),
+                    original = path("generator", "assets", "ui", "uiskin.atlas")))
+            files.add(CopiedFile(projectName = Assets.ID, path = path("ui", "uiskin.json"),
+                    original = path("generator", "assets", "ui", "uiskin.json")))
+            files.add(CopiedFile(projectName = Assets.ID, path = path("ui", "uiskin.png"),
+                    original = path("generator", "assets", "ui", "uiskin.png")))
+            files.add(CopiedFile(projectName = Assets.ID, path = path("ui", "font.fnt"),
+                    original = path("generator", "assets", "ui", "font.fnt")))
+            files.add(CopiedFile(projectName = Assets.ID, path = path("ui", "font-list.fnt"),
+                    original = path("generator", "assets", "ui", "font-list.fnt")))
+            files.add(CopiedFile(projectName = Assets.ID, path = path("ui", "font-subtitle.fnt"),
+                    original = path("generator", "assets", "ui", "font-subtitle.fnt")))
+            files.add(CopiedFile(projectName = Assets.ID, path = path("ui", "font-window.fnt"),
+                    original = path("generator", "assets", "ui", "font-window.fnt")))
+
             // Android does not support classpath fonts loading through skins.
             // Explicitly copying Arial font if Android platform is included:
             if (hasPlatform(Android.ID)) {
@@ -274,14 +283,6 @@ Zodiac-Square-24x24.png
                     files.add(CopiedFile(projectName = Assets.ID, path = path, original = path,
                             fileType = Files.FileType.Classpath))
                 }
-            }
-
-            // Copying raw assets - internal files listing doesn't work, so we're hard-coding raw/ui content:
-            arrayOf("check.png", "check-on.png", "dot.png", "knob-h.png", "knob-v.png", "line-h.png", "line-v.png",
-                    "pack.json", "rect.png", "select.9.png", "square.png", "tree-minus.png", "tree-plus.png",
-                    "window-border.9.png", "window-resize.9.png").forEach {
-                files.add(CopiedFile(projectName = "raw", path = "ui${File.separator}$it",
-                        original = path("generator", "raw", "ui", it)))
             }
         }
     }

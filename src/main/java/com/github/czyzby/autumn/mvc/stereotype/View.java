@@ -1,17 +1,13 @@
 package com.github.czyzby.autumn.mvc.stereotype;
 
+import com.badlogic.gdx.Files.FileType;
+import com.github.czyzby.autumn.mvc.component.ui.controller.*;
+import com.github.czyzby.autumn.mvc.component.ui.dto.ThemeOrdering;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.badlogic.gdx.Files.FileType;
-import com.github.czyzby.autumn.mvc.component.ui.controller.ViewInitializer;
-import com.github.czyzby.autumn.mvc.component.ui.controller.ViewPauser;
-import com.github.czyzby.autumn.mvc.component.ui.controller.ViewRenderer;
-import com.github.czyzby.autumn.mvc.component.ui.controller.ViewResizer;
-import com.github.czyzby.autumn.mvc.component.ui.controller.ViewShower;
-import com.github.czyzby.autumn.mvc.component.ui.dto.ThemeOrdering;
 
 /** Should annotate classes that manage a single view. Partial control over how the view is managed can be gained by
  * implementing a {@link ViewInitializer},

@@ -29,7 +29,6 @@ jar {
 }
 
 repositories {
-  mavenLocal()
   mavenCentral()
   maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
   maven { url 'https://jitpack.io' }
@@ -44,8 +43,7 @@ dependencies {
   api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
   api "io.github.lukehutch:fast-classpath-scanner:2.21"
-  api "com.kotcrab.vis:vis-ui:1.4.4"
-  api "com.github.czyzby.gdx-lml:gdx-kiwi:$lmlVersion"
+  api "com.kotcrab.vis:vis-ui:1.4.6"
   // all dependencies below are for jcabi-github to be usable at runtime... ugh.
   api "org.glassfish:javax.json:1.0.4"
   api "org.glassfish.jersey.core:jersey-common:2.17"

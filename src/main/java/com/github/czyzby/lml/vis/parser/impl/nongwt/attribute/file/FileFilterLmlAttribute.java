@@ -1,14 +1,14 @@
 package com.github.czyzby.lml.vis.parser.impl.nongwt.attribute.file;
 
-import java.io.File;
-import java.io.FileFilter;
-
 import com.github.czyzby.kiwi.util.common.Strings;
 import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.action.ActorConsumer;
 import com.github.czyzby.lml.parser.tag.LmlAttribute;
 import com.github.czyzby.lml.parser.tag.LmlTag;
 import com.kotcrab.vis.ui.widget.file.FileChooser;
+
+import java.io.File;
+import java.io.FileFilter;
 
 /** See {@link FileChooser#setFileFilter(FileFilter)}. Expects an action ID that references a method consuming
  * {@link File} instance and returning a boolean (boxed or unboxed). Method will be invoked each time a file is

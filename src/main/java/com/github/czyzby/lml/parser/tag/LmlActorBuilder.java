@@ -3,8 +3,8 @@ package com.github.czyzby.lml.parser.tag;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.github.czyzby.kiwi.util.gdx.scene2d.Actors;
 import com.github.czyzby.lml.parser.impl.DefaultLmlData;
-import com.github.czyzby.lml.util.LmlUtilities;
 import com.github.czyzby.lml.util.LmlUserObject.TableTarget;
+import com.github.czyzby.lml.util.LmlUtilities;
 
 /** Contains data necessary to construct widgets.
  *

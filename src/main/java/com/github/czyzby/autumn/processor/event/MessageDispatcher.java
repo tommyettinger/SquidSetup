@@ -1,7 +1,5 @@
 package com.github.czyzby.autumn.processor.event;
 
-import java.util.Iterator;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -14,6 +12,8 @@ import com.github.czyzby.autumn.context.error.ContextInitiationException;
 import com.github.czyzby.autumn.processor.AbstractAnnotationProcessor;
 import com.github.czyzby.autumn.processor.event.impl.ReflectionMessageListener;
 import com.github.czyzby.kiwi.util.gdx.collection.lazy.LazyObjectMap;
+
+import java.util.Iterator;
 
 /** Processes messages. Can be injected and used to invoke registered listeners with {@link #postMessage(String)}. If
  * this processor is not injected into any component, it will mostly likely get garbage-collected after context
@@ -73,7 +73,7 @@ public class MessageDispatcher extends AbstractAnnotationProcessor<OnMessage> {
     /**
      * @param listener will be registered.
      * @param messageContent content of handled message. If the message is posted, listener will be invoked.
-     * @param forceMainThread if true, listener will be invoked only on main LibGDX thread with
+     * @param forceMainThread if true, listener will be invoked only on main libGDX thread with
      * Gdx.app.postRunnable(Runnable). Otherwise the listener is invoked as soon as the message is posted.
      */
     public void addListener(final MessageListener listener, final String messageContent,

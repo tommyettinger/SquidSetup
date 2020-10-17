@@ -1,16 +1,10 @@
 package com.github.czyzby.lml.parser.impl;
 
-import java.lang.annotation.Annotation;
-
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.I18NBundle;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectSet;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
 import com.badlogic.gdx.utils.reflect.Method;
@@ -21,19 +15,9 @@ import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
 import com.github.czyzby.kiwi.util.gdx.collection.pooled.PooledList;
 import com.github.czyzby.kiwi.util.gdx.reflection.Annotations;
 import com.github.czyzby.kiwi.util.gdx.reflection.Reflection;
-import com.github.czyzby.lml.annotation.LmlActor;
-import com.github.czyzby.lml.annotation.LmlAfter;
-import com.github.czyzby.lml.annotation.LmlBefore;
-import com.github.czyzby.lml.annotation.LmlInject;
-import com.github.czyzby.lml.annotation.OnChange;
+import com.github.czyzby.lml.annotation.*;
 import com.github.czyzby.lml.annotation.processor.OnChangeProcessor;
-import com.github.czyzby.lml.parser.LmlData;
-import com.github.czyzby.lml.parser.LmlParser;
-import com.github.czyzby.lml.parser.LmlParserListener;
-import com.github.czyzby.lml.parser.LmlStyleSheet;
-import com.github.czyzby.lml.parser.LmlSyntax;
-import com.github.czyzby.lml.parser.LmlTemplateReader;
-import com.github.czyzby.lml.parser.LmlView;
+import com.github.czyzby.lml.parser.*;
 import com.github.czyzby.lml.parser.action.ActionContainer;
 import com.github.czyzby.lml.parser.action.ActionContainerWrapper;
 import com.github.czyzby.lml.parser.action.ActorConsumer;
@@ -43,6 +27,9 @@ import com.github.czyzby.lml.util.Lml;
 import com.github.czyzby.lml.util.LmlParsingException;
 import com.github.czyzby.lml.util.LmlUtilities;
 import com.github.czyzby.lml.util.collection.IgnoreCaseStringMap;
+
+import java.lang.annotation.Annotation;
+import java.lang.StringBuilder;
 
 /** Abstract base for all LML parsers. Manages required getters and setters. Allows to focus on the actual parsing
  * implementation by providing abstract method {@link #parseTemplate()} and implementing all specific parsing methods

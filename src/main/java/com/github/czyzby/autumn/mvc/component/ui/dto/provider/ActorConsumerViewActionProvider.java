@@ -3,7 +3,7 @@ package com.github.czyzby.autumn.mvc.component.ui.dto.provider;
 import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.action.ActorConsumer;
 
-/** Wraps around an {@link com.github.czyzby.lml.parser.action.ActorConsumer}.
+/** Wraps around an {@link ActorConsumer}.
  *
  * @author MJ */
 public class ActorConsumerViewActionProvider extends AbstractViewActionProvider {

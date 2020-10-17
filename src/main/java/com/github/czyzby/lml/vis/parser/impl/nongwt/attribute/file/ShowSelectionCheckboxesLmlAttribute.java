@@ -1,6 +1,5 @@
 package com.github.czyzby.lml.vis.parser.impl.nongwt.attribute.file;
 
-import com.github.czyzby.kiwi.util.common.Strings;
 import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.tag.LmlAttribute;
 import com.github.czyzby.lml.parser.tag.LmlTag;

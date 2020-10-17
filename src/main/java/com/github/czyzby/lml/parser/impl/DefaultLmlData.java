@@ -15,13 +15,7 @@ import com.github.czyzby.lml.parser.LmlData;
 import com.github.czyzby.lml.parser.action.ActionContainer;
 import com.github.czyzby.lml.parser.action.ActionContainerWrapper;
 import com.github.czyzby.lml.parser.action.ActorConsumer;
-import com.github.czyzby.lml.parser.impl.annotation.processor.ButtonOnChangeProcessor;
-import com.github.czyzby.lml.parser.impl.annotation.processor.ListOnChangeProcessor;
-import com.github.czyzby.lml.parser.impl.annotation.processor.ListSingleItemOnChangeProcessor;
-import com.github.czyzby.lml.parser.impl.annotation.processor.ProgressBarOnChangeProcessor;
-import com.github.czyzby.lml.parser.impl.annotation.processor.SelectBoxOnChangeProcessor;
-import com.github.czyzby.lml.parser.impl.annotation.processor.SelectBoxSingleItemOnChangeProcessor;
-import com.github.czyzby.lml.parser.impl.annotation.processor.TextFieldOnChangeProcessor;
+import com.github.czyzby.lml.parser.impl.annotation.processor.*;
 import com.github.czyzby.lml.util.LmlUtilities;
 import com.github.czyzby.lml.util.collection.IgnoreCaseStringMap;
 
