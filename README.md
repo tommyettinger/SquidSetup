@@ -114,8 +114,8 @@ Now you'll have a project all set up with a sample.
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
     case they don't immediately work.
-  - All builds currently use Gradle 6.5.1 with the "api/implementation/compile fiasco" resolved.
-    Java 13 and 14 work with SquidSetup because Gradle 6.5.1 supports Java from 8 to 14.
+  - All builds currently use Gradle 6.7 with the "api/implementation/compile fiasco" resolved.
+    Java 13 and 14 work with SquidSetup because Gradle 6.7 supports Java from 8 to 15.
     Adding dependencies will use the `api` keyword instead of the `compile` keyword it used
     in earlier versions. All modules use the `java-library` plugin, which enables the `api` keyword
     for dependencies.
@@ -136,8 +136,9 @@ These apply to the options on the Advanced tab, which may need some extra explan
     - Ths is a dependency of SquidLib 3.0.0.
   - Application version: Your choice
     - Maybe `0.0.1-SNAPSHOT` if it's going to change a lot. `-SNAPSHOT` has special meaning as a non-release.
-  - Java version: 8.0, 11.0, or 14.0
-    - 8.0 is the max for Android and iOS, but 11.0 can be used on GWT, and 14.0 for desktop/LWJGL3 only.
+  - Java version: 8.0, 11.0, or 15.0
+    - 8.0 is the max for Android and iOS, but 11.0 can be used on GWT, and 15.0 for desktop/LWJGL3 only
+      (if you have Java 15 installed, which you should also bundle for users).
   - Server Java version: Must be at least equal to `Java version`, maybe should be equal.
     - Only matters if you have selected a Server project on the Platforms tab.
   - Android plugin: 3.4.3

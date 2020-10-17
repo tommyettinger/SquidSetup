@@ -14,7 +14,7 @@ import java.util.*
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-val SQUID_LIB_VERSION = "3.0.0" 
+val SQUID_LIB_VERSION = "3.0.1" 
 //        RtGithub().repos().get(Coordinates.Simple("SquidPony", "SquidLib"))
 //        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
 

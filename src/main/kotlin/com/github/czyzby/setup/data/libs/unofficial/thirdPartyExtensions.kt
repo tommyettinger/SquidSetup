@@ -346,7 +346,7 @@ class Colorful : ThirdPartyExtension() {
 @Extension
 class Anim8 : ThirdPartyExtension() {
     override val id = "anim8"
-    override val defaultVersion = "0.1.6"
+    override val defaultVersion = "0.2.0"
     override val url = "https://github.com/tommyettinger/anim8-gdx"
 
     override fun initiateDependencies(project: Project) {
@@ -549,7 +549,7 @@ class RegExodus : ThirdPartyExtension() {
 @Extension
 class VisUI : ThirdPartyExtension() {
     override val id = "visUi"
-    override val defaultVersion = "1.3.0"
+    override val defaultVersion = "1.4.4"
     override val url = "https://github.com/kotcrab/VisEditor/wiki/VisUI"
 
     override fun initiateDependencies(project: Project) {
