@@ -53,7 +53,7 @@ class ArtemisOdb : ThirdPartyExtension() {
 }
 
 /**
- * General LibGDX utilities.
+ * General libGDX utilities.
  * @author Dermetfan
  * @author Maintained by Tommy Ettinger
  */
@@ -61,7 +61,7 @@ class ArtemisOdb : ThirdPartyExtension() {
 class LibgdxUtils : ThirdPartyExtension() {
     override val id = "utils"
     override val defaultVersion = "0.13.6"
-    override val url = "http://dermetfan.net/libgdx-utils.php"
+    override val url = "https://github.com/tommyettinger/gdx-utils"
 
     override fun initiateDependencies(project: Project) {
         addDependency(project, Core.ID, "com.github.tommyettinger:libgdx-utils")
@@ -72,7 +72,7 @@ class LibgdxUtils : ThirdPartyExtension() {
 }
 
 /**
- * Box2D LibGDX utilities.
+ * Box2D libGDX utilities.
  * @author Dermetfan
  * @author Maintained by Tommy Ettinger
  */
@@ -80,7 +80,7 @@ class LibgdxUtils : ThirdPartyExtension() {
 class LibgdxUtilsBox2D : ThirdPartyExtension() {
     override val id = "utilsBox2d"
     override val defaultVersion = "0.13.6"
-    override val url = "http://dermetfan.net/libgdx-utils.php"
+    override val url = "https://github.com/tommyettinger/gdx-utils"
 
     override fun initiateDependencies(project: Project) {
         addDependency(project, Core.ID, "com.github.tommyettinger:libgdx-utils-box2d")
@@ -93,7 +93,7 @@ class LibgdxUtilsBox2D : ThirdPartyExtension() {
 }
 
 /**
- * Facebook graph API wrapper.
+ * Facebook graph API wrapper. May be out-of-date.
  * @author Tom Grill
  */
 @Extension
@@ -248,8 +248,6 @@ class Joise : ThirdPartyExtension() {
 
 /**
  * Another 2D, 3D, 4D and 6D noise library, supporting some unusual types of noise.
- * Mostly pulled from squidlib-util, so if you keep the default squidlib-util dep, you
- * can use the FastNoise class instead.
  * @author Tommy Ettinger
  */
 @Extension
@@ -346,7 +344,7 @@ class Colorful : ThirdPartyExtension() {
 @Extension
 class Anim8 : ThirdPartyExtension() {
     override val id = "anim8"
-    override val defaultVersion = "0.2.0"
+    override val defaultVersion = "0.2.2"
     override val url = "https://github.com/tommyettinger/anim8-gdx"
 
     override fun initiateDependencies(project: Project) {
@@ -398,12 +396,13 @@ class SpineRuntime : ThirdPartyExtension() {
 /**
  * MrStahlfelge's fantastic upgrades to controller support for desktop, Android, and GWT.
  * If something doesn't work in the official controller extension, it's probably been fixed here.
+ * Change the version to 1.0.1 if you use libGDX 1.9.10 or earlier!
  * @author MrStahlfelge
  */
 @Extension
 class ControllerUtils : ThirdPartyExtension() {
     override val id = "controllerUtils"
-    override val defaultVersion = "1.0.0"
+    override val defaultVersion = "2.1.0"
     override val url = "https://github.com/MrStahlfelge/gdx-controllerutils"
 
     override fun initiateDependencies(project: Project) {
@@ -424,12 +423,13 @@ class ControllerUtils : ThirdPartyExtension() {
 /**
  * MrStahlfelge's controller-imitating Scene2D widgets, for players who don't have a controller.
  * <a href="https://github.com/MrStahlfelge/gdx-controllerutils/wiki/Button-operable-Scene2d">See the docs before using</a>.
+ * Change the version to 1.0.1 if you use libGDX 1.9.10 or earlier!
  * @author MrStahlfelge
  */
 @Extension
 class ControllerScene2D : ThirdPartyExtension() {
     override val id = "controllerScene2D"
-    override val defaultVersion = "1.0.0"
+    override val defaultVersion = "2.1.0"
     override val url = "https://github.com/MrStahlfelge/gdx-controllerutils/wiki/Button-operable-Scene2d"
 
     override fun initiateDependencies(project: Project) {
@@ -448,7 +448,7 @@ class ControllerScene2D : ThirdPartyExtension() {
 @Extension
 class GdxVfxCore : ThirdPartyExtension() {
     override val id = "gdxVfxCore"
-    override val defaultVersion = "0.4.3"
+    override val defaultVersion = "0.5.0"
     override val url = "https://github.com/crashinvaders/gdx-vfx"
 
     override fun initiateDependencies(project: Project) {
@@ -470,7 +470,7 @@ class GdxVfxCore : ThirdPartyExtension() {
 @Extension
 class GdxVfxStandardEffects : ThirdPartyExtension() {
     override val id = "gdxVfxEffects"
-    override val defaultVersion = "0.4.3"
+    override val defaultVersion = "0.5.0"
     override val url = "https://github.com/crashinvaders/gdx-vfx"
 
     override fun initiateDependencies(project: Project) {
@@ -479,48 +479,6 @@ class GdxVfxStandardEffects : ThirdPartyExtension() {
 
         addDependency(project, GWT.ID, "com.crashinvaders.vfx:gdx-vfx-effects:sources")
         addGwtInherit(project, "com.crashinvaders.vfx.GdxVfxEffects")
-    }
-}
-
-/**
- * Loaders for the 3D GLTF format and ways to render GLTF scenes and objects nicely.
- * <br>
- * Note: this has a dependency on a commit from June 3, 2020 via JitPack. You may want to check if there is a newer
- * commit or a release since then, or use a SNAPSHOT dependency: https://jitpack.io/#mgsx-dev/gdx-gltf
- * @author mgsx-dev
- */
-@Extension
-class GdxGltf : ThirdPartyExtension() {
-    override val id = "gdxGltf"
-    override val defaultVersion = "2d1374fd3c"
-    override val url = "https://github.com/mgsx-dev/gdx-gltf"
-
-    override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.mgsx-dev.gdx-gltf:gltf")
-
-        addDependency(project, GWT.ID, "com.github.mgsx-dev.gdx-gltf:gltf:sources")
-        addGwtInherit(project, "GLTF")
-    }
-}
-
-/**
- * Custom Scene2D widgets and utilities.
- * <br>
- * Note: this has a dependency on a commit from June 30, 2020 via JitPack. You may want to check if there is a newer
- * commit or a release since then, or use a SNAPSHOT dependency: https://jitpack.io/#raeleus/stripe
- * @author Raymond Buckley
- */
-@Extension
-class Stripe : ThirdPartyExtension() {
-    override val id = "stripe"
-    override val defaultVersion = "d92965c0ea"
-    override val url = "https://github.com/raeleus/stripe"
-
-    override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.raeleus:stripe")
-
-        addDependency(project, GWT.ID, "com.github.raeleus:stripe:sources")
-        addGwtInherit(project, "com.ray3k.stripe")
     }
 }
 
@@ -542,15 +500,16 @@ class RegExodus : ThirdPartyExtension() {
     }
 }
 
+
 /**
- * UI toolkit.
+ * UI toolkit with extra widgets and a different theme style.
  * @author Kotcrab
  */
 @Extension
 class VisUI : ThirdPartyExtension() {
     override val id = "visUi"
-    override val defaultVersion = "1.4.4"
-    override val url = "https://github.com/kotcrab/VisEditor/wiki/VisUI"
+    override val defaultVersion = "1.4.6"
+    override val url = "https://github.com/kotcrab/vis-ui"
 
     override fun initiateDependencies(project: Project) {
         addDependency(project, Core.ID, "com.kotcrab.vis:vis-ui")
@@ -560,4 +519,92 @@ class VisUI : ThirdPartyExtension() {
     }
 }
 
+/**
+ * A library to obtain a circular WidgetGroup or context menu using scene2d.ui.
+ * @author Jérémi Grenier-Berthiaume
+ */
+@Extension
+class PieMenu : ThirdPartyExtension() {
+    override val id = "pieMenu"
+    override val defaultVersion = "4.2.0"
+    override val url = "https://github.com/payne911/PieMenu"
 
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.payne911:PieMenu")
+
+        addDependency(project, GWT.ID, "com.github.payne911:PieMenu:sources")
+        addGwtInherit(project, "PieMenu")
+        ShapeDrawer().initiate(project)
+    }
+}
+
+/**
+ * A 2D AABB collision detection and response library; like a basic/easy version of box2d.
+ * @author implicit-invocation
+ * @author Raymond Buckley
+ */
+@Extension
+class JBump : ThirdPartyExtension() {
+    override val id = "jbump"
+    override val defaultVersion = "v1.0.0"
+    override val url = "https://github.com/tommyettinger/jbump"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.tommyettinger:jbump")
+        addDependency(project, GWT.ID, "com.github.tommyettinger:jbump:sources")
+        addGwtInherit(project, "com.dongbat.jbump")
+    }
+}
+
+/**
+ * A fast and efficient binary object graph serialization framework for Java.
+ * @author Nathan Sweet
+ */
+@Extension
+class Kryo : ThirdPartyExtension() {
+    override val id = "kryo"
+    override val defaultVersion = "5.0.0-RC9"
+    override val url = "https://github.com/EsotericSoftware/kryo"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.esotericsoftware:kryo")
+    }
+}
+
+/**
+ * A Java library that provides a clean and simple API for efficient network communication, using Kryo.
+ * @author Nathan Sweet
+ * @author damios/crykn
+ */
+@Extension
+class KryoNet : ThirdPartyExtension() {
+    override val id = "kryoNet"
+    override val defaultVersion = "2.22.6"
+    override val url = "https://github.com/crykn/kryonet"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.crykn:kryonet")
+    }
+}
+
+/**
+ * A small collection of some common and very basic utilities for libGDX games.
+ * @author damios/crykn
+ */
+@Extension
+class Guacamole : ThirdPartyExtension() {
+    override val id = "guacamole"
+    override val defaultVersion = "0.2.2"
+    override val url = "https://github.com/crykn/guacamole"
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.crykn.guacamole:core")
+        addDependency(project, Core.ID, "com.github.crykn.guacamole:gdx")
+        addDependency(project, Desktop.ID, "com.github.crykn.guacamole:gdx-desktop")
+        addDependency(project, LWJGL3.ID, "com.github.crykn.guacamole:gdx-desktop")
+        addDependency(project, GWT.ID, "com.github.crykn.guacamole:core:sources")
+        addDependency(project, GWT.ID, "com.github.crykn.guacamole:gdx:sources")
+        addDependency(project, GWT.ID, "com.github.crykn.guacamole:gdx-gwt")
+        addDependency(project, GWT.ID, "com.github.crykn.guacamole:gdx-gwt:sources")
+        addGwtInherit(project, "guacamole_gdx_gwt")
+    }
+}

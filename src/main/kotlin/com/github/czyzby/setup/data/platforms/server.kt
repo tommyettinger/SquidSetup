@@ -22,7 +22,7 @@ class Server : Platform {
     override fun initiate(project: Project) {
         // Server project has no additional dependencies.
 
-        addGradleTaskDescription(project, "run", "runs the ${id} application.")
+        addGradleTaskDescription(project, "run", "runs the $id application.")
     }
 }
 
@@ -42,8 +42,7 @@ dependencies {
 ${joinDependencies(dependencies)}}
 
 jar {
-	from files(sourceSets.main.output.classesDirs)
-	archiveFileName = "${'$'}{appName}-server-${'$'}{archiveVersion.get()}.jar"
+	archiveBaseName = "${'$'}{appName}-server"
 	dependsOn configurations.runtimeClasspath
 	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
 	manifest {

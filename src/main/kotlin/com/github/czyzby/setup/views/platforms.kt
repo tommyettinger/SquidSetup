@@ -9,7 +9,6 @@ import com.github.czyzby.autumn.context.ContextDestroyer
 import com.github.czyzby.autumn.context.ContextInitializer
 import com.github.czyzby.autumn.processor.AbstractAnnotationProcessor
 import com.github.czyzby.lml.annotation.LmlActor
-import com.github.czyzby.setup.data.platforms.Core
 import com.github.czyzby.setup.data.platforms.Platform
 
 /**
@@ -29,13 +28,6 @@ class PlatformsData : AbstractAnnotationProcessor<GdxPlatform>() {
         androidSdkButton.isDisabled = !active
     }
 
-    fun toggleClientPlatforms() = platformButtons.filter { platforms[it.name]!!.isStandard }
-            .forEach { it.isChecked = !it.isChecked }
-
-    fun togglePlatforms() = platformButtons.filter { it.name != Core.ID }
-            .forEach { it.isChecked = !it.isChecked }
-
-
     operator fun get(platformId: String): Platform = platforms[platformId]!!
 
     fun getSelectedPlatforms(): Map<String, Platform> =
@@ -53,7 +45,7 @@ class PlatformsData : AbstractAnnotationProcessor<GdxPlatform>() {
 }
 
 /**
- * Should annotate all LibGDX platforms.
+ * Should annotate all libGDX platforms.
  * @author MJ
  */
 @Target(AnnotationTarget.CLASS)

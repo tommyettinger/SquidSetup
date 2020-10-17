@@ -17,7 +17,7 @@ class LWJGL3 : Platform {
 	}
 
 	override val id = ID
-	override val isStandard = true // true is the default, and we want to prefer this to desktop
+	//override val isStandard = true // true is the default, and we want to prefer this to desktop
 	override fun createGradleFile(project: Project): GradleFile = Lwjgl3GradleFile(project)
 	override fun initiate(project: Project) {
 		// Adding game icons:
@@ -50,7 +50,7 @@ class Lwjgl3GradleFile(val project: Project) : GradleFile(LWJGL3.ID) {
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = '${project.basic.rootPackage}.lwjgl3.Lwjgl3Launcher'
 eclipse.project.name = appName + '-lwjgl3'
-sourceCompatibility = ${project.advanced.javaVersion}
+sourceCompatibility = ${project.advanced.desktopJavaVersion}
 
 dependencies {
 ${joinDependencies(dependencies)}}
@@ -67,13 +67,21 @@ run {
 	}
 }
 jar {
-	archiveFileName = "${'$'}{appName}-${'$'}{archiveVersion.get()}.jar"
+	archiveBaseName = appName
+	//// These can be excluded because they add to the jar size but libGDX 1.9.11 can't use them.
+	//// When the next version of libGDX is released, and SquidLib depends on it, then this should be removed. 
+	exclude('linux/arm32/**', 'linux/arm64/**')
+	
 	dependsOn configurations.runtimeClasspath
 	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
 	manifest {
 		attributes 'Main-Class': project.mainClassName
 	}
+	doLast {
+		file(archivePath).setExecutable(true, false)
+	}
 }
+
 """
 
 }

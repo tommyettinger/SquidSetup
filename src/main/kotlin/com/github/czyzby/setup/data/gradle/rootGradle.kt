@@ -57,12 +57,8 @@ subprojects {
 	}
 }
 
-// Clearing Eclipse project data in root folder:
-tasks.eclipse.doLast {
-	delete '.project'
-	delete '.classpath'
-	delete '.settings/'
-}
+eclipse.project.name = '${project.basic.name}' + '-parent'
+
 """
 
 }

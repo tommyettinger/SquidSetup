@@ -32,7 +32,7 @@ class GWT : Platform {
 
 	override val id = ID
 	override val isStandard = false
-
+	
 	override fun createGradleFile(project: Project): GradleFile = GWTGradleFile(project)
 
 	override fun initiate(project: Project) {
@@ -42,12 +42,13 @@ class GWT : Platform {
 		addGradleTaskDescription(project, "dist", "compiles GWT sources. The compiled application can be found at `${id}/build/dist`: you can use any HTTP server to deploy it.")
 
 		project.gwtInherits.add(BASIC_INHERIT)
+		project.properties["gwtFrameworkVersion"] = project.advanced.gwtVersion
 		project.properties["gwtPluginVersion"] = project.advanced.gwtPluginVersion
 
 		// Adding GWT definition to core project:
 		project.files.add(SourceFile(projectName = Core.ID, packageName = project.basic.rootPackage,
 				fileName = "${project.basic.mainClass}.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://www.gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
 <module>
 	<source path="" />${(project.reflectedClasses + project.reflectedPackages).joinToString(separator = "\n", prefix = "\n") { "    <extend-configuration-property name=\"gdx.reflect.include\" value=\"$it\" />" }}
 </module>"""))
@@ -57,7 +58,7 @@ class GWT : Platform {
 		if (project.hasPlatform(Shared.ID)) {
 			project.files.add(SourceFile(projectName = Shared.ID, packageName = project.basic.rootPackage,
 					fileName = "Shared.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://www.gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
 <module>
 	<source path="" />
 </module>"""))
@@ -67,7 +68,7 @@ class GWT : Platform {
 		// Adding GWT definition:
 		project.files.add(SourceFile(projectName = ID, packageName = project.basic.rootPackage,
 				fileName = "GdxDefinition.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://www.gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
 <module rename-to="html">
 	<source path="" />
 ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\n") { "\t<inherits name=\"$it\" />" }}
@@ -83,7 +84,7 @@ ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\
 		// Adding SuperDev definition:
 		project.files.add(SourceFile(projectName = ID, packageName = project.basic.rootPackage,
 				fileName = "GdxDefinitionSuperdev.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit ${project.advanced.gwtVersion}//EN" "http://www.gwtproject.org/doctype/${project.advanced.gwtVersion}/gwt-module.dtd">
 <module rename-to="html">
 	<inherits name="${project.basic.rootPackage}.GdxDefinition" />
 	<collapse-all-properties />
@@ -93,17 +94,37 @@ ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\
 </module>"""))
 
 		// Copying webapp files:
-		addCopiedFile(project, "webapp", "index.html")
 		addCopiedFile(project, "webapp", "refresh.png")
-		addCopiedFile(project, "webapp", "soundmanager2-setup.js")
+		val version = LibGdxVersion.parseLibGdxVersion(project.advanced.gdxVersion)
+		if(version != null && version < LibGdxVersion(major = 1, minor = 9, revision = 12))
+		{
+			addCopiedFile(project, "webapp", "soundmanager2-setup.js")
+			project.files.add(CopiedFile(projectName = id,
+					original = path("generator", id, "webapp", "index_old.html"), 
+					path = path("webapp", "index.html")))
+		}
+		else
+			addCopiedFile(project, "webapp", "index.html")
 		addSoundManagerSource(project)
 		addCopiedFile(project, "webapp", "styles.css")
 		addCopiedFile(project, "webapp", "WEB-INF", "web.xml")
 	}
 
 	private fun addSoundManagerSource(project: Project) {
-		project.files.add(CopiedFile(projectName = id,
-				original = path("generator", id, "webapp", "soundmanager2-jsmin.js"),
+		val version = LibGdxVersion.parseLibGdxVersion(project.advanced.gdxVersion)
+		val soundManagerSource = when {
+		// Invalid, user-entered libGDX version - defaulting to current lack of SoundManager:
+			version == null -> ""
+		// Pre-1.9.6: using old SoundManager sources:
+			version < LibGdxVersion(major = 1, minor = 9, revision = 6) -> "soundmanager2-jsmin_old.js"
+		// Recent libGDX version - using latest SoundManager:
+			version < LibGdxVersion(major = 1, minor = 9, revision = 12) -> "soundmanager2-jsmin.js"
+		// after 1.9.11, soundmanager is no longer used
+			else -> ""
+		}
+		if(soundManagerSource.isNotEmpty()) 
+			project.files.add(CopiedFile(projectName = id,
+				original = path("generator", id, "webapp", soundManagerSource),
 				path = path("webapp", "soundmanager2-jsmin.js")))
 	}
 }
@@ -113,9 +134,9 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
 		buildDependencies.add("project(':${Core.ID}')")
 		dependencies.add("project(':${Core.ID}')")
 
-		addDependency("com.badlogicgames.gdx:gdx:1.9.11:sources")
-		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.911.2")
-		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.911.2:sources")
+		addDependency("com.badlogicgames.gdx:gdx:\$gdxVersion:sources")
+		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion")
+		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion:sources")
 	}
 
 	override fun getContent(): String = """
@@ -132,7 +153,7 @@ apply plugin: "war"
 apply plugin: "org.gretty"
 
 gwt {
-	gwtVersion = "2.9.0" // Should match the version used by the libGDX backend.
+	gwtVersion = "${'$'}gwtFrameworkVersion" // Should match the version used for building the GWT backend. See gradle.properties.
 	maxHeapSize = '1G' // Default 256m is not enough for the GWT compiler. GWT is HUNGRY.
 	minHeapSize = '1G'
 
@@ -143,7 +164,6 @@ gwt {
 
 	compiler.strict = true
 	compiler.disableCastChecking = true
-	${if(project.advanced.javaVersion != "1.8") "sourceLevel = 1." + project.advanced.javaVersion.toDouble().toInt() else ""}
 }
 
 dependencies {
@@ -212,10 +232,25 @@ task addSource {
 	}
 }
 
+task distZip(type: Zip, dependsOn: dist){
+	//// The next lines copy the dist but remove the recompile button (circling arrow) from the HTML page.
+	from('build/dist/') {
+		exclude '**/*.html'
+	}
+	from('build/dist/') {
+		include '**/*.html'
+		filter { String line -> line.replaceAll('<a class="superdev" .+', '') }
+	}
+	//// The next line attempts to name the zip with a unique timestamp, removing spaces and ':' for compatibility.
+	archiveName "dist-${'$'}{(new Date().toString()).replace(' ', '-').replace(':', '-')}.zip"
+	//// The result will be in html/build/ with a name containing the above probably-unique timestamp.
+	destinationDir(file("build"))
+}
+
 tasks.compileGwt.dependsOn(addSource)
 tasks.draftCompileGwt.dependsOn(addSource)
 
-sourceCompatibility = ${project.advanced.javaVersion}
+sourceCompatibility = 8.0
 sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 
 eclipse.project.name = appName + "-html"

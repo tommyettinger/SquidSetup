@@ -89,7 +89,7 @@ class Box2DLights : OfficialExtension() {
     override val url = "https://github.com/libgdx/box2dlights"
 
     override fun initiate(project: Project) {
-        project.properties[id + "Version"] = "1.4"
+        project.properties[id + "Version"] = "1.5"
 
         addDependency(project, Core.ID, "com.badlogicgames.box2dlights:box2dlights:\$box2dlightsVersion")
 
@@ -180,7 +180,7 @@ class Freetype : OfficialExtension() {
 }
 
 /**
- * Official LibGDX tools extension.
+ * Official libGDX tools extension.
  */
 @Extension(official = true)
 class Tools : OfficialExtension() {
@@ -190,6 +190,7 @@ class Tools : OfficialExtension() {
     override fun initiate(project: Project) {
         addDesktopDependency(project, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")
 
-//        addDependency(project, Headless.ID, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")
+        //// Headless is unlikely to work because gdx-tools relies on graphics classes.
+        // addDependency(project, Headless.ID, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")
     }
 }

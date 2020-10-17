@@ -67,7 +67,7 @@ class BasicProjectData {
 
     fun getLatestAndroidApiVersion(): Int = getAndroidApi { ver1, ver2 -> ver1 - ver2 }
     fun getOldestAndroidApiVersion(): Int = getAndroidApi { ver1, ver2 -> ver2 - ver1 }
-    
+
     private fun getAndroidApi(comparator: (Int, Int) -> Int): Int {
         if (!androidSdkPathField.isInputValid) {
             return 0
@@ -89,7 +89,7 @@ class BasicProjectData {
             sdkButtons.forEach { it.isDisabled = true }
         }
     }
-    
+
     private fun findProperty(directory: FileHandle, property: String, file: String = "source.properties"): String? {
         val properties = directory.child(file)
         if (properties.exists()) {

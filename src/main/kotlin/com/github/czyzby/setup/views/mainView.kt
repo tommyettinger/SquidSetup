@@ -78,9 +78,6 @@ class MainView : ActionContainer {
         }
     }
 
-    @LmlAction("toggleClients") fun toggleClientPlatforms() = platformsData.toggleClientPlatforms()
-    @LmlAction("toggleAll") fun toggleAllPlatforms() = platformsData.togglePlatforms()
-
     @LmlAction("mkdirs") fun createDestinationDirectory() {
         basicData.destination.mkdirs()
         revalidateForm()
@@ -147,15 +144,18 @@ class MainView : ActionContainer {
     @LmlAction("show") fun getTabShowingAction(): Action = Actions.sequence(Actions.alpha(0f), Actions.fadeIn(0.1f))
     @LmlAction("hide") fun getTabHidingAction(): Action = Actions.fadeOut(0.1f)
     @LmlAction("gdxVersion") fun getGdxVersion(): String = Version.VERSION
-    @LmlAction("gwtVersions") fun getGwtVersions(): Array<String> = arrayOf("2.6.0", "2.6.1", "2.7.0", "2.8.0", "2.8.1", "2.8.2", "2.9.0")
+    @LmlAction("gwtVersions") fun getGwtVersions(): Array<String> = arrayOf("2.9.0")
     @LmlAction("jvmLanguages") fun getLanguages(): Array<String> = languagesData.languages
     @LmlAction("jvmLanguagesVersions") fun getLanguagesVersions(): Array<String> = languagesData.versions
     @LmlAction("templates") fun getOfficialTemplates(): Array<String> =
             templatesData.officialTemplates.map { it.id }.sortedWith(Comparator
             { left, right ->
-                if(left == "squidLibBasicTemplate") -10000
-                else if (right == "squidLibBasicTemplate") 10000
-                else left.compareTo(right) })
+                when {
+                    left == "squidLibBasicTemplate" -> -10000
+                    right == "squidLibBasicTemplate" -> 10000
+                    else -> left.compareTo(right)
+                }
+            })
                     .toTypedArray()
 
     @LmlAction("thirdPartyTemplates") fun getThirdPartyTemplates(): Array<String> =
