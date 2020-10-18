@@ -28,7 +28,7 @@ import com.kotcrab.vis.ui.widget.file.FileChooser
 @Component
 class Configuration {
     companion object {
-        const val VERSION = "3.0.1"
+        const val VERSION = "3.0.2"
         const val WIDTH = 600
         const val HEIGHT = 700
         const val PREFERENCES_PATH = "SquidSetup-prefs"
