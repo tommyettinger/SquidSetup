@@ -11,7 +11,7 @@ import com.github.czyzby.setup.views.Extension
  * @author MJ
  */
 abstract class OfficialExtension : Library {
-    override val defaultVersion = Version.VERSION
+    override val defaultVersion = "1.9.12"// Version.VERSION
     override val official = true
 }
 
@@ -180,7 +180,7 @@ class Freetype : OfficialExtension() {
 }
 
 /**
- * Official libGDX tools extension.
+ * Official libGDX tools extension; only usable by Desktop ("Legacy" LWJGL 2) modules.
  */
 @Extension(official = true)
 class Tools : OfficialExtension() {
@@ -188,7 +188,7 @@ class Tools : OfficialExtension() {
     override val url = "https://github.com/libgdx/libgdx/wiki/Texture-packer"
 
     override fun initiate(project: Project) {
-        addDesktopDependency(project, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")
+        addDependency(project, Desktop.ID, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")
 
         //// Headless is unlikely to work because gdx-tools relies on graphics classes.
         // addDependency(project, Headless.ID, "com.badlogicgames.gdx:gdx-tools:\$gdxVersion")

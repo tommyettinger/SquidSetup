@@ -1,5 +1,7 @@
 package com.github.czyzby.kiwi.util.gdx.reflection;
 
+import java.lang.annotation.Annotation;
+
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
@@ -7,8 +9,6 @@ import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.github.czyzby.kiwi.util.common.Exceptions;
 import com.github.czyzby.kiwi.util.common.UtilitiesClass;
-
-import java.lang.annotation.Annotation;
 
 /** LibGDX reflection utilities.
  *

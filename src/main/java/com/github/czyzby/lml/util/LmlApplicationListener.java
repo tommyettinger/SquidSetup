@@ -1,5 +1,7 @@
 package com.github.czyzby.lml.util;
 
+import java.io.Writer;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -21,8 +23,6 @@ import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.action.ActorConsumer;
 import com.github.czyzby.lml.parser.impl.AbstractLmlView;
 import com.github.czyzby.lml.parser.impl.tag.Dtd;
-
-import java.io.Writer;
 
 /** An {@link ApplicationListener} implementation that manages a list of {@link AbstractLmlView LML views}. Forces the
  * user to prepare a {@link LmlParser} with {@link #createParser()} method. Ensures smooth view transitions. Adds

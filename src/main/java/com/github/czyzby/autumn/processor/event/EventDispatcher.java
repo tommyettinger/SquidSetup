@@ -1,5 +1,7 @@
 package com.github.czyzby.autumn.processor.event;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -12,8 +14,6 @@ import com.github.czyzby.autumn.context.error.ContextInitiationException;
 import com.github.czyzby.autumn.processor.AbstractAnnotationProcessor;
 import com.github.czyzby.autumn.processor.event.impl.ReflectionEventListener;
 import com.github.czyzby.kiwi.util.gdx.collection.lazy.LazyObjectMap;
-
-import java.util.Iterator;
 
 /** Processes events. Can be injected and used to invoke registered listeners with {@link #postEvent(Object)}. If this
  * processor is not injected into any component, it will mostly likely get garbage-collected after context initiation,

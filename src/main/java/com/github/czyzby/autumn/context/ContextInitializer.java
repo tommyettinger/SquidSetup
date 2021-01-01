@@ -1,27 +1,42 @@
 package com.github.czyzby.autumn.context;
 
+import java.lang.annotation.Annotation;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IdentityMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
-import com.badlogic.gdx.utils.reflect.*;
-import com.github.czyzby.autumn.annotation.*;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Constructor;
+import com.badlogic.gdx.utils.reflect.Field;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.github.czyzby.autumn.annotation.Component;
+import com.github.czyzby.autumn.annotation.Dispose;
+import com.github.czyzby.autumn.annotation.OnEvent;
+import com.github.czyzby.autumn.annotation.OnMessage;
+import com.github.czyzby.autumn.annotation.Processor;
+import com.github.czyzby.autumn.annotation.Provider;
 import com.github.czyzby.autumn.context.error.ContextInitiationException;
 import com.github.czyzby.autumn.context.impl.method.ContextConsumer;
 import com.github.czyzby.autumn.context.impl.method.MethodInvocation;
 import com.github.czyzby.autumn.processor.AnnotationProcessor;
 import com.github.czyzby.autumn.processor.event.EventDispatcher;
 import com.github.czyzby.autumn.processor.event.MessageDispatcher;
-import com.github.czyzby.autumn.processor.impl.*;
+import com.github.czyzby.autumn.processor.impl.ComponentAnnotationProcessor;
+import com.github.czyzby.autumn.processor.impl.DestroyAnnotationProcessor;
+import com.github.czyzby.autumn.processor.impl.DisposeAnnotationProcessor;
+import com.github.czyzby.autumn.processor.impl.InitiateAnnotationProcessor;
+import com.github.czyzby.autumn.processor.impl.InjectAnnotationProcessor;
+import com.github.czyzby.autumn.processor.impl.MetaAnnotationProcessor;
+import com.github.czyzby.autumn.processor.impl.ProviderAnnotationProcessor;
 import com.github.czyzby.autumn.scanner.ClassScanner;
 import com.github.czyzby.kiwi.util.common.Exceptions;
 import com.github.czyzby.kiwi.util.common.Strings;
 import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
 import com.github.czyzby.kiwi.util.gdx.collection.GdxMaps;
 import com.github.czyzby.kiwi.util.gdx.collection.lazy.LazyObjectMap;
-
-import java.lang.annotation.Annotation;
 
 /** A single-use context initializer object. Scans the selected packages for annotated classes and initiates them, using
  * registered {@link AnnotationProcessor}s. After {@link #initiate()} call, clears the context meta-data (to allow

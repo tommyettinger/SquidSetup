@@ -1,9 +1,9 @@
 package com.github.czyzby.autumn.scanner;
 
+import java.lang.annotation.Annotation;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-
-import java.lang.annotation.Annotation;
 
 /** Contains utility methods common for vanilla Java + libGDX scanners that could support GWT.
  *

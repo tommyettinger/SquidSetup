@@ -1,11 +1,11 @@
 package com.github.czyzby.kiwi.log.impl;
 
+import java.util.Date;
+
 import com.github.czyzby.kiwi.log.Logger;
 import com.github.czyzby.kiwi.log.LoggerService;
 import com.github.czyzby.kiwi.log.formatter.TextFormatter;
 import com.github.czyzby.kiwi.util.common.Nullables;
-
-import java.util.Date;
 
 /** Abstract base for Kiwi loggers.
  *

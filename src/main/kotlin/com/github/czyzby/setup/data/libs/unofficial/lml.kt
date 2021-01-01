@@ -5,13 +5,13 @@ import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.Extension
 
 /**
- * Version of Czyzby's libraries.
+ * Version of Czyzby's libraries; this is a snapshot release because Czyzby is unlikely to make a stable release.
  * @author MJ
  */
-const val AUTUMN_VERSION = "1.9.1.9.6"
+const val AUTUMN_VERSION = "1.9.1.9.11-SNAPSHOT"
 
 /**
- * Guava-inspired LibGDX utilities.
+ * Guava-inspired libGDX utilities.
  * @author MJ
  */
 @Extension
@@ -71,7 +71,7 @@ class LMLVis : ThirdPartyExtension() {
 }
 
 /**
- * Dependency injection mechanism with component scan using LibGDX reflection API.
+ * Dependency injection mechanism with component scan using libGDX reflection API.
  * @author MJ
  */
 @Extension
@@ -99,7 +99,7 @@ class Autumn : ThirdPartyExtension() {
 }
 
 /**
- * Model-view-controller framework on top of Autumn DI and LibGDX.
+ * Model-view-controller framework on top of Autumn DI and libGDX.
  * @author MJ
  */
 @Extension

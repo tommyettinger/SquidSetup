@@ -1,9 +1,9 @@
 package com.github.czyzby.kiwi.util.gdx.collection.pooled;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.utils.Pool;
 import com.github.czyzby.kiwi.util.common.Nullables;
-
-import java.util.Iterator;
 
 /** {@link java.util.LinkedList} equivalent for LibGDX applications. As opposed to
  * {@link com.badlogic.gdx.utils.PooledLinkedList}, this list allows to use custom node pools to share them among

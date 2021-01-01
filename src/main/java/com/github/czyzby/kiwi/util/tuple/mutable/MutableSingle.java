@@ -1,11 +1,11 @@
 package com.github.czyzby.kiwi.util.tuple.mutable;
 
+import java.util.Iterator;
+
 import com.github.czyzby.kiwi.util.common.Nullables;
 import com.github.czyzby.kiwi.util.tuple.SingleTuple;
 import com.github.czyzby.kiwi.util.tuple.Tuples;
 import com.github.czyzby.kiwi.util.tuple.immutable.Single;
-
-import java.util.Iterator;
 
 /** Single tuple. Stores one variable. Mutable, iterable utility container for a single value - can be used to pass a
  * single variable when an iterable is required and expected to be somehow modified.

@@ -4,9 +4,9 @@ import com.github.czyzby.setup.data.platforms.Core
 import com.github.czyzby.setup.data.platforms.GWT
 import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.Extension
-import com.jcabi.github.Coordinates
-import com.jcabi.github.RtGithub
-import java.util.*
+//import com.jcabi.github.Coordinates
+//import com.jcabi.github.RtGithub
+//import java.util.*
 
 
 /**
@@ -14,7 +14,7 @@ import java.util.*
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-val SQUID_LIB_VERSION = "3.0.2" 
+val SQUID_LIB_VERSION = "3.0.3"
 //        RtGithub().repos().get(Coordinates.Simple("SquidPony", "SquidLib"))
 //        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
 

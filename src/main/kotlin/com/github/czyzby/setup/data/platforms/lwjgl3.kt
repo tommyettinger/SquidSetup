@@ -68,9 +68,6 @@ run {
 }
 jar {
 	archiveBaseName = appName
-	//// These can be excluded because they add to the jar size but libGDX 1.9.11 can't use them.
-	//// When the next version of libGDX is released, and SquidLib depends on it, then this should be removed. 
-	exclude('linux/arm32/**', 'linux/arm64/**')
 	
 	dependsOn configurations.runtimeClasspath
 	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 

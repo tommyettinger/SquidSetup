@@ -1,11 +1,11 @@
 package com.github.czyzby.kiwi.util.gdx.asset;
 
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.czyzby.kiwi.util.common.UtilitiesClass;
-
-import java.util.Map;
 
 /** Provides some simple utility methods for disposable objects.
  *

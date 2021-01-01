@@ -1,8 +1,8 @@
 package com.github.czyzby.autumn.scanner;
 
-import com.badlogic.gdx.utils.Array;
-
 import java.lang.annotation.Annotation;
+
+import com.badlogic.gdx.utils.Array;
 
 /** Common interface for class scanners. Used to find classes annotated with a chosen set of annotations in selected
  * package.

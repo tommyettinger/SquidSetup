@@ -4,7 +4,9 @@ import com.github.czyzby.lml.parser.LmlParser;
 import com.github.czyzby.lml.parser.impl.tag.builder.TextLmlActorBuilder;
 import com.github.czyzby.lml.parser.tag.LmlTag;
 import com.github.czyzby.lml.util.LmlUtilities;
+import com.kotcrab.vis.ui.util.highlight.BaseHighlighter;
 import com.kotcrab.vis.ui.widget.HighlightTextArea;
+import com.kotcrab.vis.ui.widget.ScrollableTextArea;
 import com.kotcrab.vis.ui.widget.VisTextField;
 
 /**

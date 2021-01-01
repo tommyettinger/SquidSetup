@@ -27,10 +27,10 @@ handle the graphics yourself).
   - Get the latest `SquidSetup.jar` from the [Releases tab](https://github.com/tommyettinger/SquidSetup/releases) of this project.
     - You may want the stable 3.0.0 release, which came out July 22, 2020 and won't change until another
       stable release (which still won't make the stable SquidSetup act any differently).
-    - You may want the small but meaningful improvements in the 3.0.2 release, which applies fixes to Android and some
+    - You may want the small but meaningful improvements in the 3.0.3 release, which applies fixes to Android and some
       to fixes JDK version issues on desktop/LWJGL3, plus some new features.
     - Future changes to SquidSetup for an existing SquidLib version will be applied to -u1, -u2, -u3, etc.;
-      there's already a 3.0.0-u1, but it's almost entirely superseded by 3.0.2.
+      there's already a 3.0.0-u1, but it's almost entirely superseded by 3.0.3.
     - You may instead want the latest possible code using the [3.0.0-JITPACK Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-JITPACK),
       but you may want a more-stable beta version. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
       will be obtained from Maven Central. The latest commit is determined by the library `jcabi-github`, and involves an API call to GitHub when using
@@ -65,7 +65,7 @@ handle the graphics yourself).
         would on desktop, and `long` not being visible to reflection. See [this small guide to GWT](GWT.md) for more.
         - SquidSetup uses GWT 2.9.0 via [a custom backend](https://github.com/tommyettinger/gdx-backends), which enables
           using Java 11 features, such as `var`, but not JDK 11 library code. The backend is closely related to the
-          libGDX version used, but SquidLib currently is only tested with libGDX 1.9.11.
+          libGDX version used, but SquidLib currently is only tested with libGDX 1.9.12.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -134,8 +134,8 @@ Now you'll have a project all set up with a sample.
 
 These apply to the options on the Advanced tab, which may need some extra explanation.
 
-  - LibGDX version: 1.9.11
-    - Ths is a dependency of SquidLib 3.0.0.
+  - LibGDX version: 1.9.12
+    - Ths is a dependency of SquidLib 3.0.3.
   - Application version: Your choice
     - Maybe `0.0.1-SNAPSHOT` if it's going to change a lot. `-SNAPSHOT` has special meaning as a non-release.
   - Java version: 8.0, 11.0, or 15.0
@@ -143,15 +143,14 @@ These apply to the options on the Advanced tab, which may need some extra explan
       (if you have Java 15 installed, which you should also bundle for users).
   - Server Java version: Must be at least equal to `Java version`, maybe should be equal.
     - Only matters if you have selected a Server project on the Platforms tab.
-  - Android plugin: 3.4.3
-    - The current version of the Android Gradle Plugin is 4.0.1, but it can have strange bugs.
-    - 3.4.3 is the most recent version to compile an APK successfully in IntelliJ IDEA, though
-      4.0.2 seems to work well for users who have Android configured well enough.
+  - Android plugin: 4.0.2
+    - 4.0.2 seems to work well as long as Android has been set up fully. It enables more of Java 8's
+      features, and you can set the Java version to 8.0 with this Android Gradle Plugin version.
       - You can try to update `androidPluginVersion` in `gradle.properties` if you want to try
         some newer features, and if the newer version doesn't work, you can downgrade there too.
   - Target Android API: 29
     - This is required by the Play Store.
-  - RoboVM Version: 2.3.9, maybe 2.3.10
+  - RoboVM Version: 2.3.10
     - This can be updated if there's a newer release, but only matters if you target iOS.
   - GWT plugin version: 1.0.13
     - This is the most recent version, and it works fine.

@@ -1,5 +1,7 @@
 package com.github.czyzby.lml.parser.impl.tag;
 
+import java.io.IOException;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -17,8 +19,6 @@ import com.github.czyzby.lml.parser.tag.LmlAttribute;
 import com.github.czyzby.lml.parser.tag.LmlTag;
 import com.github.czyzby.lml.parser.tag.LmlTagProvider;
 import com.github.czyzby.lml.util.Lml;
-
-import java.io.IOException;
 
 /** Allows to create DTD schema files for LML templates.
  *

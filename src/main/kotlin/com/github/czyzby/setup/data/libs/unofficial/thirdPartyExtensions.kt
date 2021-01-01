@@ -60,7 +60,7 @@ class ArtemisOdb : ThirdPartyExtension() {
 @Extension
 class LibgdxUtils : ThirdPartyExtension() {
     override val id = "utils"
-    override val defaultVersion = "0.13.6"
+    override val defaultVersion = "0.13.7"
     override val url = "https://github.com/tommyettinger/gdx-utils"
 
     override fun initiateDependencies(project: Project) {
@@ -79,7 +79,7 @@ class LibgdxUtils : ThirdPartyExtension() {
 @Extension
 class LibgdxUtilsBox2D : ThirdPartyExtension() {
     override val id = "utilsBox2d"
-    override val defaultVersion = "0.13.6"
+    override val defaultVersion = "0.13.7"
     override val url = "https://github.com/tommyettinger/gdx-utils"
 
     override fun initiateDependencies(project: Project) {
@@ -320,13 +320,13 @@ class Formic : ThirdPartyExtension() {
 }
 
 /**
- * An alternative color model for changing the colors of sprites, including brightening.
+ * Alternative color models for changing the colors of sprites and scenes, including brightening.
  * @author Tommy Ettinger
  */
 @Extension
 class Colorful : ThirdPartyExtension() {
     override val id = "colorful"
-    override val defaultVersion = "0.2.1"
+    override val defaultVersion = "0.4.0"
     override val url = "https://github.com/tommyettinger/colorful-gdx"
 
     override fun initiateDependencies(project: Project) {
@@ -344,7 +344,7 @@ class Colorful : ThirdPartyExtension() {
 @Extension
 class Anim8 : ThirdPartyExtension() {
     override val id = "anim8"
-    override val defaultVersion = "0.2.2"
+    override val defaultVersion = "0.2.4"
     override val url = "https://github.com/tommyettinger/anim8-gdx"
 
     override fun initiateDependencies(project: Project) {
@@ -362,7 +362,7 @@ class Anim8 : ThirdPartyExtension() {
 @Extension
 class TenPatch : ThirdPartyExtension() {
     override val id = "tenPatch"
-    override val defaultVersion = "5.0.0"
+    override val defaultVersion = "5.0.1"
     override val url = "https://github.com/raeleus/TenPatch"
 
     override fun initiateDependencies(project: Project) {
@@ -381,7 +381,7 @@ class TenPatch : ThirdPartyExtension() {
 @Extension
 class SpineRuntime : ThirdPartyExtension() {
     override val id = "spineRuntime"
-    override val defaultVersion = "3.5.51.1"
+    override val defaultVersion = "3.8.55.1"
     override val url = "https://github.com/EsotericSoftware/spine-runtimes/tree/3.8/spine-libgdx"
 
     override fun initiateDependencies(project: Project) {
@@ -397,12 +397,13 @@ class SpineRuntime : ThirdPartyExtension() {
  * MrStahlfelge's fantastic upgrades to controller support for desktop, Android, and GWT.
  * If something doesn't work in the official controller extension, it's probably been fixed here.
  * Change the version to 1.0.1 if you use libGDX 1.9.10 or earlier!
+ * This will replace the official gdx-controllers in the next libGDX release, and the dependency will change.
  * @author MrStahlfelge
  */
 @Extension
 class ControllerUtils : ThirdPartyExtension() {
     override val id = "controllerUtils"
-    override val defaultVersion = "2.1.0"
+    override val defaultVersion = "2.2.0"
     override val url = "https://github.com/MrStahlfelge/gdx-controllerutils"
 
     override fun initiateDependencies(project: Project) {
@@ -429,7 +430,7 @@ class ControllerUtils : ThirdPartyExtension() {
 @Extension
 class ControllerScene2D : ThirdPartyExtension() {
     override val id = "controllerScene2D"
-    override val defaultVersion = "2.1.0"
+    override val defaultVersion = "2.2.0"
     override val url = "https://github.com/MrStahlfelge/gdx-controllerutils/wiki/Button-operable-Scene2d"
 
     override fun initiateDependencies(project: Project) {
@@ -526,7 +527,7 @@ class VisUI : ThirdPartyExtension() {
 @Extension
 class PieMenu : ThirdPartyExtension() {
     override val id = "pieMenu"
-    override val defaultVersion = "4.2.0"
+    override val defaultVersion = "5.0.0"
     override val url = "https://github.com/payne911/PieMenu"
 
     override fun initiateDependencies(project: Project) {
@@ -563,7 +564,7 @@ class JBump : ThirdPartyExtension() {
 @Extension
 class Kryo : ThirdPartyExtension() {
     override val id = "kryo"
-    override val defaultVersion = "5.0.0-RC9"
+    override val defaultVersion = "5.0.3"
     override val url = "https://github.com/EsotericSoftware/kryo"
 
     override fun initiateDependencies(project: Project) {
@@ -573,13 +574,14 @@ class Kryo : ThirdPartyExtension() {
 
 /**
  * A Java library that provides a clean and simple API for efficient network communication, using Kryo.
+ * This is crykn's fork (AKA damios), which is much more up-to-date than the official repo.
  * @author Nathan Sweet
  * @author damios/crykn
  */
 @Extension
 class KryoNet : ThirdPartyExtension() {
     override val id = "kryoNet"
-    override val defaultVersion = "2.22.6"
+    override val defaultVersion = "2.22.7"
     override val url = "https://github.com/crykn/kryonet"
 
     override fun initiateDependencies(project: Project) {
@@ -594,7 +596,7 @@ class KryoNet : ThirdPartyExtension() {
 @Extension
 class Guacamole : ThirdPartyExtension() {
     override val id = "guacamole"
-    override val defaultVersion = "0.2.2"
+    override val defaultVersion = "0.2.3"
     override val url = "https://github.com/crykn/guacamole"
     override fun initiateDependencies(project: Project) {
         addDependency(project, Core.ID, "com.github.crykn.guacamole:core")

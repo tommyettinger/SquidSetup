@@ -1,13 +1,13 @@
 package com.github.czyzby.autumn.processor;
 
+import java.lang.annotation.Annotation;
+
 import com.badlogic.gdx.utils.reflect.Field;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.github.czyzby.autumn.context.Context;
 import com.github.czyzby.autumn.context.ContextDestroyer;
 import com.github.czyzby.autumn.context.ContextInitializer;
 import com.github.czyzby.autumn.context.error.ContextInitiationException;
-
-import java.lang.annotation.Annotation;
 
 /** Utility abstract implementation of {@link AnnotationProcessor}. Reports that it doesn't support any type of
  * annotation; throws exceptions for all processing methods. Allows to create annotation processors for a single type

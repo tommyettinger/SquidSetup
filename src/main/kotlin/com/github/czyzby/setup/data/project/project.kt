@@ -100,6 +100,9 @@ bloccus-msdf.png
 BoxedIn-distance.fnt
 BoxedIn-distance.png
 BoxedIn-License.txt
+Cascadia-license.txt
+CascadiaMono-msdf.fnt
+CascadiaMono-msdf.png
 CM-Custom-distance.fnt
 CM-Custom-distance.png
 ComputerSaysNo.fnt

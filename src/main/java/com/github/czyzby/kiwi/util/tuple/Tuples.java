@@ -1,8 +1,8 @@
 package com.github.czyzby.kiwi.util.tuple;
 
-import com.github.czyzby.kiwi.util.common.UtilitiesClass;
-
 import java.util.Iterator;
+
+import com.github.czyzby.kiwi.util.common.UtilitiesClass;
 
 /** Contains utilties for creating tuples. Note that factory methods are provided by classes that are implementation of
  * specific tuple interfaces.

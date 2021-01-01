@@ -1,11 +1,11 @@
 package com.github.czyzby.autumn.mvc.stereotype.preference;
 
-import com.badlogic.gdx.Files.FileType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.badlogic.gdx.Files.FileType;
 
 /** Should annotate a string field with a path to a bundle. Proposed to be kept in a single configuration component.
  *

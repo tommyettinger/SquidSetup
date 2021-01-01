@@ -1,11 +1,11 @@
 package com.github.czyzby.kiwi.util.gdx.collection;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.utils.PooledLinkedList;
 import com.badlogic.gdx.utils.SortedIntList;
 import com.github.czyzby.kiwi.util.common.UtilitiesClass;
 import com.github.czyzby.kiwi.util.gdx.collection.pooled.PooledList;
-
-import java.util.Iterator;
 
 /** Utilities for LibGDX list collections: {@link PooledLinkedList} and {@link SortedIntList}.
  *

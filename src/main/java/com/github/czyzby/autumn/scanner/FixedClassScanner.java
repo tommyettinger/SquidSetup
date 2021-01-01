@@ -1,9 +1,9 @@
 package com.github.czyzby.autumn.scanner;
 
+import java.lang.annotation.Annotation;
+
 import com.badlogic.gdx.utils.Array;
 import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
-
-import java.lang.annotation.Annotation;
 
 /** Rather than scanning through the whole application, this scanner uses a limited pool of registered classes. This
  * might be significantly faster than other scanners, but it does require "manual" registration of scanned classes in

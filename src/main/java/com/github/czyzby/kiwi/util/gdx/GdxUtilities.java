@@ -1,7 +1,11 @@
 package com.github.czyzby.kiwi.util.gdx;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;

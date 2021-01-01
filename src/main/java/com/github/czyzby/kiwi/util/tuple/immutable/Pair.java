@@ -1,13 +1,13 @@
 package com.github.czyzby.kiwi.util.tuple.immutable;
 
+import java.util.Iterator;
+
 import com.github.czyzby.kiwi.util.common.Nullables;
 import com.github.czyzby.kiwi.util.tuple.DoubleTuple;
 import com.github.czyzby.kiwi.util.tuple.TripleTuple;
 import com.github.czyzby.kiwi.util.tuple.Tuples;
 import com.github.czyzby.kiwi.util.tuple.mutable.MutablePair;
 import com.github.czyzby.kiwi.util.tuple.mutable.MutableTriple;
-
-import java.util.Iterator;
 
 /** Double tuple. Stores two variables. Immutable utility container for all these cases that two variables have to be
  * returned by a function or otherwise passed and stored together. Implements Map.Entry using first variable as key and

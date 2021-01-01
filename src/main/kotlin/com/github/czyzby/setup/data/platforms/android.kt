@@ -133,7 +133,21 @@ android {
 		targetSdkVersion ${project.advanced.androidSdkVersion}
 		versionCode 1
 		versionName "1.0"
+		multiDexEnabled true
 	}
+	compileOptions {
+		sourceCompatibility "${project.advanced.javaVersion}"
+		targetCompatibility "${project.advanced.javaVersion}"
+		${if(project.advanced.javaVersion != "1.6" && project.advanced.javaVersion != "1.7")"coreLibraryDesugaringEnabled true" else ""}
+	}
+	${if(latePlugin && project.advanced.javaVersion != "1.6" && project.advanced.javaVersion != "1.7")"kotlinOptions.jvmTarget = \"1.8\"" else ""}
+	buildTypes {
+		release {
+			minifyEnabled true
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+		}
+	}
+
 }
 
 repositories {
@@ -144,6 +158,7 @@ repositories {
 configurations { natives }
 
 dependencies {
+	${if(project.advanced.javaVersion != "1.6" && project.advanced.javaVersion != "1.7")"coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'" else ""}
 ${joinDependencies(dependencies)}
 ${joinDependencies(nativeDependencies, "natives")}
 }
@@ -177,7 +192,11 @@ task copyAndroidNatives() {
 	}
 }
 
-preBuild.dependsOn(copyAndroidNatives)
+tasks.whenTaskAdded { packageTask ->
+  if (packageTask.name.contains("package")) {
+    packageTask.dependsOn 'copyAndroidNatives'
+  }
+}
 
 task run(type: Exec) {
 	def path

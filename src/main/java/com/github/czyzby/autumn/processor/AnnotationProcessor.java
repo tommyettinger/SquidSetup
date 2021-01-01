@@ -1,12 +1,12 @@
 package com.github.czyzby.autumn.processor;
 
+import java.lang.annotation.Annotation;
+
 import com.badlogic.gdx.utils.reflect.Field;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.github.czyzby.autumn.context.Context;
 import com.github.czyzby.autumn.context.ContextDestroyer;
 import com.github.czyzby.autumn.context.ContextInitializer;
-
-import java.lang.annotation.Annotation;
 
 /** Common interface for processors of a single annotation.
  *

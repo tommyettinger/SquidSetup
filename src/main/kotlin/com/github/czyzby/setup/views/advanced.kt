@@ -28,7 +28,7 @@ class AdvancedData {
         get() = versionField.text
 
     val gdxVersion: String
-        get() = "1.9.11"
+        get() = "1.9.12"
 
     val javaVersion: String
         get() = if(javaVersionField.model.text.length == 1 && "9" != javaVersionField.model.text)
