@@ -42,13 +42,13 @@ class GWT : Platform {
 		addGradleTaskDescription(project, "dist", "compiles GWT sources. The compiled application can be found at `${id}/build/dist`: you can use any HTTP server to deploy it.")
 
 		project.gwtInherits.add(BASIC_INHERIT)
-		project.properties["gwtFrameworkVersion"] = "2.9.0"
+		project.properties["gwtFrameworkVersion"] = "2.8.2"
 		project.properties["gwtPluginVersion"] = project.advanced.gwtPluginVersion
 
 		// Adding GWT definition to core project:
 		project.files.add(SourceFile(projectName = Core.ID, packageName = project.basic.rootPackage,
 				fileName = "${project.basic.mainClass}.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.9.0//EN" "http://www.gwtproject.org/doctype/2.9.0/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.2//EN" "http://www.gwtproject.org/doctype/2.8.2/gwt-module.dtd">
 <module>
 	<source path="" />${(project.reflectedClasses + project.reflectedPackages).joinToString(separator = "\n", prefix = "\n") { "    <extend-configuration-property name=\"gdx.reflect.include\" value=\"$it\" />" }}
 </module>"""))
@@ -58,7 +58,7 @@ class GWT : Platform {
 		if (project.hasPlatform(Shared.ID)) {
 			project.files.add(SourceFile(projectName = Shared.ID, packageName = project.basic.rootPackage,
 					fileName = "Shared.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.9.0//EN" "http://www.gwtproject.org/doctype/2.9.0/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.2//EN" "http://www.gwtproject.org/doctype/2.8.2/gwt-module.dtd">
 <module>
 	<source path="" />
 </module>"""))
@@ -68,7 +68,7 @@ class GWT : Platform {
 		// Adding GWT definition:
 		project.files.add(SourceFile(projectName = ID, packageName = project.basic.rootPackage,
 				fileName = "GdxDefinition.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.9.0//EN" "http://www.gwtproject.org/doctype/2.9.0/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.2//EN" "http://www.gwtproject.org/doctype/2.8.2/gwt-module.dtd">
 <module rename-to="html">
 	<source path="" />
 ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\n") { "\t<inherits name=\"$it\" />" }}
@@ -84,7 +84,7 @@ ${project.gwtInherits.sortedWith(INHERIT_COMPARATOR).joinToString(separator = "\
 		// Adding SuperDev definition:
 		project.files.add(SourceFile(projectName = ID, packageName = project.basic.rootPackage,
 				fileName = "GdxDefinitionSuperdev.gwt.xml", content = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.9.0//EN" "http://www.gwtproject.org/doctype/2.9.0/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.2//EN" "http://www.gwtproject.org/doctype/2.8.2/gwt-module.dtd">
 <module rename-to="html">
 	<inherits name="${project.basic.rootPackage}.GdxDefinition" />
 	<collapse-all-properties />
@@ -135,8 +135,11 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
 		dependencies.add("project(':${Core.ID}')")
 
 		addDependency("com.badlogicgames.gdx:gdx:\$gdxVersion:sources")
-		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.912.0")
-		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.912.0:sources")
+		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion")
+		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion:sources")
+//		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.912.0")
+//		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.912.0:sources")
+
 	}
 
 	override fun getContent(): String = """
@@ -153,7 +156,7 @@ apply plugin: "war"
 apply plugin: "org.gretty"
 
 gwt {
-	gwtVersion = "2.9.0" // Should match the version used for building the GWT backend. See gradle.properties.
+	gwtVersion = "2.8.2" // Should match the version used for building the GWT backend. See gradle.properties.
 	maxHeapSize = '1G' // Default 256m is not enough for the GWT compiler. GWT is HUNGRY.
 	minHeapSize = '1G'
 

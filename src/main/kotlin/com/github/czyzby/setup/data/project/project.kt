@@ -134,6 +134,9 @@ Inconsolata-LGC-12x24.fnt
 Inconsolata-LGC-12x24.png
 Inconsolata-LGC-Custom-distance.fnt
 Inconsolata-LGC-Custom-distance.png
+Inconsolata-LGC-Custom-msdf.fnt
+Inconsolata-LGC-Custom-msdf.png
+Inconsolata-LGC-License.txt
 Inconsolata-LGC-Square-25x25.fnt
 Inconsolata-LGC-Square-25x25.png
 Inconsolata-LGC-Square-distance.fnt

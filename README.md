@@ -63,9 +63,10 @@ handle the graphics yourself).
         these differences and make things like random seeds act the same on all platforms, but it takes work. Mostly,
         you need to be careful with the `long` and `int` number types, and relates to `int` not overflowing as it
         would on desktop, and `long` not being visible to reflection. See [this small guide to GWT](GWT.md) for more.
-        - SquidSetup uses GWT 2.9.0 via [a custom backend](https://github.com/tommyettinger/gdx-backends), which enables
-          using Java 11 features, such as `var`, but not JDK 11 library code. The backend is closely related to the
-          libGDX version used, but SquidLib currently is only tested with libGDX 1.9.12.
+        - SquidSetup for release 3.0.3 uses GWT 2.9.0 via [a custom backend](https://github.com/tommyettinger/gdx-backends),
+          which enables using Java 11 features, such as `var`, but not JDK 11 library code. The backend is closely
+          related to the libGDX version used, but SquidLib currently is only tested with libGDX 1.9.12. The JitPack
+          release does not use GWT 2.9.0 or the custom backend, and uses libGDX 1.9.13's default of GWT 2.8.2.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -134,12 +135,13 @@ Now you'll have a project all set up with a sample.
 
 These apply to the options on the Advanced tab, which may need some extra explanation.
 
-  - LibGDX version: 1.9.12
-    - Ths is a dependency of SquidLib 3.0.3.
+  - LibGDX version: 1.9.12 if you use the stable 3.0.3 release, or 1.9.13 if you use JitPack.
+    - 1.9.12 is a dependency of SquidLib 3.0.3.
+    - 1.9.13 is a dependency for later commits available on JitPack.
   - Application version: Your choice
     - Maybe `0.0.1-SNAPSHOT` if it's going to change a lot. `-SNAPSHOT` has special meaning as a non-release.
   - Java version: 8.0, 11.0, or 15.0
-    - 8.0 is the max for Android and iOS, but 11.0 can be used on GWT, and 15.0 for desktop/LWJGL3 only
+    - 8.0 is the max for Android and iOS, but 15.0 can be used for desktop/LWJGL3 only
       (if you have Java 15 installed, which you should also bundle for users).
   - Server Java version: Must be at least equal to `Java version`, maybe should be equal.
     - Only matters if you have selected a Server project on the Platforms tab.

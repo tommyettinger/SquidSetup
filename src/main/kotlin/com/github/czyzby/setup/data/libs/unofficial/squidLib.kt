@@ -4,6 +4,10 @@ import com.github.czyzby.setup.data.platforms.Core
 import com.github.czyzby.setup.data.platforms.GWT
 import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.Extension
+import com.jcabi.github.Coordinates
+import com.jcabi.github.RtGithub
+import java.util.*
+
 //import com.jcabi.github.Coordinates
 //import com.jcabi.github.RtGithub
 //import java.util.*
@@ -14,19 +18,19 @@ import com.github.czyzby.setup.views.Extension
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-val SQUID_LIB_VERSION = "3.0.3"
-//        RtGithub().repos().get(Coordinates.Simple("SquidPony", "SquidLib"))
-//        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
+val SQUID_LIB_VERSION = //"3.0.3"
+        RtGithub().repos().get(Coordinates.Simple("yellowstonegames", "SquidLib"))
+        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
 
 /**
  * URL of SquidLib libraries.
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-const val SQUID_LIB_URL = "https://github.com/SquidPony/SquidLib"
+const val SQUID_LIB_URL = "https://github.com/yellowstonegames/SquidLib"
 
-//const val REPO_PATH = "com.github.SquidPony.SquidLib"
-const val REPO_PATH = "com.squidpony"
+const val REPO_PATH = "com.github.yellowstonegames.SquidLib"
+//const val REPO_PATH = "com.squidpony"
 
 /**
  * Utilities for grid-based games.

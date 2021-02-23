@@ -28,7 +28,7 @@ class AdvancedData {
         get() = versionField.text
 
     val gdxVersion: String
-        get() = "1.9.12"
+        get() = "1.9.13"
 
     val javaVersion: String
         get() = if(javaVersionField.model.text.length == 1 && "9" != javaVersionField.model.text)
@@ -49,7 +49,7 @@ class AdvancedData {
         get() = robovmVersionField.text
 
     val gwtVersion: String
-        get() = "2.9.0"
+        get() = "2.8.2"
 
     val gwtPluginVersion: String
         get() = gwtPluginVersionField.text
