@@ -117,8 +117,9 @@ Now you'll have a project all set up with a sample.
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
     case they don't immediately work.
-  - All builds currently use Gradle 6.7 with the "api/implementation/compile fiasco" resolved.
-    Java 13 and 14 work with SquidSetup because Gradle 6.7 supports Java from 8 to 15.
+  - All builds currently use Gradle 6.8.2 with the "api/implementation/compile fiasco" resolved.
+    Recent Java works with SquidSetup because Gradle 6.8.2 supports Java from 8 to 15.
+    (Java 16 is expected to be released soon, but it may not work right away.)
     Adding dependencies will use the `api` keyword instead of the `compile` keyword it used
     in earlier versions. All modules use the `java-library` plugin, which enables the `api` keyword
     for dependencies.
@@ -126,10 +127,8 @@ Now you'll have a project all set up with a sample.
     JitPack takes a minute or two to build SquidLib, and it usually doesn't take long before the SquidLib
     dependencies can be downloaded in full. In IntelliJ IDEA, the `Reimport all Gradle projects` button is
     a pair of circling arrows in the Gradle tool window, which can be opened with `View -> Tool Windows -> Gradle`.
-  - Out of an abundance of caution, [the dependency impersonation issue reported here by Márton
-    Braun](https://blog.autsoft.hu/a-confusing-dependency/) is handled the way he handled it, by putting
-    `jcenter()` last in the repositories lists. I don't know if any other tools have done the same, but it's
-    an easy fix, and I encourage them to do so.
+  - JCenter is being rapidly closed by its parent company, so it's a good idea to get away from that sinking ship
+    as quickly as possible. SquidSetup won't look on JCenter for dependencies by default.
     
 ## Recommended Settings
 

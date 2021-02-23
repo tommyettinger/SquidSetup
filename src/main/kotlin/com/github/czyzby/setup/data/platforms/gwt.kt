@@ -139,13 +139,12 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
 		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion:sources")
 //		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.912.0")
 //		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.912.0:sources")
-
 	}
 
 	override fun getContent(): String = """
 buildscript {
 	repositories {
-		jcenter()
+		maven { url 'https://plugins.gradle.org/m2/' }
 	}
 	dependencies {
 		classpath 'org.gretty:gretty:3.0.2'

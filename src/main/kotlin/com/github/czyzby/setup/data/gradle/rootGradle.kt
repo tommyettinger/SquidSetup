@@ -17,7 +17,7 @@ class RootGradleFile(val project: Project) : GradleFile("") {
         buildRepositories.add("mavenCentral()")
         buildRepositories.add("google()")
         buildRepositories.add("maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }")
-        buildRepositories.add("jcenter()")
+        buildRepositories.add("maven { url 'https://plugins.gradle.org/m2/' }")
     }
 
     override fun getContent(): String = """buildscript {
@@ -52,8 +52,8 @@ subprojects {
 		mavenLocal()
 		mavenCentral()
 		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+		maven { url 'https://plugins.gradle.org/m2/' }
 		maven { url 'https://jitpack.io' }
-		jcenter()
 	}
 }
 
