@@ -28,11 +28,11 @@ handle the graphics yourself).
     - You may want the stable 3.0.0 release, which came out July 22, 2020 and won't change until another
       stable release (which still won't make the stable SquidSetup act any differently).
     - You may want the small but meaningful improvements in the 3.0.3 release, which applies fixes to Android and some
-      to fixes JDK version issues on desktop/LWJGL3, plus some new features.
+      fixes to JDK version issues on desktop/LWJGL3, plus some new features.
     - Future changes to SquidSetup for an existing SquidLib version will be applied to -u1, -u2, -u3, etc.;
       there's already a 3.0.0-u1, but it's almost entirely superseded by 3.0.3.
     - You may instead want the latest possible code using the [3.0.0-JITPACK Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-JITPACK),
-      but you may want a more-stable beta version. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
+      which is still receiving updates, just at a slower pace. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
       will be obtained from Maven Central. The latest commit is determined by the library `jcabi-github`, and involves an API call to GitHub when using
       the snapshot release (not any beta or stable releases); the API call may be a little slow or might not complete if GitHub is having issues. However,
       because the code at that commit is the same at any point in the future, the snapshot commits won't "suddenly stop working" like a dependency
@@ -141,7 +141,12 @@ These apply to the options on the Advanced tab, which may need some extra explan
     - Maybe `0.0.1-SNAPSHOT` if it's going to change a lot. `-SNAPSHOT` has special meaning as a non-release.
   - Java version: 8.0, 11.0, or 15.0
     - 8.0 is the max for Android and iOS, but 15.0 can be used for desktop/LWJGL3 only
-      (if you have Java 15 installed, which you should also bundle for users).
+      (if you have Java 15 installed, which you should also bundle for users). 11.0 is the current LTS
+      release, which really only has meaning if you're paying for support from Oracle. Contrary to popular
+      opinion, LTS releases have no special guarantees of stability, just that Oracle is maintaining that
+      version for a longer period of time. Red Hat marks Java 8 as an LTS release if you pay for support
+      from them (Azul Systems also treats 8 as LTS, and probably several others), and Java 8 is still what
+      most Java developers are using.
   - Server Java version: Must be at least equal to `Java version`, maybe should be equal.
     - Only matters if you have selected a Server project on the Platforms tab.
   - Android plugin: 4.0.2
@@ -151,7 +156,7 @@ These apply to the options on the Advanced tab, which may need some extra explan
         some newer features, and if the newer version doesn't work, you can downgrade there too.
   - Target Android API: 29
     - This is required by the Play Store.
-  - RoboVM Version: 2.3.10
+  - RoboVM Version: 2.3.12
     - This can be updated if there's a newer release, but only matters if you target iOS.
   - GWT plugin version: 1.0.13
     - This is the most recent version, and it works fine.

@@ -18,7 +18,7 @@ class GWT : Platform {
 	companion object {
 		const val ID = "html"
 		const val BASIC_INHERIT = "com.badlogic.gdx.backends.gdx_backends_gwt"
-		val INHERIT_COMPARATOR = Comparator<kotlin.String> { a, b ->
+		val INHERIT_COMPARATOR = Comparator<String> { a, b ->
 			// Basic GWT inherit has to be first:
 			if (a == BASIC_INHERIT) {
 				-1
@@ -245,9 +245,8 @@ task distZip(type: Zip, dependsOn: dist){
 		include '**/*.html'
 		filter { String line -> line.replaceAll('<a class="superdev" .+', '') }
 	}
-	//// The next line attempts to name the zip with a unique timestamp, removing spaces and ':' for compatibility.
-	archiveName "dist-${'$'}{(new Date().toString()).replace(' ', '-').replace(':', '-')}.zip"
-	//// The result will be in html/build/ with a name containing the above probably-unique timestamp.
+	archiveBaseName.set("${'$'}{appName}-dist")
+	//// The result will be in html/build/ with a name containing "dist".
 	destinationDir(file("build"))
 }
 
