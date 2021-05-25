@@ -5,13 +5,16 @@ import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.Extension
 
 /**
- * Version of Czyzby's libraries; this is a snapshot release because Czyzby is unlikely to make a stable release.
+ * Version of Czyzby's libraries; there is no chance of a newer stable release (by Czyzby).
+ * Some libraries in this file are maintained by other people and are still getting updates.
  * @author MJ
  */
 const val AUTUMN_VERSION = "1.9.1.9.11-SNAPSHOT"
 
 /**
- * Guava-inspired libGDX utilities.
+ * Guava-inspired libGDX utilities; no longer maintained.
+ * Kiwi is actually used by gdx-liftoff and you can pull an updated fork of Kiwi code from the "com.github.czyzby.kiwi"
+ * Java package in gdx-liftoff's repo.
  * @author MJ
  */
 @Extension
@@ -29,7 +32,9 @@ class Kiwi : ThirdPartyExtension() {
 }
 
 /**
- * Parser of HTML-like templates that produces Scene2D widgets.
+ * Parser of HTML-like templates that produces Scene2D widgets; no longer maintained.
+ * LML is actually used by gdx-liftoff and you can pull an updated fork of LML code from the "com.github.czyzby.lml"
+ * Java package in gdx-liftoff's repo.
  * @author MJ
  */
 @Extension
@@ -49,7 +54,9 @@ class LML : ThirdPartyExtension() {
 }
 
 /**
- * Parser of HTML-like templates that produces VisUI widgets.
+ * Parser of HTML-like templates that produces VisUI widgets; no longer maintained.
+ * LMLVis is actually used by gdx-liftoff and you can pull an updated fork of LMLVis code from the
+ * "com.github.czyzby.lml" Java package in gdx-liftoff's repo.
  * @author MJ
  * @author Kotcrab
  */
@@ -71,7 +78,9 @@ class LMLVis : ThirdPartyExtension() {
 }
 
 /**
- * Dependency injection mechanism with component scan using libGDX reflection API.
+ * Dependency injection mechanism with component scan using libGDX reflection API; no longer maintained.
+ * Autumn is actually used by gdx-liftoff and you can pull an updated fork of Autumn code from the
+ * "com.github.czyzby.autumn" Java package in gdx-liftoff's repo.
  * @author MJ
  */
 @Extension
@@ -99,7 +108,9 @@ class Autumn : ThirdPartyExtension() {
 }
 
 /**
- * Model-view-controller framework on top of Autumn DI and libGDX.
+ * Model-view-controller framework on top of Autumn DI and libGDX; no longer maintained.
+ * AutumnMVC is actually used by gdx-liftoff and you can pull an updated fork of AutumnMVC code from the
+ * "com.github.czyzby.autumn" Java package in gdx-liftoff's repo.
  * @author MJ
  */
 @Extension
@@ -120,51 +131,54 @@ class AutumnMVC : ThirdPartyExtension() {
 }
 
 /**
- * Cross-platform web sockets support.
+ * Cross-platform web sockets support; MrStahlfelge's fork.
  * @author MJ
+ * @author MrStahlfelge
  */
 @Extension
 class Websocket : ThirdPartyExtension() {
     override val id = "websocket"
-    override val defaultVersion = AUTUMN_VERSION
-    override val url = "https://github.com/czyzby/gdx-lml/tree/master/websocket"
+    override val defaultVersion = "1.9.10.3"
+    override val url = "https://github.com/MrStahlfelge/gdx-websockets"
 
     override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.czyzby:gdx-websocket")
+        addDependency(project, Core.ID, "com.github.MrStahlfelge.gdx-websockets:core")
 
-        addDependency(project, Shared.ID, "com.github.czyzby:gdx-websocket")
+        addDependency(project, Shared.ID, "com.github.MrStahlfelge.gdx-websockets:core")
 
-        addDesktopDependency(project, "com.github.czyzby:gdx-websocket-common")
-        addDependency(project, Headless.ID, "com.github.czyzby:gdx-websocket-common")
-        addDependency(project, iOS.ID, "com.github.czyzby:gdx-websocket-common")
+        addDesktopDependency(project, "com.github.MrStahlfelge.gdx-websockets:common")
+        addDependency(project, Headless.ID, "com.github.MrStahlfelge.gdx-websockets:common")
+        addDependency(project, iOS.ID, "com.github.MrStahlfelge.gdx-websockets:common")
 
-        addDependency(project, Android.ID, "com.github.czyzby:gdx-websocket-common")
+        addDependency(project, Android.ID, "com.github.MrStahlfelge.gdx-websockets:common")
         addAndroidPermission(project, "android.permission.INTERNET")
 
-        addDependency(project, GWT.ID, "com.github.czyzby:gdx-websocket:sources")
-        addDependency(project, GWT.ID, "com.github.czyzby:gdx-websocket-gwt")
-        addDependency(project, GWT.ID, "com.github.czyzby:gdx-websocket-gwt:sources")
+        addDependency(project, GWT.ID, "com.github.MrStahlfelge.gdx-websockets:core:sources")
+        addDependency(project, GWT.ID, "com.github.MrStahlfelge.gdx-websockets:html")
+        addDependency(project, GWT.ID, "com.github.MrStahlfelge.gdx-websockets:html:sources")
+        addGwtInherit(project, "com.github.czyzby.websocket.GdxWebSocket")
         addGwtInherit(project, "com.github.czyzby.websocket.GdxWebSocketGwt")
     }
 }
 
 /**
- * Cross-platform efficient serialization without reflection.
+ * Cross-platform efficient serialization without reflection; MrStahlfelge's fork.
  * @author MJ
+ * @author MrStahlfelge
  */
 @Extension
 class WebsocketSerialization : ThirdPartyExtension() {
     override val id = "websocketSerialization"
-    override val defaultVersion = AUTUMN_VERSION
-    override val url = "https://github.com/czyzby/gdx-lml/tree/master/websocket/natives/serialization"
+    override val defaultVersion = "1.9.10.3"
+    override val url = "https://github.com/MrStahlfelge/gdx-websockets/tree/master/serialization"
 
     override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.czyzby:gdx-websocket-serialization")
+        addDependency(project, Core.ID, "com.github.MrStahlfelge.gdx-websockets:serialization")
 
-        addDependency(project, Shared.ID, "com.github.czyzby:gdx-websocket-serialization")
-        addDependency(project, Server.ID, "com.github.czyzby:gdx-websocket-serialization")
+        addDependency(project, Shared.ID, "com.github.MrStahlfelge.gdx-websockets:serialization")
+        addDependency(project, Server.ID, "com.github.MrStahlfelge.gdx-websockets:serialization")
 
-        addDependency(project, GWT.ID, "com.github.czyzby:gdx-websocket-serialization:sources")
+        addDependency(project, GWT.ID, "com.github.MrStahlfelge.gdx-websockets:serialization:sources")
         addGwtInherit(project, "com.github.czyzby.websocket.GdxWebSocketSerialization")
 
         Websocket().initiate(project)

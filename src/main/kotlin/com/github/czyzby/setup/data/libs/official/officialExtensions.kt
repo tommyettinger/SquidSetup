@@ -11,7 +11,7 @@ import com.github.czyzby.setup.views.Extension
  * @author MJ
  */
 abstract class OfficialExtension : Library {
-    override val defaultVersion = "1.9.13"// Version.VERSION
+    override val defaultVersion = Version.VERSION
     override val official = true
 }
 
@@ -62,7 +62,6 @@ class Box2D : OfficialExtension() {
     override fun initiate(project: Project) {
         addDependency(project, Core.ID, "com.badlogicgames.gdx:gdx-box2d:\$gdxVersion")
 
-        addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-box2d-platform:\$gdxVersion:natives-armeabi")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-box2d-platform:\$gdxVersion:natives-armeabi-v7a")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-box2d-platform:\$gdxVersion:natives-arm64-v8a")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-box2d-platform:\$gdxVersion:natives-x86")
@@ -112,7 +111,6 @@ class Bullet : OfficialExtension() {
     override fun initiate(project: Project) {
         addDependency(project, Core.ID, "com.badlogicgames.gdx:gdx-bullet:\$gdxVersion")
 
-        addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-bullet-platform:\$gdxVersion:natives-armeabi")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-bullet-platform:\$gdxVersion:natives-armeabi-v7a")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-bullet-platform:\$gdxVersion:natives-arm64-v8a")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-bullet-platform:\$gdxVersion:natives-x86")
@@ -126,9 +124,10 @@ class Bullet : OfficialExtension() {
     }
 }
 
-
 /**
  * Official controllers support. See https://github.com/libgdx/gdx-controllers for Android ProGuard info.
+ * Note, the code for gdx-controllers (and its version) are separate from the earlier gdx-controllers extension.
+ * If you used a version of gdx-controllers before 2.0.0, there may be some important changes.
  */
 @Extension(official = true)
 class Controllers : OfficialExtension() {
@@ -136,7 +135,7 @@ class Controllers : OfficialExtension() {
     override val url = "https://github.com/libgdx/gdx-controllers"
 
     override fun initiate(project: Project) {
-        project.properties["gdxControllersVersion"] = "2.1.0"
+        project.properties["gdxControllersVersion"] = "2.2.0"
 
         addDependency(project, Core.ID, "com.badlogicgames.gdx-controllers:gdx-controllers-core:\$gdxControllersVersion")
 
@@ -166,7 +165,6 @@ class Freetype : OfficialExtension() {
     override fun initiate(project: Project) {
         addDependency(project, Core.ID, "com.badlogicgames.gdx:gdx-freetype:\$gdxVersion")
 
-        addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-freetype-platform:\$gdxVersion:natives-armeabi")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-freetype-platform:\$gdxVersion:natives-armeabi-v7a")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-freetype-platform:\$gdxVersion:natives-arm64-v8a")
         addNativeAndroidDependency(project, "com.badlogicgames.gdx:gdx-freetype-platform:\$gdxVersion:natives-x86")

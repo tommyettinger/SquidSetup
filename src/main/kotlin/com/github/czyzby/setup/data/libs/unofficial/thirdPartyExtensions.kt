@@ -1,5 +1,7 @@
 package com.github.czyzby.setup.data.libs.unofficial
 
+import com.github.czyzby.setup.data.files.CopiedFile
+import com.github.czyzby.setup.data.files.path
 import com.github.czyzby.setup.data.libs.Library
 import com.github.czyzby.setup.data.libs.official.Controllers
 import com.github.czyzby.setup.data.platforms.*
@@ -21,8 +23,8 @@ abstract class ThirdPartyExtension : Library {
     abstract fun initiateDependencies(project: Project)
 
     override fun addDependency(project: Project, platform: String, dependency: String) {
-        if (dependency.endsWith(":sources")) {
-            super.addDependency(project, platform, dependency.replace(":sources", ":\$${id}Version:sources"))
+        if(dependency.count { it == ':' } > 1) {
+            super.addDependency(project, platform, dependency.substringBeforeLast(':') + ":\$${id}Version:" + dependency.substringAfterLast(':'))
         } else {
             super.addDependency(project, platform, dependency + ":\$${id}Version")
         }
@@ -30,78 +32,6 @@ abstract class ThirdPartyExtension : Library {
 
     fun addExternalDependency(project: Project, platform: String, dependency: String) {
         super.addDependency(project, platform, dependency)
-    }
-}
-
-/**
- * Cross-platform regex utilities.
- * @author Tommy Ettinger
- */
-@Extension()
-class RegExodus : ThirdPartyExtension() {
-    override val id = "regExodus"
-    override val defaultVersion = "0.1.11"
-    override val url = "https://github.com/tommyettinger/RegExodus"
-
-    override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.tommyettinger:regexodus")
-
-        addDependency(project, GWT.ID, "com.github.tommyettinger:regexodus:sources")
-        addGwtInherit(project, "regexodus")
-    }
-}
-
-/**
- * Provides a replacement for GWT's missing String.format() with its Stringf.format().
- * @author Tommy Ettinger
- */
-@Extension
-class Formic : ThirdPartyExtension() {
-    override val id = "formic"
-    override val defaultVersion = "0.1.4"
-    override val url = "https://github.com/tommyettinger/formic"
-
-    override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.tommyettinger:formic")
-
-        addDependency(project, GWT.ID, "com.github.tommyettinger:formic:sources")
-        addGwtInherit(project, "formic")
-    }
-}
-
-/**
- * Alternative color models for changing the colors of sprites and scenes, including brightening.
- * @author Tommy Ettinger
- */
-@Extension
-class Colorful : ThirdPartyExtension() {
-    override val id = "colorful"
-    override val defaultVersion = "0.5.1"
-    override val url = "https://github.com/tommyettinger/colorful-gdx"
-
-    override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.tommyettinger:colorful")
-
-        addDependency(project, GWT.ID, "com.github.tommyettinger:colorful:sources")
-        addGwtInherit(project, "com.github.tommyettinger.colorful.colorful")
-    }
-}
-
-/**
- * Support for writing animated GIF and animated PNG images from libGDX, as well as 8-bit-palette PNGs.
- * @author Tommy Ettinger
- */
-@Extension
-class Anim8 : ThirdPartyExtension() {
-    override val id = "anim8"
-    override val defaultVersion = "0.2.7"
-    override val url = "https://github.com/tommyettinger/anim8-gdx"
-
-    override fun initiateDependencies(project: Project) {
-        addDependency(project, Core.ID, "com.github.tommyettinger:anim8-gdx")
-
-        addDependency(project, GWT.ID, "com.github.tommyettinger:anim8-gdx:sources")
-        addGwtInherit(project, "anim8")
     }
 }
 
@@ -122,6 +52,16 @@ class ArtemisOdb : ThirdPartyExtension() {
         addDependency(project, GWT.ID, "net.onedaybeard.artemis:artemis-odb-gwt:sources")
         addDependency(project, GWT.ID, "net.onedaybeard.artemis:artemis-odb:sources")
         addGwtInherit(project, "com.artemis.backends.artemis_backends_gwt")
+        if (project.hasPlatform(GWT.ID)) {
+            project.files.add(
+                CopiedFile(
+                    projectName = GWT.ID,
+                    original = path("generator", GWT.ID, "jsr305.gwt.xml"),
+                    path = path("src", "main", "java", "jsr305.gwt.xml")
+                )
+            )
+            addGwtInherit(project, "jsr305")
+        }
     }
 }
 
@@ -166,7 +106,7 @@ class LibgdxUtilsBox2D : ThirdPartyExtension() {
 }
 
 /**
- * Facebook graph API wrapper. May be out-of-date.
+ * Facebook graph API wrapper. iOS-incompatible! Also, out-of-date.
  * @author Tom Grill
  */
 @Extension
@@ -181,8 +121,8 @@ class Facebook : ThirdPartyExtension() {
         addDependency(project, Android.ID, "de.tomgrill.gdxfacebook:gdx-facebook-android")
 
         addDesktopDependency(project, "de.tomgrill.gdxfacebook:gdx-facebook-desktop")
-
-        addDependency(project, iOS.ID, "de.tomgrill.gdxfacebook:gdx-facebook-ios")
+//// This is a problem for the App Store, removed.
+//        addDependency(project, iOS.ID, "de.tomgrill.gdxfacebook:gdx-facebook-ios")
 
         addDependency(project, GWT.ID, "de.tomgrill.gdxfacebook:gdx-facebook-core:sources")
         addDependency(project, GWT.ID, "de.tomgrill.gdxfacebook:gdx-facebook-html")
@@ -218,7 +158,7 @@ class Dialogs : ThirdPartyExtension() {
 }
 
 /**
- * In-game console implementation.
+ * In-game console implementation; GWT-incompatible. If you target GWT, you can use JACI GWT.
  * @author StrongJoshua
  */
 @Extension
@@ -229,14 +169,11 @@ class InGameConsole : ThirdPartyExtension() {
 
     override fun initiateDependencies(project: Project) {
         addDependency(project, Core.ID, "com.strongjoshua:libgdx-inGameConsole")
-
-        addDependency(project, GWT.ID, "com.strongjoshua:libgdx-inGameConsole:sources")
-        addGwtInherit(project, "com.strongjoshua.console")
     }
 }
 
 /**
- * Java Annotation Console Interface. In-game console implementation.
+ * Java Annotation Console Interface. In-game console implementation, for non-GWT usage.
  * @author Yevgeny Krasik
  */
 @Extension
@@ -252,6 +189,7 @@ class Jaci : ThirdPartyExtension() {
 
 /**
  * Java Annotation Console Interface. GWT-compatible in-game console implementation.
+ * Don't use this at the same time as JACI (the non-GWT version).
  * @author Yevgeny Krasik
  */
 @Extension
@@ -269,7 +207,8 @@ class JaciGwt : ThirdPartyExtension() {
 }
 
 /**
- * Simple map generators.
+ * Simple map generators. Noise4J can be used as a continuous noise generator, but you're better served by
+ * joise or make-some-noise in that case. There are also many kinds of map generator in squidlib-util.
  * @author MJ
  */
 @Extension
@@ -303,6 +242,7 @@ class BladeInk : ThirdPartyExtension() {
 
 /**
  * 2D, 3D, 4D and 6D modular noise library written in Java.
+ * Joise can combine noise in versatile ways, and can serialize the "recipes" for a particular type of noise generator.
  * @author SudoPlayGames
  */
 @Extension
@@ -320,7 +260,10 @@ class Joise : ThirdPartyExtension() {
 }
 
 /**
- * Another 2D, 3D, 4D and 6D noise library, supporting some unusual types of noise.
+ * Another 2D, 3D, 4D, 5D, and 6D noise library, supporting some unusual types of noise.
+ * The API is more "raw" than Joise, and is meant as a building block for things that use noise, rather
+ * than something that generates immediately-usable content. It is still a more convenient API than
+ * Noise4J when making fields of noise.
  * @author Tommy Ettinger
  */
 @Extension
@@ -374,6 +317,78 @@ class ShapeDrawer : ThirdPartyExtension() {
     }
 }
 
+/**
+ * Provides various frequently-used graph algorithms, aiming to be lightweight, fast, and intuitive.
+ * A good substitute for the pathfinding in gdx-ai.
+ * @author earlygrey
+ */
+@Extension
+class SimpleGraphs : ThirdPartyExtension() {
+    override val id = "simpleGraphs"
+    override val defaultVersion = "3.0.0"
+    override val url = "https://github.com/earlygrey/simple-graphs"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "space.earlygrey:simple-graphs")
+
+        addDependency(project, GWT.ID, "space.earlygrey:simple-graphs:sources")
+        addGwtInherit(project, "simple_graphs")
+    }
+}
+
+/**
+ * Provides a replacement for GWT's missing String.format() with its Stringf.format().
+ * @author Tommy Ettinger
+ */
+@Extension
+class Formic : ThirdPartyExtension() {
+    override val id = "formic"
+    override val defaultVersion = "0.1.4"
+    override val url = "https://github.com/tommyettinger/formic"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.tommyettinger:formic")
+
+        addDependency(project, GWT.ID, "com.github.tommyettinger:formic:sources")
+        addGwtInherit(project, "formic")
+    }
+}
+
+/**
+ * Alternative color models for changing the colors of sprites and scenes, including brightening.
+ * @author Tommy Ettinger
+ */
+@Extension
+class Colorful : ThirdPartyExtension() {
+    override val id = "colorful"
+    override val defaultVersion = "0.5.1"
+    override val url = "https://github.com/tommyettinger/colorful-gdx"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.tommyettinger:colorful")
+
+        addDependency(project, GWT.ID, "com.github.tommyettinger:colorful:sources")
+        addGwtInherit(project, "com.github.tommyettinger.colorful.colorful")
+    }
+}
+
+/**
+ * Support for writing animated GIF and animated PNG images from libGDX, as well as 8-bit-palette PNGs.
+ * @author Tommy Ettinger
+ */
+@Extension
+class Anim8 : ThirdPartyExtension() {
+    override val id = "anim8"
+    override val defaultVersion = "0.2.9"
+    override val url = "https://github.com/tommyettinger/anim8-gdx"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.tommyettinger:anim8-gdx")
+
+        addDependency(project, GWT.ID, "com.github.tommyettinger:anim8-gdx:sources")
+        addGwtInherit(project, "anim8")
+    }
+}
 
 /**
  * Bonus features for 9-patch images, filling significant gaps in normal 9-patch functionality.
@@ -457,7 +472,6 @@ class ControllerScene2D : ThirdPartyExtension() {
 
         addDependency(project, GWT.ID, "de.golfgl.gdxcontrollerutils:gdx-controllerutils-scene2d:sources")
         addGwtInherit(project, "de.golfgl.gdx.controllers.controller_scene2d")
-        Controllers().initiate(project)
     }
 }
 
@@ -523,13 +537,36 @@ class GdxVfxStandardEffects : ThirdPartyExtension() {
 }
 
 /**
+ * Cross-platform regex utilities.
+ * @author Tommy Ettinger
+ */
+@Extension()
+class RegExodus : ThirdPartyExtension() {
+    override val id = "regExodus"
+    override val defaultVersion = "0.1.12"
+    override val url = "https://github.com/tommyettinger/RegExodus"
+
+    override fun initiateDependencies(project: Project) {
+        addDependency(project, Core.ID, "com.github.tommyettinger:regexodus")
+
+        addDependency(project, GWT.ID, "com.github.tommyettinger:regexodus:sources")
+        addGwtInherit(project, "regexodus")
+    }
+}
+
+
+/**
  * UI toolkit with extra widgets and a different theme style.
+ * Check the vis-ui changelog for what vis-ui versions are compatible
+ * with which libGDX versions; vis-ui 1.5.0 is the default and is
+ * compatible with libGDX 1.10.0.
  * @author Kotcrab
  */
 @Extension
 class VisUI : ThirdPartyExtension() {
     override val id = "visUi"
-    override val defaultVersion = "1.4.10"
+    //You may need to skip a check: VisUI.setSkipGdxVersionCheck(true);
+    override val defaultVersion = "1.5.0"
     override val url = "https://github.com/kotcrab/vis-ui"
 
     override fun initiateDependencies(project: Project) {
@@ -567,7 +604,7 @@ class PieMenu : ThirdPartyExtension() {
 @Extension
 class JBump : ThirdPartyExtension() {
     override val id = "jbump"
-    override val defaultVersion = "v1.0.0"
+    override val defaultVersion = "v1.0.1"
     override val url = "https://github.com/tommyettinger/jbump"
 
     override fun initiateDependencies(project: Project) {
@@ -584,7 +621,7 @@ class JBump : ThirdPartyExtension() {
 @Extension
 class Kryo : ThirdPartyExtension() {
     override val id = "kryo"
-    override val defaultVersion = "5.0.3"
+    override val defaultVersion = "5.1.1"
     override val url = "https://github.com/EsotericSoftware/kryo"
 
     override fun initiateDependencies(project: Project) {

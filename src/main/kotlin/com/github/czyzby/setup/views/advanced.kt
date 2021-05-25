@@ -18,22 +18,22 @@ class AdvancedData {
     @LmlActor("androidPluginVersion") private lateinit var androidPluginVersionField: VisTextField
     @LmlActor("robovmVersion") private lateinit var robovmVersionField: VisTextField
     @LmlActor("gwtPlugin") private lateinit var gwtPluginVersionField: VisTextField
-    @LmlActor("serverJavaVersion") private lateinit var serverJavaVersionField: Spinner 
+    @LmlActor("serverJavaVersion") private lateinit var serverJavaVersionField: Spinner
+    @LmlActor("desktopJavaVersion") private lateinit var desktopJavaVersionField: Spinner
     @LmlActor("generateSkin") private lateinit var generateSkinButton: Button
     @LmlActor("generateReadme") private lateinit var generateReadmeButton: Button
-    @LmlActor("gradleWrapper") private lateinit var gradleWrapperButton: Button
     @LmlActor("gradleTasks") private lateinit var gradleTasksField: VisTextField
 
     val version: String
         get() = versionField.text
 
     val gdxVersion: String
-        get() = "1.9.13"
+        get() = "1.10.0"
 
     val javaVersion: String
-        get() = if(javaVersionField.model.text.length == 1 && "9" != javaVersionField.model.text)
+        get() = if(javaVersionField.model.text.length == 1)
             "1." + javaVersionField.model.text else javaVersionField.model.text
-    
+
     var androidSdkVersion: String
         get() = sdkVersionField.model.text
         set(value) {
@@ -41,7 +41,7 @@ class AdvancedData {
             model.value = value.toInt()
             sdkVersionField.notifyValueChanged(false)
         }
-    
+
     val androidPluginVersion: String
         get() = androidPluginVersionField.text
 
@@ -55,10 +55,12 @@ class AdvancedData {
         get() = gwtPluginVersionField.text
 
     val serverJavaVersion: String
-        get() = serverJavaVersionField.model.text
+        get() = if(serverJavaVersionField.model.text.length == 1)
+            "1." + serverJavaVersionField.model.text else serverJavaVersionField.model.text
 
     val desktopJavaVersion: String
-        get() = javaVersionField.model.text
+        get() = if(desktopJavaVersionField.model.text.length == 1)
+            "1." + desktopJavaVersionField.model.text else desktopJavaVersionField.model.text
 
     val generateSkin: Boolean
         get() = generateSkinButton.isChecked
@@ -67,10 +69,10 @@ class AdvancedData {
         get() = generateReadmeButton.isChecked
 
     val addGradleWrapper: Boolean
-        get() = gradleWrapperButton.isChecked
+        get() = true
 
     val gradleTasks: List<String>
-        get() = if (gradleTasksField.isEmpty) listOf<String>()
+        get() = if (gradleTasksField.isEmpty) listOf()
         else gradleTasksField.text.split(Regex(Strings.WHITESPACE_SPLITTER_REGEX)).filter { it.isNotBlank() }
 
     fun forceSkinGeneration() {
