@@ -29,9 +29,9 @@ class Project(val basic: BasicProjectData, val platforms: Map<String, Platform>,
     val files = mutableListOf<ProjectFile>()
     val rootGradle: RootGradleFile
     val properties = mutableMapOf(
-            "org.gradle.daemon" to "false",
-            "org.gradle.jvmargs" to "-Xms128m -Xmx2g",
-            "org.gradle.configureondemand" to "false")
+        "org.gradle.daemon" to "true",
+        "org.gradle.jvmargs" to "-Xms512M -Xmx1G -XX:MaxPermSize=1G -XX:MaxMetaspaceSize=1G",
+        "org.gradle.configureondemand" to "false")
     val postGenerationTasks = mutableListOf<(Project) -> Unit>()
     val gwtInherits = mutableSetOf<String>()
     val androidPermissions = mutableSetOf<String>()
@@ -316,22 +316,22 @@ For example, `core:clean` removes `build` folder only from the `core` project.""
     }
 
     fun includeGradleWrapper(logger: ProjectLogger) {
-        if (advanced.addGradleWrapper) {
-            arrayOf("gradlew", "gradlew.bat", path("gradle", "wrapper", "gradle-wrapper.jar"),
-                    path("gradle", "wrapper", "gradle-wrapper.properties")).forEach {
-                CopiedFile(path = it, original = path("generator", it)).save(basic.destination)
-            }
-            basic.destination.child("gradlew").file().setExecutable(true)
-            basic.destination.child("gradlew.bat").file().setExecutable(true)
-            logger.logNls("copyGradle")
+        arrayOf(
+            "gradlew", "gradlew.bat", path("gradle", "wrapper", "gradle-wrapper.jar"),
+            path("gradle", "wrapper", "gradle-wrapper.properties")
+        ).forEach {
+            CopiedFile(path = it, original = path("generator", it)).save(basic.destination)
         }
+        basic.destination.child("gradlew").file().setExecutable(true)
+        basic.destination.child("gradlew.bat").file().setExecutable(true)
+        logger.logNls("copyGradle")
         val gradleTasks = advanced.gradleTasks
         if (gradleTasks.isNotEmpty()) {
             logger.logNls("runningGradleTasks")
             val commands = determineGradleCommand() + advanced.gradleTasks
             logger.log(commands.joinToString(separator = " "))
             val process = ProcessBuilder(*commands).directory(basic.destination.file())
-                    .redirectErrorStream(true).start()
+                .redirectErrorStream(true).start()
             val stream = BufferedReader(InputStreamReader(process.inputStream))
             var line = stream.readLine();
             while (line != null) {
@@ -347,9 +347,9 @@ For example, `core:clean` removes `build` folder only from the `core` project.""
 
     private fun determineGradleCommand(): Array<String> {
         return if (OsUtils.isWindows()) {
-            arrayOf("cmd", "/c", if (advanced.addGradleWrapper) "gradlew" else "gradle")
+            arrayOf("cmd", "/c", "gradlew")
         } else {
-            arrayOf(if (advanced.addGradleWrapper) "./gradlew" else "gradle")
+            arrayOf("./gradlew")
         }
     }
 }
