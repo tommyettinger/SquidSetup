@@ -4,6 +4,8 @@ import com.github.czyzby.setup.data.files.CopiedFile
 import com.github.czyzby.setup.data.files.SourceFile
 import com.github.czyzby.setup.data.files.path
 import com.github.czyzby.setup.data.gradle.GradleFile
+import com.github.czyzby.setup.data.libs.official.Controllers
+import com.github.czyzby.setup.data.libs.official.OfficialExtension
 import com.github.czyzby.setup.data.project.Project
 import com.github.czyzby.setup.views.GdxPlatform
 
@@ -19,7 +21,7 @@ class iOS : Platform {
 
     override val id = ID
     override val isStandard = false
-    
+
     override fun createGradleFile(project: Project): GradleFile = iOSGradleFile(project)
     override fun initiate(project: Project) {
         project.rootGradle.buildDependencies.add("\"com.mobidevelop.robovm:robovm-gradle-plugin:\$robovmVersion\"")
@@ -27,7 +29,7 @@ class iOS : Platform {
 
         // Including RoboVM config files:
         project.files.add(CopiedFile(projectName = ID, path = "Info.plist.xml",
-                original = path("generator", "ios", "Info.plist.xml")))
+            original = path("generator", "ios", "Info.plist.xml")))
         project.files.add(SourceFile(projectName = ID, fileName = "robovm.properties", content = """app.version=${project.advanced.version.replace("[^0-9\\.]", "")}
 app.id=${project.basic.rootPackage}
 app.mainclass=${project.basic.rootPackage}.ios.IOSLauncher
@@ -38,9 +40,9 @@ app.name=${project.basic.name}"""))
 	<executableName>${'$'}{app.executable}</executableName>
 	<mainClass>${'$'}{app.mainclass}</mainClass>
 	<os>ios</os>
-	<arch>thumbv7</arch>
 	<target>ios</target>
 	<iosInfoPList>Info.plist.xml</iosInfoPList>
+	<treeShaker>conservative</treeShaker>
 	<resources>
 		<resource>
 			<directory>../assets</directory>
@@ -67,6 +69,7 @@ app.name=${project.basic.name}"""))
 		<pattern>com.android.org.bouncycastle.crypto.digests.AndroidDigestFactoryOpenSSL</pattern>
 		<pattern>org.apache.harmony.security.provider.cert.DRLCertFactory</pattern>
 		<pattern>org.apache.harmony.security.provider.crypto.CryptoProvider</pattern>
+${if (project.extensions.getSelectedOfficialExtensions().find { it.id == "gdx-controllers" } != null) "\t\t<pattern>com.badlogic.gdx.controllers.IosControllerManager</pattern>" else ""}
 	</forceLinkClasses>
 	<libs>
 			<lib>z</lib>
@@ -79,58 +82,53 @@ app.name=${project.basic.name}"""))
 		<framework>OpenAL</framework>
 		<framework>AudioToolbox</framework>
 		<framework>AVFoundation</framework>
+		<framework>GameController</framework>
+${if (project.extensions.getSelectedOfficialExtensions().find { it.id == "gdx-controllers" } != null) "\t\t<framework>GameKit</framework>" else ""}
 	</frameworks>
 </config>"""))
 
-        // Copying data images:
-        arrayOf("Default.png", "Default@2x.png", "Default@2x~ipad.png", "Default-375w-667h@2x.png",
-                "Default-414w-736h@3x.png", "Default-568h@2x.png", "Default-1024w-1366h@2x~ipad.png",
-                "Default~ipad.png", "Icon.png", "Icon@2x.png", "Icon-72.png", "Icon-72@2x.png").forEach {
-            project.files.add(CopiedFile(projectName = ID, path = path("data", it),
-                    original = path("generator", "ios", "data", it)))
-        }
         project.files.add(CopiedFile(projectName = ID, path = path("data", "Media.xcassets", "Contents.json"),
-                original = path("generator", "ios", "data", "Media.xcassets")))
+            original = path("generator", "ios", "data", "Media.xcassets", "Contents.json")))
         arrayOf(
-                "app-store-icon-1024@1x.png",
-                "Contents.json",
-                "ipad-app-icon-76@1x.png",
-                "ipad-app-icon-76@2x.png",
-                "ipad-notifications-icon-20@1x.png",
-                "ipad-notifications-icon-20@2x.png",
-                "ipad-pro-app-icon-83.5@2x.png",
-                "ipad-settings-icon-29@1x.png",
-                "ipad-settings-icon-29@2x.png",
-                "ipad-spotlight-icon-40@1x.png",
-                "ipad-spotlight-icon-40@2x.png",
-                "iphone-app-icon-60@2x.png",
-                "iphone-app-icon-60@3x.png",
-                "iphone-notification-icon-20@2x.png",
-                "iphone-notification-icon-20@3x.png",
-                "iphone-spotlight-icon-40@2x.png",
-                "iphone-spotlight-icon-40@3x.png",
-                "iphone-spotlight-settings-icon-29@2x.png",
-                "iphone-spotlight-settings-icon-29@3x.png"
+            "app-store-icon-1024@1x.png",
+            "Contents.json",
+            "ipad-app-icon-76@1x.png",
+            "ipad-app-icon-76@2x.png",
+            "ipad-notifications-icon-20@1x.png",
+            "ipad-notifications-icon-20@2x.png",
+            "ipad-pro-app-icon-83.5@2x.png",
+            "ipad-settings-icon-29@1x.png",
+            "ipad-settings-icon-29@2x.png",
+            "ipad-spotlight-icon-40@1x.png",
+            "ipad-spotlight-icon-40@2x.png",
+            "iphone-app-icon-60@2x.png",
+            "iphone-app-icon-60@3x.png",
+            "iphone-notification-icon-20@2x.png",
+            "iphone-notification-icon-20@3x.png",
+            "iphone-spotlight-icon-40@2x.png",
+            "iphone-spotlight-icon-40@3x.png",
+            "iphone-spotlight-settings-icon-29@2x.png",
+            "iphone-spotlight-settings-icon-29@3x.png"
         ).forEach {
             project.files.add(CopiedFile(projectName = ID, path = path("data", "Media.xcassets", "AppIcon.appiconset", it),
-                    original = path("generator", "ios", "data", "Media.xcassets", "AppIcon.appiconset", it)))
+                original = path("generator", "ios", "data", "Media.xcassets", "AppIcon.appiconset", it)))
         }
         arrayOf(
-                "Contents.json",
-                "libgdx@1x.png",
-                "libgdx@2x.png",
-                "libgdx@3x.png"
+            "Contents.json",
+            "libgdx@1x.png",
+            "libgdx@2x.png",
+            "libgdx@3x.png"
         ).forEach {
             project.files.add(CopiedFile(projectName = ID, path = path("data", "Media.xcassets", "Logo.imageset", it),
-                    original = path("generator", "ios", "data", "Media.xcassets", "Logo.imageset", it)))
+                original = path("generator", "ios", "data", "Media.xcassets", "Logo.imageset", it)))
         }
         project.files.add(CopiedFile(projectName = ID, path = path("data", "Base.lproj", "LaunchScreen.storyboard"),
-                original = path("generator", "ios", "data", "Base.lproj")))
+            original = path("generator", "ios", "data", "Base.lproj", "LaunchScreen.storyboard")))
 
         // Including reflected classes:
         if (project.reflectedClasses.isNotEmpty() || project.reflectedPackages.isNotEmpty()) {
             project.files.add(SourceFile(projectName = ID, sourceFolderPath = path("src", "main", "resources"),
-                    packageName = "META-INF.robovm.ios", fileName = "robovm.xml", content = """<config>
+                packageName = "META-INF.robovm.ios", fileName = "robovm.xml", content = """<config>
 	<forceLinkClasses>
 ${project.reflectedPackages.joinToString(separator = "\n") { "		<pattern>${it}.**</pattern>" }}
 ${project.reflectedClasses.joinToString(separator = "\n") { "		<pattern>${it}</pattern>" }}

@@ -24,7 +24,7 @@ class Android : Platform {
         addGradleTaskDescription(project, "lint", "performs Android project validation.")
 
         addCopiedFile(project, "ic_launcher-web.png")
-        addCopiedFile(project, "proguard-project.txt")
+        addCopiedFile(project, "proguard-rules.pro")
         addCopiedFile(project, "project.properties")
         addCopiedFile(project, "res", "drawable-hdpi", "ic_launcher.png")
         addCopiedFile(project, "res", "drawable-mdpi", "ic_launcher.png")
@@ -33,15 +33,15 @@ class Android : Platform {
         addCopiedFile(project, "res", "values", "styles.xml")
 
         project.files.add(SourceFile(projectName = "", sourceFolderPath = "", packageName = "", fileName = "local.properties",
-                content = "# Location of the Android SDK:\nsdk.dir=${project.basic.androidSdk}"))
+            content = "# Location of the Android SDK:\nsdk.dir=${project.basic.androidSdk}"))
         project.files.add(SourceFile(projectName = ID, sourceFolderPath = "res", packageName = "values", fileName = "strings.xml",
-                content = """<?xml version="1.0" encoding="utf-8"?>
+            content = """<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">${project.basic.name}</string>
 </resources>
 """))
         project.files.add(SourceFile(projectName = ID, sourceFolderPath = "", packageName = "", fileName = "AndroidManifest.xml",
-                content = """<?xml version="1.0" encoding="utf-8"?>
+            content = """<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="${project.basic.rootPackage}">
     <application
@@ -52,7 +52,7 @@ class Android : Platform {
             android:label="@string/app_name"
             android:theme="@style/GdxTheme">
         <activity
-                android:name="${project.basic.rootPackage}.android.AndroidLauncher"
+                android:name="${project.basic.rootPackage}.AndroidLauncher"
                 android:label="@string/app_name"
                 android:screenOrientation="landscape"
                 android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout">
@@ -82,7 +82,6 @@ class AndroidGradleFile(val project: Project) : GradleFile(Android.ID) {
     init {
         dependencies.add("project(':${Core.ID}')")
         addDependency("com.badlogicgames.gdx:gdx-backend-android:\$gdxVersion")
-        addNativeDependency("com.badlogicgames.gdx:gdx-platform:\$gdxVersion:natives-armeabi")
         addNativeDependency("com.badlogicgames.gdx:gdx-platform:\$gdxVersion:natives-armeabi-v7a")
         addNativeDependency("com.badlogicgames.gdx:gdx-platform:\$gdxVersion:natives-arm64-v8a")
         addNativeDependency("com.badlogicgames.gdx:gdx-platform:\$gdxVersion:natives-x86")
@@ -143,7 +142,7 @@ android {
 	${if(latePlugin && project.advanced.javaVersion != "1.6" && project.advanced.javaVersion != "1.7")"kotlinOptions.jvmTarget = \"1.8\"" else ""}
 	buildTypes {
 		release {
-			minifyEnabled true
+			minifyEnabled false
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 		}
 	}
@@ -158,7 +157,7 @@ repositories {
 configurations { natives }
 
 dependencies {
-	${if(project.advanced.javaVersion != "1.6" && project.advanced.javaVersion != "1.7")"coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'" else ""}
+	${if(project.advanced.javaVersion != "1.6" && project.advanced.javaVersion != "1.7")"coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'" else ""}
 ${joinDependencies(dependencies)}
 ${joinDependencies(nativeDependencies, "natives")}
 }
@@ -168,7 +167,6 @@ ${joinDependencies(nativeDependencies, "natives")}
 // so they get packed with the APK.
 task copyAndroidNatives() {
 	doFirst {
-		file("libs/armeabi/").mkdirs()
 		file("libs/armeabi-v7a/").mkdirs()
 		file("libs/arm64-v8a/").mkdirs()
 		file("libs/x86_64/").mkdirs()
@@ -176,9 +174,8 @@ task copyAndroidNatives() {
 		
 		configurations.getByName("natives").copy().files.each { jar ->
     	    def outputDir = null
-    	    if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
     	    if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-    	    if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
+    	    if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
     	    if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
     	    if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
     	    if(outputDir != null) {
@@ -217,7 +214,7 @@ task run(type: Exec) {
 	}
 
 	def adb = path + "/platform-tools/adb"
-	commandLine "${'$'}adb", 'shell', 'am', 'start', '-n', '${project.basic.rootPackage}/${project.basic.rootPackage}.android.AndroidLauncher'
+	commandLine "${'$'}adb", 'shell', 'am', 'start', '-n', '${project.basic.rootPackage}/${project.basic.rootPackage}.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"
