@@ -46,5 +46,18 @@ eclipse.project.name = appName + '-headless'
 
 dependencies {
 ${joinDependencies(dependencies)}}
+
+jar {
+	archiveBaseName.set(appName)
+	duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+	dependsOn configurations.runtimeClasspath
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+	manifest {
+		attributes 'Main-Class': project.mainClassName
+	}
+	doLast {
+		file(archiveFile).setExecutable(true, false)
+	}
+}
 """
 }

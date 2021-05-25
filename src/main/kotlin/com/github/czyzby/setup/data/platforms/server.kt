@@ -42,11 +42,24 @@ dependencies {
 ${joinDependencies(dependencies)}}
 
 jar {
-	archiveBaseName = "${'$'}{appName}-server"
+	archiveBaseName.set(appName)
+// the duplicatesStrategy matters starting in Gradle 7.0; this setting works.
+	duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 	dependsOn configurations.runtimeClasspath
-	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } } 
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+// these "exclude" lines remove some unnecessary duplicate files in the output JAR.
+	exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+	dependencies {
+		exclude('META-INF/INDEX.LIST', 'META-INF/maven/**')
+	}
+// setting the manifest makes the JAR runnable.
 	manifest {
 		attributes 'Main-Class': project.mainClassName
 	}
-}"""
+// this last step may help on some OSes that need extra instruction to make runnable JARs.
+	doLast {
+		file(archiveFile).setExecutable(true, false)
+	}
+}
+"""
 }
