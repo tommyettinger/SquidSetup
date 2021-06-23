@@ -135,8 +135,8 @@ class GWTGradleFile(val project: Project) : GradleFile(GWT.ID) {
 		dependencies.add("project(':${Core.ID}')")
 
 		addDependency("com.badlogicgames.gdx:gdx:\$gdxVersion:sources")
-		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion")
-		addDependency("com.badlogicgames.gdx:gdx-backend-gwt:\$gdxVersion:sources")
+		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.100.0")
+		addDependency("com.github.tommyettinger:gdx-backend-gwt:1.100.0:sources")
 	}
 
 	override fun getContent(): String = """
@@ -211,20 +211,39 @@ task superDev(type: GwtSuperDev) {
 		gwt.modules = gwt.devModules
 	}
 }
+// This next line can be changed if you want to, for instance, always build into the
+// docs/ folder of a Git repo, which can be set to automatically publish on GitHub Pages.
+// This is relative to the html/ folder.
+var outputPath = "build/dist/"
+
 task dist(dependsOn: [clean, compileGwt]) {
     doLast {
-		file("build/dist").mkdirs()
+		file(outputPath).mkdirs()
 		copy {
-			from "build/gwt/out"
-			into "build/dist"
+			from("build/gwt/out"){
+				exclude '**/*.symbolMap' // Not used by a dist, and these can be large.
+			}
+			into outputPath
 		}
 		copy {
-			from "webapp"
-			into "build/dist"
+			from("webapp") {
+				exclude 'index.html' // We edit this HTML file later.
+				exclude 'refresh.png' // We don't need this button; this saves some bytes.
+			}
+			into outputPath
+			}
+		copy {
+			from("webapp") {
+				// These next two lines take the index.html page and remove the superdev refresh button.
+				include 'index.html'
+				filter { String line -> line.replaceAll('<a class="superdev" .+', '') }
+				// This does not modify the original index.html, only the copy in the dist.
+			}
+			into outputPath
 			}
 		copy {
 			from "war"
-			into "build/dist"
+			into outputPath
 		}
 	}
 }
@@ -237,16 +256,10 @@ task addSource {
 }
 
 task distZip(type: Zip, dependsOn: dist){
-	//// The next lines copy the dist but remove the recompile button (circling arrow) from the HTML page.
-	from('build/dist/') {
-		exclude '**/*.html'
-	}
-	from('build/dist/') {
-		include '**/*.html'
-		filter { String line -> line.replaceAll('<a class="superdev" .+', '') }
-	}
+	//// This uses the output of the dist task, which removes the superdev buttons from index.html .
+	from(outputPath)
 	archiveBaseName.set("${'$'}{appName}-dist")
-	//// The result will be in html/build/ with a name containing "dist".
+	//// The result will be in html/build/ with a name containing "-dist".
 	destinationDir(file("build"))
 }
 
@@ -255,6 +268,7 @@ tasks.draftCompileGwt.dependsOn(addSource)
 tasks.checkGwt.dependsOn(addSource)
 checkGwt.war = file("war")
 
+//// You will need to change the next line to 11.0 if you use Java 11 language features.
 sourceCompatibility = 8.0
 sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 

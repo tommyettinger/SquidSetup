@@ -18,9 +18,9 @@ import java.util.*
  * @author Eben Howard
  * @author Tommy Ettinger
  */
-val SQUID_LIB_VERSION = //"3.0.3"
-        RtGithub().repos().get(Coordinates.Simple("yellowstonegames", "SquidLib"))
-        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
+val SQUID_LIB_VERSION = "3.0.4"
+//        RtGithub().repos().get(Coordinates.Simple("yellowstonegames", "SquidLib"))
+//        .commits().iterate(Collections.emptyMap()).first().sha().substring(0, 10)
 
 /**
  * URL of SquidLib libraries.
@@ -29,8 +29,8 @@ val SQUID_LIB_VERSION = //"3.0.3"
  */
 const val SQUID_LIB_URL = "https://github.com/yellowstonegames/SquidLib"
 
-const val REPO_PATH = "com.github.yellowstonegames.SquidLib" //// used with JitPack
-//const val REPO_PATH = "com.squidpony" //// used with stable versions
+//const val REPO_PATH = "com.github.yellowstonegames.SquidLib" //// used with JitPack
+const val REPO_PATH = "com.squidpony" //// used with stable versions
 
 /**
  * Utilities for grid-based games.

@@ -49,7 +49,7 @@ class AdvancedData {
         get() = robovmVersionField.text
 
     val gwtVersion: String
-        get() = "2.8.2"
+        get() = "2.9.0"
 
     val gwtPluginVersion: String
         get() = gwtPluginVersionField.text
