@@ -63,10 +63,10 @@ handle the graphics yourself).
         these differences and make things like random seeds act the same on all platforms, but it takes work. Mostly,
         you need to be careful with the `long` and `int` number types, and relates to `int` not overflowing as it
         would on desktop, and `long` not being visible to reflection. See [this small guide to GWT](GWT.md) for more.
-        - SquidSetup for release 3.0.3 uses GWT 2.9.0 via [a custom backend](https://github.com/tommyettinger/gdx-backends),
+        - SquidSetup for release 3.0.4 uses GWT 2.9.0 via [a custom backend](https://github.com/tommyettinger/gdx-backends),
           which enables using Java 11 features, such as `var`, but not JDK 11 library code. The backend is closely
-          related to the libGDX version used, but SquidLib currently is only tested with libGDX 1.9.12. The JitPack
-          release does not use GWT 2.9.0 or the custom backend, and uses libGDX 1.9.13's default of GWT 2.8.2.
+          related to the libGDX version used, and requires using libGDX 1.10.0 (the current version). The JitPack
+          release does not use GWT 2.9.0 or the custom backend, and uses libGDX 1.10.0's default of GWT 2.8.2.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -117,9 +117,8 @@ Now you'll have a project all set up with a sample.
     tell, I am not terribly confident in the ability of this tool to generate iOS projects
     that work on the first try, though it may be easy enough to modify things in the likely
     case they don't immediately work.
-  - All builds currently use Gradle 6.8.2 with the "api/implementation/compile fiasco" resolved.
-    Recent Java works with SquidSetup because Gradle 6.8.2 supports Java from 8 to 15.
-    (Java 16 is expected to be released soon, but it may not work right away.)
+  - All builds currently use Gradle 7.1 with the "api/implementation/compile fiasco" resolved.
+    Recent Java works with SquidSetup because Gradle 7.1 supports Java from 8 to 16.
     Adding dependencies will use the `api` keyword instead of the `compile` keyword it used
     in earlier versions. All modules use the `java-library` plugin, which enables the `api` keyword
     for dependencies.
@@ -134,31 +133,35 @@ Now you'll have a project all set up with a sample.
 
 These apply to the options on the Advanced tab, which may need some extra explanation.
 
-  - LibGDX version: 1.9.12 if you use the stable 3.0.3 release, or 1.9.13 if you use JitPack.
-    - 1.9.12 is a dependency of SquidLib 3.0.3.
-    - 1.9.13 is a dependency for later commits available on JitPack.
+  - LibGDX version: 1.10.0.
+    - 1.10.0 is a dependency of SquidLib 3.0.4.
+    - 1.10.0 is the current dependency for later commits available on JitPack.
+      - If you target HTML, the custom backend used here by default requires libGDX 1.10.0.
   - Application version: Your choice
     - Maybe `0.0.1-SNAPSHOT` if it's going to change a lot. `-SNAPSHOT` has special meaning as a non-release.
-  - Java version: 8.0, 11.0, or 15.0
-    - 8.0 is the max for Android and iOS, but 15.0 can be used for desktop/LWJGL3 only
-      (if you have Java 15 installed, which you should also bundle for users). 11.0 is the current LTS
+      - On iOS, you can't use anything but digits and `.` in a release version.
+  - Java version: 8.0, 11.0, or 16.0
+    - 8.0 is the max for Android and iOS, but 16.0 can be used for desktop/LWJGL3 only
+      (if you have Java 16 installed, which you should also bundle for users). 11.0 is the current LTS
       release, which really only has meaning if you're paying for support from Oracle. Contrary to popular
       opinion, LTS releases have no special guarantees of stability, just that Oracle is maintaining that
       version for a longer period of time. Red Hat marks Java 8 as an LTS release if you pay for support
       from them (Azul Systems also treats 8 as LTS, and probably several others), and Java 8 is still what
       most Java developers are using.
+      - You must use a JDK with version 15 or lower to build Android projects, currently, due to limitations
+        of the Android tooling. JDK 8 and 11 are recommended.
   - Server Java version: Must be at least equal to `Java version`, maybe should be equal.
     - Only matters if you have selected a Server project on the Platforms tab.
-  - Android plugin: 4.0.2
-    - 4.0.2 seems to work well as long as Android has been set up fully. It enables more of Java 8's
+  - Android plugin: 4.1.2
+    - 4.1.2 seems to work well as long as Android has been set up fully. It enables more of Java 8's
       features, and you can set the Java version to 8.0 with this Android Gradle Plugin version.
       - You can try to update `androidPluginVersion` in `gradle.properties` if you want to try
         some newer features, and if the newer version doesn't work, you can downgrade there too.
   - Target Android API: 29
-    - This is required by the Play Store.
+    - This is required by the Play Store. 30 may be required now.
   - RoboVM Version: 2.3.12
     - This can be updated if there's a newer release, but only matters if you target iOS.
-  - GWT plugin version: 1.0.13
+  - GWT plugin version: 1.1.12
     - This is the most recent version, and it works fine.
 
 Good luck, and I hope you make something great!

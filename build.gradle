@@ -13,7 +13,7 @@ buildscript {
   }
 }
 
-version = "3.0.4-JITPACK"
+version = "3.0.4"
 mainClassName = 'com.github.czyzby.setup.MainKt'
 
 sourceCompatibility = 1.8
@@ -25,7 +25,15 @@ jar {
 //    attributes 'JCabi-Build': "4bb75e3"
 //    attributes 'JCabi-Date': "2015-04-24T18:33:15"
   }
+  duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
   from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+  exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+  dependencies {
+    exclude('META-INF/INDEX.LIST', 'META-INF/maven/**')
+  }
+  doLast {
+    file(archiveFile).setExecutable(true, false)
+  }
 }
 
 repositories {
@@ -43,7 +51,7 @@ dependencies {
   api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
   api "io.github.lukehutch:fast-classpath-scanner:2.21"
-  api "com.kotcrab.vis:vis-ui:1.4.6"
+  api "com.kotcrab.vis:vis-ui:1.5.0"
   // all dependencies below are for jcabi-github to be usable at runtime... ugh.
   api "org.glassfish:javax.json:1.0.4"
   api "org.glassfish.jersey.core:jersey-common:2.17"
