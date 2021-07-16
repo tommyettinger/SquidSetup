@@ -27,11 +27,11 @@ handle the graphics yourself).
   - Get the latest `SquidSetup.jar` from the [Releases tab](https://github.com/tommyettinger/SquidSetup/releases) of this project.
     - You may want the stable 3.0.0 release, which came out July 22, 2020 and won't change until another
       stable release (which still won't make the stable SquidSetup act any differently).
-    - You may want the small but meaningful improvements in the 3.0.3 release, which applies fixes to Android and some
+    - You may want the small but meaningful improvements in the 3.0.4 release, which applies fixes to Android and some
       fixes to JDK version issues on desktop/LWJGL3, plus some new features.
     - Future changes to SquidSetup for an existing SquidLib version will be applied to -u1, -u2, -u3, etc.;
-      there's already a 3.0.0-u1, but it's almost entirely superseded by 3.0.3.
-    - You may instead want the latest possible code using the [3.0.0-JITPACK Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.0-JITPACK),
+      there's already a 3.0.0-u1, but it's almost entirely superseded by 3.0.4.
+    - You may instead want the latest possible code using the [3.0.5-JITPACK Release](https://github.com/tommyettinger/SquidSetup/releases/tag/v3.0.5-JITPACK),
       which is still receiving updates, just at a slower pace. The latest version will get a commit compiled by JitPack.io, while the beta and stable versions
       will be obtained from Maven Central. The latest commit is determined by the library `jcabi-github`, and involves an API call to GitHub when using
       the snapshot release (not any beta or stable releases); the API call may be a little slow or might not complete if GitHub is having issues. However,
@@ -65,8 +65,9 @@ handle the graphics yourself).
         would on desktop, and `long` not being visible to reflection. See [this small guide to GWT](GWT.md) for more.
         - SquidSetup for release 3.0.4 uses GWT 2.9.0 via [a custom backend](https://github.com/tommyettinger/gdx-backends),
           which enables using Java 11 features, such as `var`, but not JDK 11 library code. The backend is closely
-          related to the libGDX version used, and requires using libGDX 1.10.0 (the current version). The JitPack
-          release does not use GWT 2.9.0 or the custom backend, and uses libGDX 1.10.0's default of GWT 2.8.2.
+          related to the libGDX version used, and requires using libGDX 1.10.0 (the current version). The 3.0.0-JITPACK
+          release does not use GWT 2.9.0 or the custom backend, and uses libGDX 1.10.0's default of GWT 2.8.2, but the
+          newer 3.0.5-JITPACK release does use GWT 2.9.0 via the custom backend.
     - If the "Templates" tab has "SquidLib Basic" checked, then dependencies will be added
       for `squidlib-util` and `squidlib`. If that template isn't checked, no dependencies
       will be added beyond libGDX. It is recommended that you use the SquidLib Basic template
@@ -74,9 +75,6 @@ handle the graphics yourself).
       only use `squidlib-util` for logic handling.
     - You don't need LibGDX checked (the tool is set up to download LibGDX and set it as a
       dependency in all cases).
-    - If you click Advanced, you can choose to generate project files for IntelliJ IDEA
-      and/or Eclipse, which has some advantages but probably more disadvantages. If you
-      know what you're doing, you might want to try it, but be prepared for frustration.
   - Click generate, and very soon a window should pop up with instructions for what to do.
     
 Now you'll have a project all set up with a sample.
